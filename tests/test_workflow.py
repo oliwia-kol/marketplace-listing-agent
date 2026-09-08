@@ -1,0 +1,106 @@
+from pathlib import Path
+
+import pytest
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.types import Command
+
+from marketplace_agent.domain.catalog import CatalogRepository
+from marketplace_agent.domain.models import (
+    FactProposal,
+    ItemCase,
+    PortalDraft,
+    PortalFillResult,
+    PriceRecommendation,
+    PriceResearchSummary,
+    WorkflowStatus,
+)
+from marketplace_agent.models.ollama_provider import StaticModelProvider
+from marketplace_agent.models.router import ModelRole, ModelRouter, RoleConfig, RouterConfig
+from marketplace_agent.models.tasks import (
+    CopyAuditItem,
+    CopyAuditOutput,
+    CopyDraftOutput,
+    FactExtractionOutput,
+    PortalRecommendationOutput,
+)
+from marketplace_agent.workflow.dependencies import WorkflowDependencies
+from marketplace_agent.workflow.graph import build_graph
+
+
+class ResearchStub:
+    async def run(self, facts):
+        return PriceResearchSummary(
+            checked_count=10,
+            reachable_count=9,
+            comparable_count=8,
+            median_pln=100,
+            exact_price_counts=[],
+            recommendations=[PriceRecommendation(strategy="market", price_pln=100, basis="median")],
+        )
+
+
+class BrowserStub:
+    async def fill_all(self, item_id, drafts, photo_paths):
+        return [PortalFillResult(portal=drafts[0].portal, status="ready")]
+
+
+def interrupt_kind(result):
+    return result["__interrupt__"][0].value["kind"]
+
+
+@pytest.mark.asyncio
+async def test_graph_pauses_before_each_human_decision(tmp_path) -> None:
+    provider = StaticModelProvider(
+        {
+            FactExtractionOutput: FactExtractionOutput(
+                facts=[
+                    FactProposal(name="category", value="lampa", confidence=0.9, source="image"),
+                    FactProposal(name="condition", value="używana", confidence=0.7, source="model"),
+                ]
+            ),
+            PortalRecommendationOutput: PortalRecommendationOutput(
+                portals=["olx"], reasons={"olx": "lokalny odbiór"}
+            ),
+            CopyDraftOutput: CopyDraftOutput(
+                drafts=[
+                    PortalDraft(
+                        portal="olx",
+                        title="Lampa",
+                        description="Używana lampa.",
+                        category="Dom",
+                        price_pln=100,
+                    )
+                ]
+            ),
+            CopyAuditOutput: CopyAuditOutput(decisions=[CopyAuditItem(portal="olx", safe=True)]),
+        }
+    )
+    router = ModelRouter(
+        provider,
+        RouterConfig(roles={role: RoleConfig(model="static") for role in ModelRole}),
+    )
+    catalog = CatalogRepository(tmp_path / "catalog.sqlite")
+    catalog.setup()
+    graph = build_graph(
+        WorkflowDependencies(router, ResearchStub(), BrowserStub(), catalog), InMemorySaver()
+    )
+    item = ItemCase(photo_paths=[Path("fixture.jpg")])
+    config = {"configurable": {"thread_id": item.item_id}}
+
+    result = await graph.ainvoke({"item": item.model_dump(mode="json")}, config=config)
+    assert interrupt_kind(result) == "fact"
+    result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+    assert interrupt_kind(result) == "fact"
+    result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+    assert interrupt_kind(result) == "portals"
+    result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+    assert interrupt_kind(result) == "price"
+    result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+    assert interrupt_kind(result) == "copy"
+    result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+    assert interrupt_kind(result) == "fill_authorization"
+    result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+
+    finished = ItemCase.model_validate(result["item"])
+    assert finished.status == WorkflowStatus.READY_TO_PUBLISH
+    assert finished.portal_drafts[0].approved

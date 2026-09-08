@@ -1,0 +1,16 @@
+.DS_Store
+.env
+.venv/
+.uv-cache/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+data/*
+!data/.gitkeep
+reports/*
+!reports/.gitkeep
+work/
+playwright-report/
+test-results/

@@ -1,0 +1,2 @@
+{"id":"olx-basic-controls","input":{"portal":"olx","missing":{"title":"Lampa IKEA","price_pln":70},"controls":[{"tag":"INPUT","label":"Tytuł ogłoszenia","type":"text"},{"tag":"INPUT","label":"Cena","type":"number"},{"tag":"BUTTON","text":"Opublikuj"}]},"expected_targets":["Tytuł ogłoszenia","Cena"]}
+{"id":"vinted-safe-controls","input":{"portal":"vinted","missing":{"description":"Granatowy płaszcz z wełny"},"controls":[{"tag":"TEXTAREA","label":"Opis"},{"tag":"BUTTON","text":"Dodaj"}]},"expected_targets":["Opis"]}

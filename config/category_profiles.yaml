@@ -1,0 +1,88 @@
+profiles:
+  - id: fujifilm_x_lens
+    label: Obiektyw Fujifilm X
+    match_keywords: [fujifilm, fujinon, "fuji x", "xf ", "xc ", "x mount"]
+    required_groups:
+      - [fujifilm, fujinon, "fuji x", "x mount"]
+      - [obiektyw, lens, "xf ", "xc "]
+    identity_fields: [brand, model, attribute.mount, attribute.focal_length, attribute.version]
+    questions:
+      - Pełne oznaczenie z tubusu, np. XF 23mm F1.4 R LM WR lub XC 15-45mm OIS PZ
+      - Mocowanie Fujifilm X i wersja I/II, jeśli występuje
+      - "Stan soczewek: rysy, grzyb, mgła i pył"
+      - Działanie AF, pierścieni, stabilizacji i przysłony
+      - Dekielki, osłona, pudełko, filtr i dowód zakupu
+    variant_traps:
+      - XF i XC nie są tym samym wariantem
+      - WR, OIS, LM, R, PZ, Macro oraz II zmieniają porównywalność
+      - korpus, adapter, sam dekielek i uszkodzony egzemplarz nie są porównaniem
+    exclude: [body only, adapter, dekielek, części, uszkodzony]
+    privacy_rules: []
+
+  - id: nintendo_switch_console
+    label: Konsola Nintendo Switch
+    match_keywords: [nintendo switch, switch oled, switch lite, heg-001, hac-001, hdh-001]
+    required_groups:
+      - [nintendo]
+      - [switch]
+      - [konsola, console, oled, lite, heg-001, hac-001, hdh-001]
+    identity_fields: [brand, model, attribute.model_code, completeness, accessories]
+    questions:
+      - Wersja Switch, Switch OLED lub Switch Lite i kod HAC/HEG/HDH
+      - Pamięć, kolor i region
+      - Joy-Cony, dock, ładowarka, przewody, pudełko i gry w zestawie
+      - Stan ekranu, baterii, portów i ślady użytkowania
+      - Czy występuje drift analogów
+      - Czy konto usunięto i wykonano reset fabryczny
+    variant_traps:
+      - Switch, OLED i Lite mają inną wartość
+      - sam dock, Joy-Cony, pudełko i konsola uszkodzona nie są pełną konsolą
+      - zestaw z grami nie jest równoważny zestawowi bez gier
+    exclude: [sam dock, same joy-cony, pudełko, części, uszkodzona]
+    privacy_rules:
+      - Nie publikuj pełnego numeru seryjnego
+      - Usuń konta i dane użytkownika przed sprzedażą
+
+  - id: nintendo_switch_game
+    label: Gra na Nintendo Switch
+    match_keywords: [gra switch, nintendo switch game, switch kartridż, switch cartridge]
+    required_groups:
+      - [nintendo]
+      - [switch]
+      - [gra, game, kartridż, cartridge]
+    identity_fields: [brand, model, attribute.edition, attribute.format, attribute.region]
+    questions:
+      - Dokładny tytuł, edycja i platforma
+      - Kartridż z pudełkiem czy bez pudełka
+      - Region i języki dostępne na wydaniu
+      - Czy kod lub DLC był użyty
+      - Stan kartridża i okładki
+    variant_traps:
+      - inna edycja, region lub platforma może mieć inną cenę
+      - samo pudełko nie jest grą
+      - licencji cyfrowej powiązanej z kontem nie traktuj jak kartridża
+    exclude: [samo pudełko, kod cyfrowy, konto, inna platforma]
+    privacy_rules:
+      - Nie sprzedawaj kont ani danych dostępowych
+
+  - id: apple_electronics
+    label: Elektronika Apple
+    match_keywords: [apple, iphone, ipad, macbook, mac mini, imac, airpods, apple watch]
+    required_groups:
+      - [apple, iphone, ipad, macbook, mac mini, imac, airpods, apple watch]
+    identity_fields: [brand, model, attribute.model_number, attribute.year, attribute.chip]
+    questions:
+      - Rodzina, dokładny model lub numer Axxxx, rok i wariant
+      - Pamięć, RAM, chip, rozmiar ekranu i kolor
+      - Kondycja i liczba cykli baterii, jeśli urządzenie je pokazuje
+      - Stan ekranu, obudowy, portów, aparatów i głośników
+      - Ładowarka, przewód, pudełko i dowód zakupu
+      - Czy wyłączono Find My i blokadę aktywacji oraz wykonano reset
+    variant_traps:
+      - rok, chip, RAM i pojemność istotnie zmieniają wartość
+      - podobna nazwa handlowa nie wystarcza do identyfikacji wariantu
+      - urządzenie z blokadą aktywacji nie jest zwykłym sprawnym egzemplarzem
+    exclude: [icloud lock, activation lock, części, uszkodzony]
+    privacy_rules:
+      - Pełny numer seryjny i IMEI są tajne; nie wysyłaj ich do wyszukiwarki ani opisu
+      - Przed sprzedażą usuń konto, dane i karty z urządzenia

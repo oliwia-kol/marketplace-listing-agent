@@ -1,0 +1,28 @@
+research:
+  target_comparables: 25
+  minimum_comparables: 8
+  timeout_seconds: 600
+  max_candidate_urls: 60
+  max_parallel_domains: 3
+  per_domain_concurrency: 1
+  request_delay_seconds: 2.0
+sources:
+  - id: olx
+    domain: olx.pl
+    search_url: "https://www.olx.pl/oferty/q-{query}/"
+    listing_path_contains: "/d/oferta/"
+    enabled: true
+  - id: allegro_lokalnie
+    domain: allegrolokalnie.pl
+    search_url: "https://allegrolokalnie.pl/oferty/q/{query}"
+    listing_path_contains: "/oferta/"
+    enabled: true
+  - id: vinted
+    domain: vinted.pl
+    search_url: "https://www.vinted.pl/catalog?search_text={query}"
+    listing_path_contains: "/items/"
+    enabled: true
+  - id: web_discovery
+    domain: duckduckgo.com
+    search_url: "https://duckduckgo.com/?q={query}"
+    enabled: true
