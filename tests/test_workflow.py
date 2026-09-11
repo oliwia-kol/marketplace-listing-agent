@@ -28,7 +28,7 @@ from marketplace_agent.workflow.graph import build_graph
 
 
 class ResearchStub:
-    async def run(self, facts):
+    async def run(self, facts, *, item_id=None):
         return PriceResearchSummary(
             checked_count=10,
             reachable_count=9,

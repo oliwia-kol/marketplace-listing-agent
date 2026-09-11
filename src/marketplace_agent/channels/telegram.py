@@ -42,8 +42,12 @@ def render_interrupt(value: dict[str, Any]) -> str:
         )
     if kind == "price":
         summary = value["summary"]
+        active_distribution = summary.get("active_distribution", {})
         counts = ", ".join(
-            f"{row['count']} x {row['price_pln']:.0f} zł" for row in summary["exact_price_counts"]
+            f"{row['count']} x {row['price_pln']:.0f} zł"
+            for row in active_distribution.get(
+                "exact_price_counts", summary["exact_price_counts"]
+            )
         )
         recommendations = ", ".join(
             f"{row['strategy']}: {row['price_pln']:.0f} zł" for row in summary["recommendations"]
@@ -52,7 +56,9 @@ def render_interrupt(value: dict[str, Any]) -> str:
             f"Zweryfikowano {summary['reachable_count']} linków; porównywalnych: "
             f"{summary['comparable_count']}; kwarantanna: "
             f"{summary.get('quarantined_count', 0)}.\n"
-            f"Rozkład: {counts or 'brak danych'}\n"
+            f"Aktywne ceny ofertowe: {summary.get('active_count', 0)}; "
+            f"sprzedane: {summary.get('sold_count', 0)}.\n"
+            f"Rozkład aktywnych ofert: {counts or 'brak danych'}\n"
             f"Rekomendacje: {recommendations or 'brak'}\n\n"
             "Akceptuj cenę rynkową albo /zmien 120"
         )

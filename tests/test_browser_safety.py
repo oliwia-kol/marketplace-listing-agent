@@ -4,7 +4,9 @@ from marketplace_agent.browser.forms import (
     _is_publish_target,
     _is_safe_click_target,
     _json_safe_form_value,
+    _readback_expected,
 )
+from marketplace_agent.domain.models import PortalDraft
 from marketplace_agent.research.sources import canonicalize_listing_url, host_matches_domain
 
 
@@ -46,3 +48,26 @@ def test_listing_urls_are_canonicalized_before_deduplication() -> None:
     assert canonicalize_listing_url(
         "https://www.OLX.pl/d/oferta/test/?utm_source=x#details"
     ) == "https://olx.pl/d/oferta/test"
+
+
+def test_readback_contract_covers_scalar_business_fields_and_photo_count(tmp_path) -> None:
+    draft = PortalDraft(
+        portal="allegro_lokalnie",
+        title="Konsola",
+        description="Opis",
+        price_pln=1000,
+        category="Konsole",
+        condition="Używany",
+        sale_type="buy_now",
+        location="Warszawa",
+    )
+    assert _readback_expected(draft, [tmp_path / "1.jpg", tmp_path / "2.jpg"]) == {
+        "title": "Konsola",
+        "description": "Opis",
+        "price_pln": 1000,
+        "category": "Konsole",
+        "condition": "Używany",
+        "sale_type": "buy_now",
+        "location": "Warszawa",
+        "photos": 2,
+    }

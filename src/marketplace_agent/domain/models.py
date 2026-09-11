@@ -110,6 +110,18 @@ class PriceRecommendation(BaseModel):
     basis: str
 
 
+class PriceDistribution(BaseModel):
+    count: int = 0
+    by_source: dict[str, int] = Field(default_factory=dict)
+    exact_price_counts: list[PricePointCount] = Field(default_factory=list)
+    minimum_pln: float | None = None
+    p25_pln: float | None = None
+    median_pln: float | None = None
+    trimmed_mean_pln: float | None = None
+    p75_pln: float | None = None
+    maximum_pln: float | None = None
+
+
 class PriceResearchSummary(BaseModel):
     checked_count: int = 0
     reachable_count: int = 0
@@ -120,6 +132,8 @@ class PriceResearchSummary(BaseModel):
     exact_price_counts: list[PricePointCount] = Field(default_factory=list)
     active_count: int = 0
     sold_count: int = 0
+    active_distribution: PriceDistribution = Field(default_factory=PriceDistribution)
+    sold_distribution: PriceDistribution = Field(default_factory=PriceDistribution)
     minimum_pln: float | None = None
     p25_pln: float | None = None
     median_pln: float | None = None
@@ -127,6 +141,8 @@ class PriceResearchSummary(BaseModel):
     p75_pln: float | None = None
     maximum_pln: float | None = None
     recommendations: list[PriceRecommendation] = Field(default_factory=list)
+    recommendation_basis: Literal["active_asking_prices"] = "active_asking_prices"
+    evidence_manifest_path: str | None = None
     confidence: Literal["low", "medium", "high"] = "low"
     generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 

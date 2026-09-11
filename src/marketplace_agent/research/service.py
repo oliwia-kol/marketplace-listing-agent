@@ -6,6 +6,7 @@ import logging
 import re
 from collections import defaultdict
 from contextlib import suppress
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
@@ -19,6 +20,7 @@ from marketplace_agent.domain.pricing import summarize_prices
 from marketplace_agent.models.router import ModelRole, ModelRouter
 from marketplace_agent.models.tasks import ComparableAuditOutput, SearchPlanOutput
 from marketplace_agent.research.config import ResearchConfig
+from marketplace_agent.research.evidence import write_research_manifest
 from marketplace_agent.research.security import compare_verifications
 from marketplace_agent.research.sources import SearchSource, canonicalize_listing_url
 from marketplace_agent.research.verifier import LinkVerifier
@@ -56,11 +58,13 @@ class MarketResearchService:
         router: ModelRouter,
         config: ResearchConfig,
         category_profiles: CategoryProfileCatalog | None = None,
+        data_dir: Path | None = None,
     ) -> None:
         self.browser = browser
         self.router = router
         self.config = config
         self.category_profiles = category_profiles
+        self.data_dir = data_dir
         self._progress_candidates: list[ComparableCandidate] = []
         self._progress_checked_count = 0
 
@@ -86,18 +90,28 @@ class MarketResearchService:
         )
         return response.output
 
-    async def run(self, facts: dict[str, Any]) -> PriceResearchSummary:
+    async def run(
+        self, facts: dict[str, Any], *, item_id: str | None = None
+    ) -> PriceResearchSummary:
         self._progress_candidates = []
         self._progress_checked_count = 0
         try:
             async with asyncio.timeout(self.config.research.timeout_seconds):
-                return await self._run_bounded(facts)
+                summary = await self._run_bounded(facts)
         except TimeoutError:
-            return summarize_prices(
+            summary = summarize_prices(
                 self._progress_candidates,
                 checked_count=self._progress_checked_count,
                 minimum_comparables=self.config.research.minimum_comparables,
             )
+        if self.data_dir is not None and item_id is not None:
+            summary.evidence_manifest_path = write_research_manifest(
+                self.data_dir,
+                item_id,
+                self._progress_candidates,
+                summary,
+            )
+        return summary
 
     async def _run_bounded(self, facts: dict[str, Any]) -> PriceResearchSummary:
         plan = await self.create_search_plan(facts)

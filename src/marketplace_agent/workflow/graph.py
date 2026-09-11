@@ -198,7 +198,9 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
 
     async def research_price(state: ListingState) -> ListingState:
         item = _item(state)
-        item.price_summary = await deps.research.run(item.facts.approved_dict())
+        item.price_summary = await deps.research.run(
+            item.facts.approved_dict(), item_id=item.item_id
+        )
         item.status = WorkflowStatus.PRICE_REVIEW
         return {"item": _save(deps, item)}
 

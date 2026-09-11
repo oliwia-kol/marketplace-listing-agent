@@ -48,6 +48,7 @@ class ApplicationRuntime:
                 self.router,
                 ResearchConfig.from_yaml(self.settings.source_config_path),
                 CategoryProfileCatalog.from_yaml(self.settings.category_profile_path),
+                data_dir=self.settings.data_dir,
             ),
             browser_fill=BrowserFillService(self.sessions, self.router, self.settings.data_dir),
             catalog=self.catalog,

@@ -115,6 +115,20 @@ def _json_safe_form_value(value: Any) -> Any:
     return value
 
 
+def _readback_expected(draft: PortalDraft, photo_paths: list[Path]) -> dict[str, Any]:
+    values: dict[str, Any] = {
+        "title": draft.title,
+        "description": draft.description,
+        "price_pln": draft.price_pln,
+        "category": draft.category,
+        "condition": draft.condition,
+        "sale_type": draft.sale_type,
+        "location": draft.location,
+        "photos": len(photo_paths),
+    }
+    return {field: value for field, value in values.items() if value not in (None, "", [])}
+
+
 class SafeActionExecutor:
     """Executes a small action vocabulary and refuses publication-like clicks."""
 
@@ -177,7 +191,7 @@ class PortalFormFiller:
             filled.update(repaired)
             missing = {field: value for field, value in missing.items() if field not in repaired}
 
-        differences = await self._readback(page, draft, filled)
+        differences = await self._readback(page, draft, filled, photo_paths)
         self.evidence_dir.mkdir(parents=True, exist_ok=True)
         screenshot = self.evidence_dir / f"{draft.portal}-ready.png"
         await page.screenshot(path=screenshot, full_page=True)
@@ -223,20 +237,43 @@ class PortalFormFiller:
         photo_paths: list[Path],
     ) -> bool:
         for label in labels:
-            locator = page.get_by_label(label, exact=False).first
             try:
-                if await locator.count() == 0:
+                locator = await self._unique_control(page, label)
+                if locator is None:
                     continue
                 if field == "photos":
                     await locator.set_input_files(photo_paths)
-                elif field == "price_pln":
-                    await locator.fill(str(int(value) if float(value).is_integer() else value))
                 else:
-                    await locator.fill(str(value))
+                    tag = await locator.evaluate("element => element.tagName")
+                    input_type = (await locator.get_attribute("type") or "").casefold()
+                    if tag == "SELECT":
+                        await locator.select_option(label=str(value))
+                    elif input_type in {"checkbox", "radio"}:
+                        if not isinstance(value, bool):
+                            continue
+                        await locator.set_checked(value)
+                    elif tag in {"INPUT", "TEXTAREA"}:
+                        rendered = (
+                            str(int(value) if float(value).is_integer() else value)
+                            if field == "price_pln"
+                            else str(value)
+                        )
+                        await locator.fill(rendered)
+                    else:
+                        continue
                 return True
             except Exception:
                 continue
         return False
+
+    async def _unique_control(self, page: Page, label: str) -> Locator | None:
+        by_label = page.get_by_label(label, exact=True)
+        if await by_label.count() == 1:
+            return by_label
+        by_placeholder = page.get_by_placeholder(label, exact=True)
+        if await by_placeholder.count() == 1:
+            return by_placeholder
+        return None
 
     async def _ai_repair(
         self,
@@ -297,12 +334,9 @@ class PortalFormFiller:
         page: Page,
         draft: PortalDraft,
         filled: dict[str, Any],
+        photo_paths: list[Path],
     ) -> dict[str, dict[str, Any]]:
-        expected = {
-            "title": draft.title,
-            "description": draft.description,
-            "price_pln": draft.price_pln,
-        }
+        expected = _readback_expected(draft, photo_paths)
         differences: dict[str, dict[str, Any]] = {}
         spec = PORTAL_SPECS[draft.portal]
         for field, expected_value in expected.items():
@@ -310,11 +344,21 @@ class PortalFormFiller:
                 continue
             actual: str | None = None
             for label in spec.field_labels[field]:
-                locator: Locator = page.get_by_label(label, exact=False).first
                 try:
-                    if await locator.count():
+                    locator = await self._unique_control(page, label)
+                    if locator is None:
+                        continue
+                    if field == "photos":
+                        actual = str(
+                            await locator.evaluate("element => element.files?.length ?? 0")
+                        )
+                    elif await locator.evaluate("element => element.tagName") == "SELECT":
+                        actual = await locator.evaluate(
+                            "element => element.selectedOptions[0]?.textContent?.trim() ?? ''"
+                        )
+                    else:
                         actual = await locator.input_value()
-                        break
+                    break
                 except Exception:
                     continue
             if actual is None:
@@ -325,6 +369,9 @@ class PortalFormFiller:
                     if float(normalized) != float(expected_value):
                         differences[field] = {"expected": expected_value, "actual": actual}
                 except ValueError:
+                    differences[field] = {"expected": expected_value, "actual": actual}
+            elif field == "photos":
+                if actual != str(expected_value):
                     differences[field] = {"expected": expected_value, "actual": actual}
             elif actual.strip() != str(expected_value).strip():
                 differences[field] = {"expected": expected_value, "actual": actual}

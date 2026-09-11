@@ -10,24 +10,41 @@ Engineering. Ma jawny graf, podział odpowiedzialności, lokalne modele, walidac
 Pydantic, SQLite, oddzielne konteksty przeglądarki, podstawowe zabezpieczenia researchu
 i mały runner ewaluacyjny.
 
-Nie jest jeszcze gotowy do niezawodnej wyceny ani automatycznego wystawiania ofert na
-prawdziwym koncie. Zielone testy potwierdzają głównie logikę domenową i graf z atrapami.
-Nie potwierdzają Telegrama, prawdziwych stron portali, restartu z checkpointem ani
-publikacji. Kilka znanych błędów może nadal prowadzić do błędnej ceny lub niewłaściwego
-statusu procesu.
+Nie jest jeszcze gotowy do automatycznego wystawiania ofert na prawdziwym koncie.
+Krytyczne, odtworzone błędy kwalifikacji cen i statusu formularza zostały naprawione,
+ale zielone testy nadal nie potwierdzają Telegrama, zalogowanych formularzy, restartu
+z checkpointem ani publikacji.
 
 Do CV projekt można już wpisać jako aktywnie rozwijany projekt własny, wskazując tylko
 elementy faktycznie zaimplementowane. CI, MCP, Docker, automatyczna publikacja,
 rozbudowany monitoring i fine-tuning są obecnie planami.
 
-## Identyfikacja audytowanej kopii
+## Aktualizacja wdrożeniowa po audycie bazowym
+
+Po audycie wykonano dwie lokalne iteracje E1/E2. Bieżący zweryfikowany stan ma:
+
+- **54 przechodzące testy**, Ruff bez uwag, poprawną kompilację modułów i 54% pokrycia;
+- wspólną bramkę dopuszczenia dowodu do statystyki;
+- portalowe ekstraktory publicznych ofert OLX i Allegro Lokalnie oparte na
+  zredagowanych fixtures;
+- oddzielne rozkłady aktywnych cen ofertowych i cen ofert sprzedanych;
+- rekomendacje wyliczane wyłącznie z aktywnych ofert;
+- prywatny, atomowo zapisywany manifest dowodów bez HTML, promptów i sekretów;
+- dokładne dopasowanie kontrolek formularza oraz readback rozszerzony na kategorię,
+  stan, typ sprzedaży, lokalizację i liczbę zdjęć;
+- poprawny status `FORM_NEEDS_USER` albo `FAILED`, gdy formularz nie jest gotowy.
+
+Te wyniki są dowodem unit/integration na danych zredagowanych. Nie są dowodem
+udanego przebiegu na zalogowanym koncie portalu.
+
+## Identyfikacja kopii
 
 - Repozytorium: `/Users/oliwia/projekty/shopper-bot`.
-- Gałąź: `main`.
-- Commit: `f6c49226e3c7f063ec1b45129be923fdbb4b5ffc`.
-- Lokalny `main`, `origin/main` i zdalny `HEAD` wskazują ten sam commit.
-- Drzewo robocze przed utworzeniem tych dokumentów było czyste.
-- Ścieżka `/Users/oliwia/Desktop/shopper-bot` przypisana do części rozmów nie istnieje.
+- Publiczny baseline: `f6c49226e3c7f063ec1b45129be923fdbb4b5ffc`.
+- Implementacja powstaje w worktree `/Users/oliwia/Desktop/shopper-bot`, następnie po
+  testach jest włączana fast-forward do lokalnego `main`.
+- Lokalny `main` zawiera kolejne wdrożenia i jest przed `origin/main`; niczego nie
+  wypchnięto do GitHub.
 
 ## Co zostało zweryfikowane
 
@@ -35,8 +52,8 @@ rozbudowany monitoring i fine-tuning są obecnie planami.
 
 | Kontrola | Wynik | Znaczenie |
 |---|---:|---|
-| `pytest` | 29/29 testów | Testy istniejące przechodzą |
-| Pokrycie instrukcji | 47% | Krytyczne integracje mają małe albo zerowe pokrycie |
+| `pytest` | 54/54 testy | Testy istniejące przechodzą |
+| Pokrycie instrukcji | 54% | Krytyczne integracje nadal wymagają testów przeglądarkowych |
 | Ruff | OK | Brak problemów z wybranych reguł lintowania |
 | Kompilacja modułów | OK | Kod źródłowy jest składniowo poprawny |
 | `uv lock --check` | OK | Lockfile jest spójny z deklaracją zależności |
@@ -45,13 +62,13 @@ rozbudowany monitoring i fine-tuning są obecnie planami.
 | `pip-audit` | 0 znanych podatności | Wynik dotyczy obecnie zainstalowanych zależności i bazy audytu z dnia kontroli |
 | Bandit | 0 high, 0 medium, 14 low | Głównie szerokie `except`, `assert` i wywołanie macOS `security` |
 
-Największe luki pokrycia:
+Największe luki pokrycia po wdrożeniu:
 
-- Telegram i CLI: 0%;
-- runtime oraz konfiguracja: 0%;
+- CLI i runtime: 0%; Telegram: 20%;
+- ustawienia aplikacji: 0%;
 - runner ewaluacji: 0%;
-- browser session i formularze: około 23–25%;
-- research service i źródła: około 24–25%;
+- formularze: 24%, a sesja przeglądarki: 25%;
+- research service: 33%, a źródła: 40%;
 - weryfikator stron: około 31%.
 
 Samo zwiększenie procentu nie jest celem. Priorytetem są scenariusze, które mogą
@@ -164,33 +181,29 @@ Braki techniczne:
 - brak dostawcy darmowego API i polityki twardo wyłączającej koszty;
 - brak monitoringu jakości w czasie.
 
-### 4. Research i wycena — krytyczne błędy otwarte
+### 4. Research i wycena — zabezpieczone na poziomie testów lokalnych
 
 Zaimplementowano plan zapytań, profile kategorii, discovery, otwieranie stron,
 podstawową ekstrakcję, kontrolę URL/DNS, semantyczny audyt ofert, drugi odczyt wybranych
 pozycji i deterministyczne statystyki.
 
-Kontrolowane próby 2026-09-11 potwierdziły:
+Naprawiono pięć odtworzonych błędów: cenę dostawy, obcą walutę, konflikt DOM/metadata,
+kwarantannę `suspicious` i częściowy wynik `unchecked` po timeout. Jedna wspólna bramka
+zwraca maszynowe przyczyny odrzucenia i jest używana także dla wyniku częściowego.
+Egzekwowany jest minimalny rozmiar próby.
 
-1. `Dostawa 10 zł. Cena przedmiotu 1200 zł` daje 10 zł.
-2. JSON-LD `299 USD` zwraca liczbę 299 bez odrzucenia waluty.
-3. Widoczne 1200 zł i metadane 100 zł dają 100 zł bez ostrzeżenia.
-4. Rekord `suspicious`, który nadal ma `comparable=True`, wchodzi do statystyki.
-5. Po timeout rekord `unchecked` może wejść do statystyki.
+Ekstraktory portalowe ograniczają odczyt do ceny głównego ogłoszenia. Fixtures
+odtwarzają rekomendowane oferty, cenę poprzednią i dostawę, aby nie mogły zostać
+wybrane przypadkowo. Aktywne i sprzedane oferty mają osobne rozkłady; tylko aktywne
+ceny ofertowe tworzą rekomendację. Vinted jest wyłączony.
 
-Dalsze problemy:
+Pozostają ograniczenia:
 
-- domeny są miejscami sprawdzane przez obecność fragmentu tekstu w `netloc`, a nie
-  przez poprawne dopasowanie hosta;
-- URL po przekierowaniu jest sprawdzany dopiero po wykonaniu połączenia;
+- URL po przekierowaniu jest sprawdzany po rozpoczęciu nawigacji;
 - kontrola aplikacyjna nie eliminuje DNS rebinding między sprawdzeniem a połączeniem;
-- `minimum_comparables` z konfiguracji nie zatrzymuje tworzenia rekomendacji;
-- nie ma trwałego rekordu każdego dowodu, jego waluty, typu ceny i przyczyny odrzucenia;
-- aktywne ceny ofertowe mogą być mylone z wartością rzeczywistej sprzedaży;
-- włączone są OLX, Allegro Lokalnie, Vinted i ogólne discovery, mimo że Vinted miał
-  pozostać etapem odroczonym.
-
-Do naprawy potrzebna jest jedna wspólna bramka dopuszczająca rekord do statystyki.
+- selektory publicznych stron mogą się zmienić i wymagają monitorowania;
+- fixtures oraz publiczne strony nie dowodzą działania pełnego researchu na koncie;
+- techniczna nazwa `price_pln` wymaga migracji do neutralnego `price_amount`.
 
 ### 5. Opisy ofert — zabezpieczony szkic, niewystarczający dowód jakości
 
@@ -206,21 +219,18 @@ Ryzyka:
 - nowy fakt wpisany w opisie nie staje się jawnie zatwierdzonym faktem;
 - brak zamrożonego, reprezentatywnego zbioru niezależnego od promptów.
 
-### 6. Formularze i przeglądarka — beta, bez publikacji
+### 6. Formularze i przeglądarka — bezpieczniejsza beta, bez publikacji
 
-Zaimplementowano oddzielny trwały profil sprzedażowy, deterministyczne próby po
-etykietach, modelowy fallback, ograniczony słownik akcji, częściowy readback i
-screenshot.
+Zaimplementowano oddzielny trwały profil sprzedażowy, bezpieczną serializację zdjęć,
+deterministyczne dopasowanie dokładnie jednej kontrolki, ograniczony fallback modelowy,
+rozszerzony readback i poprawne agregowanie statusów portali.
 
-Potwierdzone błędy i luki:
+Otwarte luki:
 
-- `Path` w brakujących polach zdjęć powoduje `TypeError` podczas `json.dumps`;
-- status całego przedmiotu jest ustawiany na `READY_TO_PUBLISH` nawet dla wyniku
-  `needs_user` lub `failed`;
-- readback obejmuje tylko tytuł, opis i cenę, bez kategorii, atrybutów i zdjęć;
-- polityka kliknięć opiera się na fragmentach słów, a locatory używają `exact=False`;
-- szerokie `except Exception` ukrywają przyczyny awarii;
-- nie ma testu zalogowanego formularza, CAPTCHA, utraty strony ani zmiany DOM;
+- nie ma zredagowanego fixture zalogowanego formularza ani testu pełnego adaptera;
+- dostawa, dynamiczne atrybuty i hashe zdjęć nie mają jeszcze pełnego readback;
+- szerokie `except Exception` nadal ukrywają część przyczyn awarii;
+- nie ma testu CAPTCHA, utraty strony ani zmiany DOM;
 - brak automatycznej publikacji, sprawdzenia utworzonej oferty i uzgadniania nieznanego
   wyniku.
 
@@ -285,14 +295,14 @@ Brakuje:
 - LoRA/fine-tuning;
 - sprawdzony backup i odtworzenie.
 
-## Najbliższe blokery P0
+## Najbliższe blokery
 
-1. Dodać regresje i naprawić kwalifikację cen oraz kwarantannę.
-2. Naprawić serializację zdjęć, status formularza i pełny readback.
-3. Wprowadzić wersjonowany snapshot i jednorazową zgodę.
-4. Utrwalić rozmowę i przygotować stany interwencji.
-5. Naprawić paczkowanie, `doctor` i czystą instalację.
-6. Dodać CI i podstawową telemetrię przed rozbudową modeli.
+1. Naprawić paczkowanie, `doctor` i czystą instalację.
+2. Dodać CI i podstawową telemetrię przed rozbudową modeli.
+3. Zweryfikować formularze w kontrolowanej sesji zalogowanej i domknąć readback.
+4. Wprowadzić wersjonowany snapshot i jednorazową zgodę.
+5. Utrwalić rozmowę i przygotować stany interwencji.
+6. Dodać izolację researchu, migracje oraz procedurę backupu i odtworzenia.
 
 Szczegółową kolejność, kontrakty i kryteria odbioru opisuje
 [`IMPLEMENTATION_PLAN.md`](IMPLEMENTATION_PLAN.md).

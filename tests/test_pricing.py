@@ -17,6 +17,12 @@ def candidate(price: float, *, source: str = "olx", accepted: bool = True):
     )
 
 
+def sold_candidate(price: float, *, source: str = "olx"):
+    row = candidate(price, source=source)
+    row.status = "sold"
+    return row
+
+
 def test_price_summary_is_evidence_only() -> None:
     summary = summarize_prices(
         [
@@ -32,6 +38,8 @@ def test_price_summary_is_evidence_only() -> None:
     assert summary.median_pln == 95
     assert summary.maximum_pln == 110
     assert [row.price_pln for row in summary.recommendations] == [90, 95, 100]
+    assert summary.active_distribution.median_pln == 95
+    assert summary.sold_distribution.count == 0
 
 
 def test_confidence_requires_sample_size_and_source_diversity() -> None:
@@ -76,3 +84,24 @@ def test_minimum_comparables_blocks_recommendations_without_hiding_observations(
     assert summary.comparable_count == 2
     assert summary.median_pln == 110
     assert summary.recommendations == []
+
+
+def test_sold_prices_are_reported_separately_and_do_not_set_recommendations() -> None:
+    summary = summarize_prices(
+        [candidate(100), candidate(120), sold_candidate(10)], minimum_comparables=2
+    )
+    assert summary.median_pln == 110
+    assert summary.active_distribution.median_pln == 110
+    assert summary.sold_distribution.median_pln == 10
+    assert summary.active_count == 2
+    assert summary.sold_count == 1
+    assert [row.price_pln for row in summary.recommendations] == [105, 110, 115]
+    assert summary.recommendation_basis == "active_asking_prices"
+
+
+def test_sold_sample_alone_does_not_create_asking_price_recommendations() -> None:
+    summary = summarize_prices([sold_candidate(90), sold_candidate(100)])
+    assert summary.median_pln is None
+    assert summary.sold_distribution.median_pln == 95
+    assert summary.recommendations == []
+    assert summary.confidence == "low"

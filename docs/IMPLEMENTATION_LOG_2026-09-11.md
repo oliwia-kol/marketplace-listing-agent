@@ -7,7 +7,7 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 ## Środowisko pracy
 
 - baza: commit `f6c49226e3c7f063ec1b45129be923fdbb4b5ffc`;
-- gałąź robocza: `codex/implementation-e0-e1`;
+- bieżąca gałąź robocza: `codex/implementation-a2`;
 - worktree implementacyjny: `/Users/oliwia/Desktop/shopper-bot`;
 - wcześniejszy checkout `main`: `/Users/oliwia/projekty/shopper-bot`;
 - powód worktree: środowisko tej sesji zezwala na zapis wyłącznie w ścieżce na
@@ -21,8 +21,8 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 | Odcinek | Zakres | Stan |
 |---|---|---|
 | A1 | E0 oraz krytyczna bramka danych cenowych z E1 | pierwsza iteracja zakończona |
-| A2 | Pozostałe przypadki E1, fixtures portalowe i manifest dowodów | następny |
-| A3 | E2: deterministyczne adaptery formularzy i pełny readback | rozpoczęty |
+| A2 | Pozostałe przypadki E1, fixtures portalowe i manifest dowodów | zakończony w zakresie publicznych stron ofert |
+| A3 | E2: deterministyczne adaptery formularzy i pełny readback | częściowo wdrożony; wymaga kontrolowanej sesji zalogowanej |
 | B1 | E3: paczkowanie, katalog aplikacji i `doctor` | oczekuje |
 | B2 | E4: GitHub Actions i kontrole repozytorium | oczekuje |
 | C1 | E5: trwała rozmowa, snapshoty i zgody | oczekuje |
@@ -31,7 +31,7 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 | D2 | E10–E11: MCP i Allegro Lokalnie | oczekuje |
 | E | E12: kontrolowany eksperyment LoRA | oczekuje |
 
-## Wdrożone w odcinku A1/A3
+## Wdrożone w odcinku A1–A3
 
 ### Research i cena
 
@@ -54,6 +54,19 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 - URL-e są kanonizowane przed deduplikacją;
 - dopasowanie domeny wymaga dokładnego hosta albo jego subdomeny. `olx.pl.evil.example`
   i `fake-olx.pl` są odrzucane.
+- dodano osobne parsery publicznych ofert OLX i Allegro Lokalnie;
+- parser OLX odczytuje cenę wyłącznie z głównego kontenera
+  `data-testid="ad-price-container"`;
+- parser Allegro Lokalnie odczytuje bieżącą cenę z głównej metadanej
+  `itemprop="price"`, zachowując cenę poprzednią jako osobny typ;
+- rekomendowane oferty i dostawa nie są skanowane jako cena głównego przedmiotu;
+- zredagowane fixtures odwzorowują jedynie elementy potrzebne do testu, bez danych
+  konta i kopii całych stron;
+- statystyki ofert aktywnych i sprzedanych są rozdzielone;
+- rekomendacje oraz poziom pewności wynikają wyłącznie z aktywnych cen ofertowych;
+- każdy research zapisuje atomowo prywatny manifest JSON z kandydatami, kanałami
+  dowodu, wynikami bramki i przyczynami odrzucenia. Manifest nie zawiera HTML, promptów,
+  cookies ani sekretów i ma uprawnienia pliku `0600`.
 
 ### Formularze i status
 
@@ -63,6 +76,11 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 - model copywritera nie może sam wybrać rodzaju sprzedaży, lokalizacji ani dostawy;
 - ścieżki zdjęć są zamieniane na bezpieczne DTO przed serializacją promptu;
 - AI fallback może wskazać tylko dokładnie jeden element o dokładnej polskiej nazwie;
+- deterministyczne wyszukiwanie kontrolek także wymaga dokładnej etykiety lub
+  placeholdera oraz dokładnie jednego dopasowania;
+- natywne `input`, `textarea` i `select` są obsługiwane zgodnie z typem kontrolki;
+- readback obejmuje tytuł, opis, cenę, kategorię, stan, rodzaj sprzedaży, lokalizację
+  oraz liczbę zdjęć, o ile pole zostało rzeczywiście wypełnione;
 - substring w rodzaju „Kategoria i opublikuj później” nie przechodzi allowlisty;
 - jeżeli formularz zwraca `needs_user`, przedmiot otrzymuje `FORM_NEEDS_USER`;
 - `READY_TO_PUBLISH` powstaje tylko wtedy, gdy wszystkie wyniki są `ready`;
@@ -70,13 +88,14 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 
 ## Dowody
 
-Po zmianach:
+Po drugiej iteracji:
 
-- `pytest`: **41 passed**;
+- `pytest`: **54 passed**;
 - Ruff: **all checks passed**;
 - compileall: **passed**;
-- pokrycie całego pakietu: **50%** (wcześniej 47%);
-- pokrycie po zmianach: pricing 94%, extractors 70%, workflow graph 87%;
+- pokrycie całego pakietu: **54%** (baseline 47%);
+- pokrycie kluczowych modułów: pricing 97%, portal extractors 89%, evidence 100%,
+  workflow graph 87%;
 - testy nie wykonują publikacji ani nie korzystają z zalogowanego profilu.
 
 Nowe regresje obejmują:
@@ -92,6 +111,13 @@ Nowe regresje obejmują:
 9. duplikat URL z parametrami śledzącymi;
 10. `Path` zdjęcia w promptcie;
 11. formularz wymagający interwencji człowieka.
+12. cenę rekomendowanej oferty i dostawy na fixture OLX;
+13. starą cenę, dostawę i polecane oferty na fixture Allegro Lokalnie;
+14. aktywne ceny ofertowe kontra jawnie sprzedane;
+15. brak rekomendacji, gdy istnieją wyłącznie ceny sprzedanych ofert;
+16. zapis manifestu, bezpieczne `item_id` i uprawnienia pliku;
+17. przekazanie `item_id` z grafu do researchu;
+18. rozszerzony kontrakt readback i komunikat Telegrama rozdzielający rodzaje danych.
 
 ## Weryfikacja aktualnego interfejsu portali
 
@@ -162,30 +188,37 @@ Konsekwencje dla modelu danych:
 6. Status przedmiotu wynika ze wszystkich wyników portali, a nie z samego zakończenia
    funkcji wypełniającej.
 
-## Wątpliwości i ryzyka otwarte
+## Wątpliwości i ryzyka otwarte po drugiej iteracji
 
-- Ogólne skanowanie tekstu całej strony może znaleźć ceny w rekomendacjach lub reklamach.
-  Następny etap musi wprowadzić portalowe fixtures i ograniczone regiony DOM.
-- Aktywne ceny ofertowe oraz ceny rzeczywiście sprzedanych przedmiotów są nadal liczone
-  razem. Trzeba przygotować osobne statystyki i jasno opisać ich znaczenie.
+- Portalowe parsery opierają się na selektorach potwierdzonych 11 września 2026 roku.
+  Zmiana DOM bez wersjonowanego monitoringu selektorów może zmniejszyć liczbę wyników;
+  bezpieczne zachowanie to brak ceny, a nie skanowanie przypadkowych kwot.
 - Waluta `UNKNOWN` jest bezpiecznie odrzucana, ale zwiększy liczbę brakujących wyników,
   dopóki nie dodamy portalowych ekstraktorów waluty.
 - Kontrola URL po przekierowaniu następuje po rozpoczęciu nawigacji. Pełna ochrona przed
   DNS rebindingiem i niebezpiecznymi redirectami wymaga blokowania żądań w kontekście
   researchu.
-- Aktualne etykiety pól po zalogowaniu nie zostały potwierdzone. Oficjalny opis procesu
-  określa dane, lecz nie stabilny kontrakt DOM.
+- Aktualne etykiety pól po zalogowaniu nie zostały potwierdzone. Rozszerzony readback
+  ma kontrakt i logikę typów, lecz nie jest jeszcze dowodem działania na prawdziwym
+  formularzu. Dostawa oraz hashe zdjęć wymagają portalu i kontrolowanej sesji.
+- Szerokie przechwytywanie wyjątków w formularzach nadal utrudnia diagnostykę; kolejny
+  etap ma dodać typowane błędy oraz zdarzenia bez danych wrażliwych.
+- Pole `price_pln` kandydata pozostaje mylące dla kwoty w obcej walucie. Zmiana nazwy
+  wymaga jawnej migracji zapisanych raportów i checkpointów, więc zostaje połączona
+  z etapem migracji danych zamiast wykonywania niekompatybilnej zmiany w locie.
 - Testy są szybkie i deterministyczne, ale nadal nie dowodzą pracy na prawdziwym koncie.
 
-## Następny odcinek A2/A3
+## Następny odcinek B1/B2 oraz domknięcie A3
 
-1. Dodać portalowe, zredagowane fixtures OLX i Allegro Lokalnie dla strony oferty oraz
-   formularza bez przycisku publikacji.
-2. Rozdzielić ekstraktory DOM OLX i Allegro Lokalnie od ogólnego fallbacku.
-3. Zmienić `price_pln` kandydata na neutralne `price_amount` i dodać migrację raportów.
-4. Rozdzielić statystyki ofert aktywnych i sprzedanych.
-5. Zapisywać manifest dowodów wraz z kanałami i kodami odrzucenia.
-6. Rozszerzyć readback o kategorię, stan, rodzaj sprzedaży, lokalizację, dostawę i zdjęcia.
-7. W kontrolowanej sesji zalogowanej jednorazowo zinwentaryzować polskie kontrolki;
+1. Naprawić paczkowanie zasobów YAML i ścieżki po instalacji wheel.
+2. Zbudować wiarygodny `doctor` z niezerowym kodem dla braków wymaganych przez wybrany
+   tryb pracy.
+3. Dodać czystą instalację i test uruchomienia CLI.
+4. Dodać GitHub Actions dla testów, Ruff, budowy paczki i kontroli sekretów.
+5. Zastąpić szerokie wyjątki formularza typowanymi zdarzeniami diagnostycznymi.
+6. W kontrolowanej sesji zalogowanej jednorazowo zinwentaryzować polskie kontrolki;
    zatrzymać się przed publikacją i nie zapisywać sekretów w repozytorium.
-8. Po ustabilizowaniu A2/A3 przejść do paczkowania i GitHub Actions.
+7. Na podstawie tej inwentaryzacji dodać zredagowane fixtures formularzy, dostawę,
+   hashe zdjęć i test kompletnego readback.
+8. Zmianę `price_pln` na neutralne `price_amount` wykonać razem z migracją schematu
+   raportów i checkpointów.

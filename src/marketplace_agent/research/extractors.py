@@ -9,6 +9,8 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from playwright.async_api import Page
 
+from marketplace_agent.research.portal_extractors import parse_portal_listing
+
 PRICE_PATTERN = re.compile(
     r"(?<!\d)(?P<integer>\d{1,3}(?:[ .]\d{3})*|\d+)"
     r"(?:[,.](?P<decimal>\d{1,2}))?\s*"
@@ -105,10 +107,18 @@ def _price_observations_from_text(text: str) -> list[PriceObservation]:
 
 def _select_item_price(observations: list[PriceObservation]) -> PriceObservation | None:
     item_observations = [row for row in observations if row.kind == "item"]
-    return next(
-        (row for row in item_observations if row.channel == "visible_text"),
-        item_observations[0] if item_observations else None,
+    channel_priority = (
+        "olx_primary_dom",
+        "allegro_lokalnie_primary_meta",
+        "visible_text",
+        "meta",
+        "json_ld",
     )
+    for channel in channel_priority:
+        preferred = next((row for row in item_observations if row.channel == channel), None)
+        if preferred is not None:
+            return preferred
+    return item_observations[0] if item_observations else None
 
 
 def _price_integrity_reasons(observations: list[PriceObservation]) -> list[str]:
@@ -185,9 +195,11 @@ def _price_from_text(text: str) -> float | None:
     return item.amount if item else None
 
 
-async def extract_listing(page: Page) -> ExtractedListing:
+async def extract_listing(page: Page, source: str | None = None) -> ExtractedListing:
     title = (await page.title()).strip()
     body = (await page.locator("body").inner_text(timeout=10_000))[:100_000]
+    html = await page.content() if source in {"olx", "allegro_lokalnie"} else ""
+    portal_fields = parse_portal_listing(source, html) if source else None
     lowered = body.lower()
     json_ld_documents: list[Any] = []
     for raw in await page.locator('script[type="application/ld+json"]').all_text_contents():
@@ -229,10 +241,9 @@ async def extract_listing(page: Page) -> ExtractedListing:
         else None
     )
     observations = _price_observations_from_json_ld(json_ld_documents)
-    visible_observations = _price_observations_from_text(body)
+    visible_observations = [] if portal_fields else _price_observations_from_text(body)
     visible_item = next((row for row in visible_observations if row.kind == "item"), None)
     if visible_item is not None:
-        # Related listings below the primary offer can contain unrelated prices.
         observations.append(visible_item)
     if parsed_meta_price is not None:
         observations.insert(
@@ -245,10 +256,34 @@ async def extract_listing(page: Page) -> ExtractedListing:
                 raw=str(meta_price),
             ),
         )
+    if portal_fields is not None:
+        title = portal_fields.title
+        observations.insert(
+            0,
+            PriceObservation(
+                amount=portal_fields.amount,
+                currency=portal_fields.currency,
+                kind="item",
+                channel=portal_fields.primary_channel,
+                raw=str(portal_fields.amount),
+            ),
+        )
+        if portal_fields.previous_amount is not None:
+            observations.append(
+                PriceObservation(
+                    amount=portal_fields.previous_amount,
+                    currency=portal_fields.currency,
+                    kind="previous",
+                    channel="allegro_lokalnie_previous_dom",
+                    raw=str(portal_fields.previous_amount),
+                )
+            )
     preferred = _select_item_price(observations)
     price = preferred.amount if preferred else None
     integrity_reasons = _price_integrity_reasons(observations)
-    sold = any(marker in lowered for marker in SOLD_MARKERS)
+    sold = portal_fields.status == "sold" if portal_fields else any(
+        marker in lowered for marker in SOLD_MARKERS
+    )
     expired = any(marker in lowered for marker in EXPIRED_MARKERS)
     blocked = any(marker in lowered for marker in CAPTCHA_MARKERS)
     return ExtractedListing(
@@ -257,7 +292,15 @@ async def extract_listing(page: Page) -> ExtractedListing:
         currency=preferred.currency if preferred else "UNKNOWN",
         price_kind=preferred.kind if preferred else "unknown",
         condition=None,
-        status="sold" if sold else "active" if not expired else "unknown",
+        status=(
+            portal_fields.status
+            if portal_fields
+            else "sold"
+            if sold
+            else "active"
+            if not expired
+            else "unknown"
+        ),
         blocked=blocked,
         expired=expired,
         evidence_channels=tuple(
