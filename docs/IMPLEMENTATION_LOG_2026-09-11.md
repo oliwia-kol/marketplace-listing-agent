@@ -12,13 +12,15 @@ działania — dowodem są kod, test i wynik kontrolowanego uruchomienia.
 - wcześniejszy checkout `main`: `/Users/oliwia/projekty/shopper-bot`;
 - powód worktree: środowisko tej sesji zezwala na zapis wyłącznie w ścieżce na
   Pulpicie. Worktree chroni `main` i korzysta z tej samej historii Git;
+- po pozytywnej weryfikacji pierwszy commit został lokalnie włączony do `main`
+  operacją fast-forward; zdalny GitHub nie został zmieniony;
 - niczego nie wypchnięto do GitHub i nie opublikowano na portalach.
 
 ## Podział prac
 
 | Odcinek | Zakres | Stan |
 |---|---|---|
-| A1 | E0 oraz krytyczna bramka danych cenowych z E1 | w toku, pierwsza część gotowa |
+| A1 | E0 oraz krytyczna bramka danych cenowych z E1 | pierwsza iteracja zakończona |
 | A2 | Pozostałe przypadki E1, fixtures portalowe i manifest dowodów | następny |
 | A3 | E2: deterministyczne adaptery formularzy i pełny readback | rozpoczęty |
 | B1 | E3: paczkowanie, katalog aplikacji i `doctor` | oczekuje |
