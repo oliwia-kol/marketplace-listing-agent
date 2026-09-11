@@ -307,4 +307,3 @@ uległy zmianie. Nie sprawdzano skuteczności działania na zmienionym DOM porta
 Aktualne zasady portali trzeba ponownie sprawdzić przed wdrożeniem adaptera. Na dzień
 audytu oficjalna pomoc Allegro nadal mówi, że API nie publikuje ofert na Allegro
 Lokalnie, natomiast dostęp do API OLX wymaga rejestracji i akceptacji aplikacji.
-

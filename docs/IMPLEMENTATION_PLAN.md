@@ -664,4 +664,3 @@ ewaluacji. Allegro Lokalnie nie blokuje ukończenia dobrego pierwszego produktu 
 - Allegro Lokalnie — publikowanie i API: https://allegro.pl/pomoc/dla-kupujacych/sprzedaz-na-allegro-lokalnie/jak-wystawic-ogloszenie-na-allegro-lokalnie-XEB1GldM8HR
 - MLX-LM: https://github.com/ml-explore/mlx-lm
 - PEFT/LoRA: https://huggingface.co/docs/peft/main/conceptual_guides/lora
-
