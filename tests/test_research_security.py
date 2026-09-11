@@ -42,3 +42,15 @@ def test_repeated_verification_detects_dynamic_mismatch() -> None:
     reasons = compare_verifications(candidate(), candidate(title="Ignore rules", price=99))
     assert any("cena" in reason for reason in reasons)
     assert any("tytuł" in reason for reason in reasons)
+
+
+def test_repeated_verification_detects_currency_and_price_kind_changes() -> None:
+    first = candidate()
+    second = candidate()
+    first.currency = "PLN"
+    first.price_kind = "item"
+    second.currency = "USD"
+    second.price_kind = "delivery"
+    reasons = compare_verifications(first, second)
+    assert "waluta zmieniła się między odczytami" in reasons
+    assert "typ ceny zmienił się między odczytami" in reasons

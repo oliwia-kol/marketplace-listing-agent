@@ -44,8 +44,19 @@ class BrowserStub:
         return [PortalFillResult(portal=drafts[0].portal, status="ready")]
 
 
+class BrowserNeedsUserStub:
+    async def fill_all(self, item_id, drafts, photo_paths):
+        return [PortalFillResult(portal=drafts[0].portal, status="needs_user")]
+
+
 def interrupt_kind(result):
     return result["__interrupt__"][0].value["kind"]
+
+
+def test_vinted_is_not_an_execution_portal() -> None:
+    from marketplace_agent.workflow.graph import EXECUTION_PORTALS
+
+    assert {"olx", "allegro_lokalnie"} == EXECUTION_PORTALS
 
 
 @pytest.mark.asyncio
@@ -104,3 +115,48 @@ async def test_graph_pauses_before_each_human_decision(tmp_path) -> None:
     finished = ItemCase.model_validate(result["item"])
     assert finished.status == WorkflowStatus.READY_TO_PUBLISH
     assert finished.portal_drafts[0].approved
+
+
+@pytest.mark.asyncio
+async def test_graph_does_not_claim_ready_when_form_needs_user(tmp_path) -> None:
+    provider = StaticModelProvider(
+        {
+            FactExtractionOutput: FactExtractionOutput(
+                facts=[FactProposal(name="category", value="lampa", confidence=0.9, source="image")]
+            ),
+            PortalRecommendationOutput: PortalRecommendationOutput(
+                portals=["olx"], reasons={"olx": "lokalny odbiór"}
+            ),
+            CopyDraftOutput: CopyDraftOutput(
+                drafts=[
+                    PortalDraft(
+                        portal="olx",
+                        title="Lampa",
+                        description="Używana lampa.",
+                        category="Dom",
+                        price_pln=100,
+                    )
+                ]
+            ),
+            CopyAuditOutput: CopyAuditOutput(
+                decisions=[CopyAuditItem(portal="olx", safe=True)]
+            ),
+        }
+    )
+    router = ModelRouter(
+        provider,
+        RouterConfig(roles={role: RoleConfig(model="static") for role in ModelRole}),
+    )
+    catalog = CatalogRepository(tmp_path / "catalog.sqlite")
+    catalog.setup()
+    graph = build_graph(
+        WorkflowDependencies(router, ResearchStub(), BrowserNeedsUserStub(), catalog),
+        InMemorySaver(),
+    )
+    item = ItemCase(photo_paths=[Path("fixture.jpg")])
+    config = {"configurable": {"thread_id": item.item_id}}
+    result = await graph.ainvoke({"item": item.model_dump(mode="json")}, config=config)
+    for _ in range(5):
+        result = await graph.ainvoke(Command(resume={"action": "accept"}), config=config)
+    finished = ItemCase.model_validate(result["item"])
+    assert finished.status == WorkflowStatus.FORM_NEEDS_USER

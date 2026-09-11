@@ -11,6 +11,30 @@ from marketplace_agent.domain.models import (
 )
 
 
+def pricing_rejection_codes(candidate: ComparableCandidate) -> list[str]:
+    """Return deterministic reasons why evidence cannot influence price statistics."""
+    codes: list[str] = []
+    if not candidate.verified:
+        codes.append("NOT_VERIFIED")
+    if not candidate.comparable:
+        codes.append("NOT_COMPARABLE")
+    if candidate.integrity_status == "unchecked":
+        codes.append("INTEGRITY_UNCHECKED")
+    elif candidate.integrity_status == "suspicious":
+        codes.append("INTEGRITY_SUSPICIOUS")
+    if candidate.currency != "PLN":
+        codes.append("CURRENCY_NOT_PLN")
+    if candidate.price_kind != "item":
+        codes.append("PRICE_NOT_ITEM")
+    if candidate.status not in {"active", "sold"}:
+        codes.append("STATUS_UNKNOWN")
+    return codes
+
+
+def is_pricing_eligible(candidate: ComparableCandidate) -> bool:
+    return not pricing_rejection_codes(candidate)
+
+
 def _percentile(sorted_values: list[float], percentile: float) -> float:
     if not sorted_values:
         raise ValueError("Cannot calculate percentile of an empty sample")
@@ -39,10 +63,11 @@ def summarize_prices(
     candidates: list[ComparableCandidate],
     *,
     checked_count: int | None = None,
+    minimum_comparables: int = 1,
 ) -> PriceResearchSummary:
-    accepted = [
-        candidate for candidate in candidates if candidate.verified and candidate.comparable
-    ]
+    for candidate in candidates:
+        candidate.rejection_codes = pricing_rejection_codes(candidate)
+    accepted = [candidate for candidate in candidates if is_pricing_eligible(candidate)]
     reachable = [candidate for candidate in candidates if candidate.verified]
     prices = sorted(candidate.price_pln for candidate in accepted)
     source_counts = Counter(candidate.source for candidate in accepted)
@@ -84,9 +109,14 @@ def summarize_prices(
         if len(prices) >= 8
         else "low"
     )
-    summary.recommendations = [
-        PriceRecommendation(strategy="quick", price_pln=_round_market_price(p25), basis="P25"),
-        PriceRecommendation(strategy="market", price_pln=_round_market_price(med), basis="median"),
-        PriceRecommendation(strategy="patient", price_pln=_round_market_price(p75), basis="P75"),
-    ]
+    if len(prices) >= minimum_comparables:
+        summary.recommendations = [
+            PriceRecommendation(strategy="quick", price_pln=_round_market_price(p25), basis="P25"),
+            PriceRecommendation(
+                strategy="market", price_pln=_round_market_price(med), basis="median"
+            ),
+            PriceRecommendation(
+                strategy="patient", price_pln=_round_market_price(p75), basis="P75"
+            ),
+        ]
     return summary

@@ -2,12 +2,29 @@ from __future__ import annotations
 
 import asyncio
 from collections.abc import Iterable
-from urllib.parse import quote_plus, urljoin, urlparse
+from urllib.parse import quote_plus, urljoin, urlparse, urlunparse
 
 from playwright.async_api import BrowserContext
 
 from marketplace_agent.research.config import SourceConfig
 from marketplace_agent.research.extractors import unwrap_search_url
+
+
+def host_matches_domain(host: str | None, expected_domain: str) -> bool:
+    if not host:
+        return False
+    normalized = host.rstrip(".").casefold()
+    expected = expected_domain.rstrip(".").casefold()
+    return normalized == expected or normalized.endswith(f".{expected}")
+
+
+def canonicalize_listing_url(url: str) -> str:
+    """Remove fragments and tracking query data before deduplication."""
+    parsed = urlparse(url)
+    host = (parsed.hostname or "").rstrip(".").casefold().removeprefix("www.")
+    port = f":{parsed.port}" if parsed.port not in {None, 80, 443} else ""
+    path = parsed.path.rstrip("/") or "/"
+    return urlunparse((parsed.scheme.casefold(), f"{host}{port}", path, "", "", ""))
 
 
 class SearchSource:
@@ -32,10 +49,12 @@ class SearchSource:
                     parsed = urlparse(candidate)
                     if not parsed.scheme.startswith("http"):
                         continue
-                    if self.config.id == "web_discovery" and self.config.domain in parsed.netloc:
+                    if self.config.id == "web_discovery" and host_matches_domain(
+                        parsed.hostname, self.config.domain
+                    ):
                         continue
                     if self.config.id != "web_discovery":
-                        if self.config.domain not in parsed.netloc:
+                        if not host_matches_domain(parsed.hostname, self.config.domain):
                             continue
                         if (
                             self.config.listing_path_contains

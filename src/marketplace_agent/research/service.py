@@ -20,7 +20,7 @@ from marketplace_agent.models.router import ModelRole, ModelRouter
 from marketplace_agent.models.tasks import ComparableAuditOutput, SearchPlanOutput
 from marketplace_agent.research.config import ResearchConfig
 from marketplace_agent.research.security import compare_verifications
-from marketplace_agent.research.sources import SearchSource
+from marketplace_agent.research.sources import SearchSource, canonicalize_listing_url
 from marketplace_agent.research.verifier import LinkVerifier
 
 SEARCH_SYSTEM = """Jesteś planistą badania cen używanych przedmiotów w Polsce.
@@ -96,6 +96,7 @@ class MarketResearchService:
             return summarize_prices(
                 self._progress_candidates,
                 checked_count=self._progress_checked_count,
+                minimum_comparables=self.config.research.minimum_comparables,
             )
 
     async def _run_bounded(self, facts: dict[str, Any]) -> PriceResearchSummary:
@@ -119,10 +120,11 @@ class MarketResearchService:
             seen_urls: set[str] = set()
             for rows in discovered:
                 for source, url in rows:
-                    if url in seen_urls:
+                    canonical_url = canonicalize_listing_url(url)
+                    if canonical_url in seen_urls:
                         continue
-                    seen_urls.add(url)
-                    raw_urls.append((source, url))
+                    seen_urls.add(canonical_url)
+                    raw_urls.append((source, canonical_url))
                     if len(raw_urls) >= self.config.research.max_candidate_urls:
                         break
                 if len(raw_urls) >= self.config.research.max_candidate_urls:
@@ -174,7 +176,11 @@ class MarketResearchService:
             selected_ids = {id(candidate) for candidate in selected}
             for candidate in verified:
                 candidate.comparable = id(candidate) in selected_ids
-            return summarize_prices(verified, checked_count=len(raw_urls))
+            return summarize_prices(
+                verified,
+                checked_count=len(raw_urls),
+                minimum_comparables=self.config.research.minimum_comparables,
+            )
         finally:
             with suppress(Exception):
                 await context.close()

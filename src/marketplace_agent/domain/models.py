@@ -17,6 +17,7 @@ class WorkflowStatus(StrEnum):
     PRICE_REVIEW = "price_review"
     COPY_REVIEW = "copy_review"
     FORM_FILLING = "form_filling"
+    FORM_NEEDS_USER = "form_needs_user"
     READY_TO_PUBLISH = "ready_to_publish"
     PUBLISHED = "published"
     ARCHIVED = "archived"
@@ -76,6 +77,10 @@ class ComparableCandidate(BaseModel):
     url: HttpUrl
     title: str
     price_pln: float = Field(gt=0)
+    currency: Literal["PLN", "EUR", "USD", "UNKNOWN"] = "UNKNOWN"
+    price_kind: Literal[
+        "item", "delivery", "installment", "previous", "range", "unknown"
+    ] = "unknown"
     delivery_pln: float | None = Field(default=None, ge=0)
     condition: str | None = None
     status: Literal["active", "sold", "unknown"] = "unknown"
@@ -85,6 +90,7 @@ class ComparableCandidate(BaseModel):
     rejection_reason: str | None = None
     integrity_status: Literal["unchecked", "consistent", "suspicious"] = "unchecked"
     integrity_reasons: list[str] = Field(default_factory=list)
+    rejection_codes: list[str] = Field(default_factory=list)
     evidence_channels: list[str] = Field(default_factory=list)
     checked_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
@@ -131,6 +137,10 @@ class PortalDraft(BaseModel):
     description: str
     category: str
     price_pln: float = Field(gt=0)
+    condition: str | None = None
+    sale_type: Literal["buy_now", "auction", "classified"] | None = None
+    location: str | None = None
+    delivery: dict[str, str | int | float | bool] = Field(default_factory=dict)
     attributes: dict[str, str | int | float | bool] = Field(default_factory=dict)
     approved: bool = False
 

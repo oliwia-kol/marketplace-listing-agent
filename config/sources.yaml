@@ -21,7 +21,7 @@ sources:
     domain: vinted.pl
     search_url: "https://www.vinted.pl/catalog?search_text={query}"
     listing_path_contains: "/items/"
-    enabled: true
+    enabled: false
   - id: web_discovery
     domain: duckduckgo.com
     search_url: "https://duckduckgo.com/?q={query}"

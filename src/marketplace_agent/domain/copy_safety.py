@@ -69,6 +69,10 @@ def safe_template(draft: PortalDraft, facts: dict[str, Any]) -> PortalDraft:
         description="\n".join(lines),
         category=draft.category,
         price_pln=draft.price_pln,
+        condition=draft.condition,
+        sale_type=draft.sale_type,
+        location=draft.location,
+        delivery=draft.delivery,
         attributes=draft.attributes,
         approved=False,
     )

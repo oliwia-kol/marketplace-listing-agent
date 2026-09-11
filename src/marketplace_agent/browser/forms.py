@@ -22,13 +22,19 @@ FORBIDDEN_ACTION_WORDS = {
     "list item",
 }
 
-ALLOWED_CLICK_WORDS = {
-    "kategori",
-    "zdję",
+ALLOWED_CLICK_TARGETS = {
+    "kategoria",
+    "wybierz kategorię",
+    "zdjęcia",
+    "dodaj zdjęcia",
     "stan",
-    "mark",
+    "wybierz stan",
+    "marka",
+    "wybierz markę",
     "rozmiar",
+    "wybierz rozmiar",
     "kolor",
+    "wybierz kolor",
 }
 
 
@@ -42,13 +48,15 @@ class PortalSpec:
 PORTAL_SPECS = {
     "olx": PortalSpec(
         portal="olx",
-        create_url="https://www.olx.pl/dodaj-ogloszenie/",
+        create_url="https://www.olx.pl/d/nowe-ogloszenie/",
         field_labels={
             "title": ("Tytuł ogłoszenia", "Tytuł"),
             "description": ("Opis",),
             "price_pln": ("Cena",),
             "category": ("Kategoria",),
             "photos": ("Zdjęcia", "Dodaj zdjęcia"),
+            "condition": ("Stan",),
+            "location": ("Lokalizacja",),
         },
     ),
     "allegro_lokalnie": PortalSpec(
@@ -60,6 +68,9 @@ PORTAL_SPECS = {
             "price_pln": ("Cena",),
             "category": ("Kategoria",),
             "photos": ("Zdjęcia", "Dodaj zdjęcia"),
+            "condition": ("Stan",),
+            "sale_type": ("Rodzaj ogłoszenia",),
+            "location": ("Lokalizacja",),
         },
     ),
     "vinted": PortalSpec(
@@ -91,9 +102,17 @@ def _is_publish_target(target: str) -> bool:
 
 def _is_safe_click_target(target: str) -> bool:
     normalized = re.sub(r"\s+", " ", target.lower()).strip()
-    return not _is_publish_target(target) and any(
-        word in normalized for word in ALLOWED_CLICK_WORDS
-    )
+    return not _is_publish_target(target) and normalized in ALLOWED_CLICK_TARGETS
+
+
+def _json_safe_form_value(value: Any) -> Any:
+    if isinstance(value, Path):
+        return {"file_name": value.name}
+    if isinstance(value, dict):
+        return {str(key): _json_safe_form_value(child) for key, child in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe_form_value(child) for child in value]
+    return value
 
 
 class SafeActionExecutor:
@@ -102,7 +121,11 @@ class SafeActionExecutor:
     async def execute(self, page: Page, action: FormAction, photo_paths: list[Path]) -> None:
         if action.action == "click" and not _is_safe_click_target(action.target):
             raise PermissionError(f"Click outside the allowlist is blocked: {action.target}")
-        locator = page.get_by_label(action.target, exact=False).first
+        locator = page.get_by_label(action.target, exact=True)
+        if await locator.count() != 1:
+            locator = page.get_by_placeholder(action.target, exact=True)
+        if await locator.count() != 1:
+            raise LookupError(f"Expected exactly one control named {action.target!r}")
         if action.action == "fill":
             await locator.fill(str(action.value or ""))
         elif action.action == "select":
@@ -112,10 +135,7 @@ class SafeActionExecutor:
         elif action.action == "upload":
             await locator.set_input_files(photo_paths)
         elif action.action == "click":
-            try:
-                await locator.click()
-            except Exception:
-                await page.get_by_text(action.target, exact=False).first.click()
+            await locator.click()
 
 
 class PortalFormFiller:
@@ -136,6 +156,10 @@ class PortalFormFiller:
             "price_pln": draft.price_pln,
             "category": draft.category,
             "photos": photo_paths,
+            "condition": draft.condition,
+            "sale_type": draft.sale_type,
+            "location": draft.location,
+            "delivery": draft.delivery,
             **draft.attributes,
         }
         for field, value in values.items():
@@ -175,7 +199,7 @@ class PortalFormFiller:
     async def _page_for_portal(self, spec: PortalSpec) -> Page:
         for page in self.context.pages:
             if spec.portal == "olx" and "olx.pl" in page.url:
-                if "/dodaj-ogloszenie" not in page.url:
+                if "/d/nowe-ogloszenie" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
             if spec.portal == "vinted" and "vinted.pl" in page.url:
@@ -241,7 +265,12 @@ class PortalFormFiller:
             ModelRole.GUI_FALLBACK,
             system=FORM_MAPPING_SYSTEM,
             prompt=json.dumps(
-                {"portal": portal, "missing": missing, "controls": controls}, ensure_ascii=False
+                {
+                    "portal": portal,
+                    "missing": _json_safe_form_value(missing),
+                    "controls": controls,
+                },
+                ensure_ascii=False,
             ),
             output_schema=FormPlanOutput,
             images=[screenshot],

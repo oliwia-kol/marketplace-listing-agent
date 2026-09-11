@@ -66,9 +66,12 @@ class EvaluationRunner:
                     url=f"https://example.test/{row['id']}/{index}",
                     title=f"Fixture {index}",
                     price_pln=item["price_pln"],
+                    currency=item.get("currency", "PLN"),
+                    price_kind=item.get("price_kind", "item"),
                     status=item.get("status", "active"),
                     verified=item.get("verified", True),
                     comparable=item.get("comparable", True),
+                    integrity_status=item.get("integrity_status", "consistent"),
                 )
                 for index, item in enumerate(row["candidates"])
             ]

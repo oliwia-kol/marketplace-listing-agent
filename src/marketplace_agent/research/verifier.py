@@ -39,6 +39,8 @@ class LinkVerifier:
                 url=page.url,
                 title=extracted.title,
                 price_pln=extracted.price_pln,
+                currency=extracted.currency,
+                price_kind=extracted.price_kind,
                 condition=extracted.condition,
                 status=extracted.status,
                 verified=True,

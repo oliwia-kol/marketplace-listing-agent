@@ -32,7 +32,7 @@ np. mount, model_code, region, format, chip i storage, zapisuj jako attribute.*.
 Odpowiadaj zgodnie ze schematem."""
 
 PORTAL_SYSTEM = """Dobierasz polskie portale sprzedażowe do konkretnego przedmiotu.
-Możesz wybrać OLX, Allegro Lokalnie i Vinted. Uwzględnij kategorię, prawdopodobną
+Możesz wybrać wyłącznie OLX lub Allegro Lokalnie. Uwzględnij kategorię, prawdopodobną
 grupę kupujących i wygodę sprzedaży. Nie zmieniaj faktów o produkcie."""
 
 COPY_SYSTEM = """Piszesz rzetelne polskie ogłoszenia sprzedażowe. Przygotuj osobny
@@ -50,6 +50,8 @@ sprawność, wymiary, stan, zastosowanie, odbiór i akcesoria są niedozwolone, 
 widnieją w facts. Zwróć dokładnie jedną decyzję dla każdego portalu obecnego w
 wejściowej liście drafts i żadnych decyzji dla innych portali. Wypisz niepoparte
 twierdzenia."""
+
+EXECUTION_PORTALS = {"olx", "allegro_lokalnie"}
 
 
 def _item(state: ListingState) -> ItemCase:
@@ -124,6 +126,11 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
             output_schema=PortalRecommendationOutput,
         )
         item.recommended_portals = list(dict.fromkeys(response.output.portals))
+        item.recommended_portals = [
+            portal for portal in item.recommended_portals if portal in EXECUTION_PORTALS
+        ]
+        if not item.recommended_portals:
+            raise ValueError("Model nie wskazał obsługiwanego portalu wykonawczego")
         item.status = WorkflowStatus.PORTALS_REVIEW
         return {
             "item": _save(deps, item),
@@ -182,6 +189,9 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
                 raise ValueError(f"Nieobsługiwana odpowiedź: {response!r}")
         elif response != "accept":
             raise ValueError(f"Nieobsługiwana odpowiedź: {response!r}")
+        unsupported = set(selected) - EXECUTION_PORTALS
+        if unsupported:
+            raise ValueError(f"Portale wyłączone z wykonania: {sorted(unsupported)}")
         item.selected_portals = selected
         item.status = WorkflowStatus.MARKET_RESEARCH
         return {"item": _save(deps, item)}
@@ -207,7 +217,7 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
         )
         market = next(
             (row.price_pln for row in summary.recommendations if row.strategy == "market"),
-            summary.median_pln,
+            None,
         )
         approved, value = approval_value(response, market)
         if not approved or value is None:
@@ -245,6 +255,15 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
             )
         for draft in item.portal_drafts:
             draft.price_pln = float(item.selected_price_pln)
+            draft.condition = (
+                str(public_facts["condition"])
+                if public_facts.get("condition") is not None
+                else None
+            )
+            # Transaction and location choices belong to the user, never to the copy model.
+            draft.sale_type = None
+            draft.location = None
+            draft.delivery = {}
             draft.approved = False
             approved_values = {str(value).casefold() for value in public_facts.values()}
             draft.attributes = {
@@ -315,6 +334,10 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
                 draft.title = edited.title
                 draft.description = edited.description
                 draft.category = edited.category
+                draft.condition = edited.condition
+                draft.sale_type = edited.sale_type
+                draft.location = edited.location
+                draft.delivery = edited.delivery
                 draft.attributes = edited.attributes
             draft.approved = True
         return {"item": _save(deps, item)}
@@ -342,7 +365,12 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
             [draft for draft in item.portal_drafts if draft.approved],
             item.photo_paths,
         )
-        item.status = WorkflowStatus.READY_TO_PUBLISH
+        if not item.fill_results or any(result.status == "failed" for result in item.fill_results):
+            item.status = WorkflowStatus.FAILED
+        elif any(result.status == "needs_user" for result in item.fill_results):
+            item.status = WorkflowStatus.FORM_NEEDS_USER
+        else:
+            item.status = WorkflowStatus.READY_TO_PUBLISH
         return {"item": _save(deps, item)}
 
     builder = StateGraph(ListingState)
