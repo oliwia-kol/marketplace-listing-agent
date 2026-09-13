@@ -1,96 +1,141 @@
-# Instalacja i eksploatacja
+# Operations
 
-## 1. Środowisko
-
-```bash
-uv sync --extra dev
-uv run pytest
-uv run marketplace-listing-agent doctor
-```
-
-Projekt korzysta z zainstalowanego Google Chrome (`channel="chrome"`), więc nie
-wymaga osobnej kopii Chromium. Profil sesji sprzedażowej znajduje się w
-`data/chrome-profile`. Nie otwieraj równocześnie drugiego procesu z tym samym profilem.
-
-## 2. Modele
+## Install and diagnose
 
 ```bash
-ollama pull qwen3.5:4b
-ollama pull qwen3.5:9b
-ollama pull hf.co/speakleash/Bielik-11B-v3.0-Instruct-GGUF:Q4_K_M
-uv run marketplace-listing-agent doctor
+uv sync --locked --extra dev --no-editable
+.venv/bin/marketplace-listing-agent doctor --scope core
+.venv/bin/marketplace-listing-agent doctor --scope models --probe
+.venv/bin/marketplace-listing-agent doctor --scope telegram
+.venv/bin/marketplace-listing-agent doctor --scope browser
 ```
 
-Pobieranie jest jednorazowe i zajmuje wiele GB. Model 27B jest opcjonalny:
-`ollama pull qwen3.5:27b`. Na testowanym Macu zmieścił się, lecz jego wyładowanie
-utknęło, więc konfiguracja używa 9B. Nazwy i role zmieniasz w `config/models.yaml`,
-bez zmian w grafie.
+The non-editable install is intentional: it tests the built package and avoids a Python
+3.14 behavior that skips hidden editable `.pth` files. Runtime data is installed under
+`~/Library/Application Support/Marketplace Listing Agent` with private directory/file
+permissions. Repository defaults are copied only when a corresponding runtime file does
+not exist.
 
-## 3. Telegram
+`doctor` exits non-zero if a selected scope fails. The core scope checks Python, writable
+directories, YAML, SQLite integrity and schema version. Model probing performs a minimal
+real structured inference.
 
-1. Utwórz prywatnego bota przez BotFather.
-2. Uruchom `uv run marketplace-listing-agent configure-token`; token trafi do macOS Keychain.
-3. Wpisz własny liczbowy identyfikator czatu w `.env` jako
-   `MARKETPLACE_AGENT_TELEGRAM_ALLOWED_CHAT_ID=...`.
-4. Uruchom `uv run marketplace-listing-agent run`.
-
-Przepływ rozmowy: `/nowa` → zdjęcia i opis → `/gotowe` → kolejne akceptacje →
-formularze w Chrome → ręczna kontrola i publikacja.
-
-## 4. Ewaluacja i podmiana modelu
+Create a redacted reproducibility manifest when recording a benchmark or release:
 
 ```bash
-uv run marketplace-listing-agent eval --suite price_math
-uv run marketplace-listing-agent eval --suite facts
-uv run marketplace-listing-agent eval --suite comparables
-uv run marketplace-listing-agent eval --suite copy
-uv run marketplace-listing-agent eval --suite forms
-uv run marketplace-listing-agent eval --suite copy --model inny-model:tag
+.venv/bin/marketplace-listing-agent manifest --destination environment-manifest.json
 ```
 
-Raport JSON trafia do `reports/`. Porównuj ten sam commit, ten sam golden dataset i
-ten sam sprzęt. Mierz jakość przed szybkością; wynik błędu schematu to niezaliczony
-przypadek. `rss_delta_mb` dotyczy procesu Pythona, nie pełnej pamięci Ollama, dlatego
-jest wskaźnikiem pomocniczym, a nie miarą VRAM/RAM modelu.
+It contains commit state, platform, model role configuration and hashes of configs and
+goldens. It contains no tokens, prompts, private content or absolute application paths.
 
-## 5. Start przy logowaniu
-
-Po ukończeniu prób ręcznych uruchom:
+## Run
 
 ```bash
-./scripts/install-launch-agent.sh
+.venv/bin/marketplace-listing-agent configure-token
+.venv/bin/marketplace-listing-agent run
 ```
 
-Skrypt tworzy `~/Library/LaunchAgents/pl.marketplace-listing-agent.agent.plist` i ładuje usługę.
-To świadoma operacja poza repozytorium, więc nie jest wykonywana automatycznie przez
-instalację. Logi lokalne trafią do `data/logs/`.
+In a second terminal:
 
-## 6. Procedura testu adaptera portalu
+```bash
+.venv/bin/marketplace-listing-agent worker
+```
 
-1. Użyj konta i testowego przedmiotu, którego nie opublikujesz.
-2. Zatwierdź tylko jeden portal.
-3. Sprawdź każdy odczytany atrybut i screenshot w `data/items/.../evidence`.
-4. Potwierdź, że kursor zatrzymuje się przed publikacją.
-5. Zanotuj zmianę selektora jako fixture/test przed poprawką kodu.
-6. Przed szerokim użyciem sprawdź aktualny regulamin portalu i limity ruchu.
+The orchestrator and worker share SQLite but are separate processes. Only the worker owns
+the sales profile. Run one worker for that profile. `SingletonLock` detection in `doctor`
+warns when Chrome already owns it.
 
-Vinted jest adapterem eksperymentalnym. Ręczne kliknięcie publikacji zmniejsza ryzyko
-niezamierzonego działania, ale samo w sobie nie gwarantuje zgodności automatyzacji z
-aktualnym regulaminem. W razie wątpliwości wyłącz źródło/adapter w konfiguracji.
+After installing the wheel on macOS, `scripts/install-launch-agent.sh` installs two
+LaunchAgents: one for the Telegram orchestrator and one for the browser worker. The
+matching uninstall script stops and removes both service definitions while preserving
+application data.
 
-## Aktualny wynik smoke testu źródeł
+Useful commands:
 
-Pierwsze próby z 8 września 2026 poprawnie dotrzymały limitu, ale zwróciły zero
-porównań. Diagnostyka znalazła poprawne URL-e OLX i błąd oczekiwania na nieistniejący
-tag `meta`; poprawka wymaga ponownego smoke testu. Nie jest to jeszcze walidacja live
-scrapera. Przed użyciem do
-wyceny wymagany jest niezerowy przebieg oraz ręczne sprawdzenie kilku rekordów;
-do tego czasu aplikacja powinna traktować brak rekomendacji jako konieczność wpisania
-ceny przez użytkowniczkę, nigdy jako podstawę do automatycznej wyceny.
+```bash
+.venv/bin/marketplace-listing-agent worker --once
+.venv/bin/marketplace-listing-agent resume-job JOB_ID INTERVENTION_ID
+.venv/bin/marketplace-listing-agent cancel-job JOB_ID
+.venv/bin/marketplace-listing-agent emergency-stop
+.venv/bin/marketplace-listing-agent reconcile-job JOB_ID
+```
 
-Kolejna próba potwierdziła 10 dostępnych stron, ale audyt 9B w trybie `think=medium`
-przekroczył 300 s. Po przejściu na `think=false` golden audytu uzyskał 2/2, a live
-smoke test zamknął się poniżej minuty i zwrócił 2 porównania (35 i 70 zł) z 10
-dostępnych stron. Confidence pozostał `low`. Analiza powodów ujawniła zbyt swobodne
-wnioskowanie modelu, więc dodano twardą bramkę jawnego dopasowania marki i modelu.
-Pełna walidacja nadal wymaga większego, ręcznie oznaczonego zbioru.
+`resume-job` only returns work to the queue. The worker rechecks CAPTCHA/login/form state.
+`reconcile-job` reads an uncertain post-submit outcome and never clicks submit.
+An abandoned preparation lease returns to the queue after 15 minutes. An abandoned
+submit becomes `unknown` and is never retried automatically.
+
+## Publication gate
+
+Form preparation requires a user-approved snapshot. A ready job still cannot publish.
+Telegram `/wystaw JOB_ID` shows the exact content, price, category and snapshot hash and
+creates a second one-time approval.
+
+Live submit is disabled by default. It may be enabled only for a controlled run:
+
+```dotenv
+MARKETPLACE_AGENT_ALLOW_LIVE_SUBMIT=true
+```
+
+Before enabling it, validate the current signed-in Polish form controls, fees and final
+button for one portal. Keep the generated preview visible. A real listing requires a
+separate, concrete user authorization for that exact snapshot.
+
+## Backup and recovery
+
+```bash
+.venv/bin/marketplace-listing-agent backup --destination ~/MarketplaceBackups
+.venv/bin/marketplace-listing-agent restore-backup BACKUP_DIR NEW_EMPTY_DATA_DIR
+```
+
+Backup uses the SQLite Backup API for a transactionally consistent copy. Restore refuses
+to overwrite a non-empty directory. Run core diagnostics against the restored location
+before switching the application configuration.
+
+## Evaluation and monitoring
+
+```bash
+.venv/bin/marketplace-listing-agent eval --suite price_math
+.venv/bin/marketplace-listing-agent eval --suite facts
+.venv/bin/marketplace-listing-agent report --run-id RUN_ID
+```
+
+Model fallback is disabled during evaluation. Reports include dataset/config hashes,
+commit and environment metadata. The local run report includes only allow-listed telemetry.
+
+## Docker
+
+```bash
+docker compose config --quiet
+docker compose build app-check research-proxy
+docker compose run --rm app-check
+docker compose --profile research up research-worker
+```
+
+The research profile has no host data mounts and reaches public networks only through the
+CONNECT proxy. On 2026-09-13 Docker Desktop 29.4.0, both image builds and the container
+core doctor passed. An integration check reached public HTTPS through the proxy, rejected
+localhost and failed direct egress when environment proxies were ignored.
+
+If an anonymous public-image pull hangs in the macOS credential helper, do not delete the
+saved Docker configuration. Use a temporary empty config for the pull, then build with
+the normal config so Compose plugins remain available:
+
+```bash
+mkdir -p /private/tmp/shopper-docker-config
+printf '{}\n' > /private/tmp/shopper-docker-config/config.json
+DOCKER_CONFIG=/private/tmp/shopper-docker-config docker pull python:3.12-slim
+docker compose build app-check research-proxy
+```
+
+## MCP
+
+Configure an MCP host to start:
+
+```bash
+.venv/bin/marketplace-listing-agent-mcp
+```
+
+Transport is local stdio. Logs must remain on stderr because stdout carries protocol
+messages. The server does not contain passwords, sessions or listing mutation payloads.

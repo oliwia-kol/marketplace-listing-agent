@@ -14,3 +14,4 @@ reports/*
 work/
 playwright-report/
 test-results/
+experiments/lora/adapters/

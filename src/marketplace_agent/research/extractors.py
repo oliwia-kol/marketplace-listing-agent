@@ -81,9 +81,7 @@ def _price_kind(text: str, match_start: int) -> str:
         return "delivery"
     if re.search(r"(?:rata|raty|miesięcz|/\s*mies)", context):
         return "installment"
-    if re.search(
-        r"(?:poprzednia|stara cena|było|przed obniż|cena początkowa)", context
-    ):
+    if re.search(r"(?:poprzednia|stara cena|było|przed obniż|cena początkowa)", context):
         return "previous"
     if re.search(r"\d[\d ,.]*\s*(?:-|\u2013|\u2014|do)\s*$", prefix):
         return "range"
@@ -173,9 +171,7 @@ def _price_observations_from_json_ld(documents: list[Any]) -> list[PriceObservat
                                 offer.get("priceCurrency") or node.get("priceCurrency")
                             ),
                             kind=(
-                                "range"
-                                if "price" not in offer and "lowPrice" in offer
-                                else "item"
+                                "range" if "price" not in offer and "lowPrice" in offer else "item"
                             ),
                             channel="json_ld",
                             raw=str(raw_price),
@@ -281,8 +277,10 @@ async def extract_listing(page: Page, source: str | None = None) -> ExtractedLis
     preferred = _select_item_price(observations)
     price = preferred.amount if preferred else None
     integrity_reasons = _price_integrity_reasons(observations)
-    sold = portal_fields.status == "sold" if portal_fields else any(
-        marker in lowered for marker in SOLD_MARKERS
+    sold = (
+        portal_fields.status == "sold"
+        if portal_fields
+        else any(marker in lowered for marker in SOLD_MARKERS)
     )
     expired = any(marker in lowered for marker in EXPIRED_MARKERS)
     blocked = any(marker in lowered for marker in CAPTCHA_MARKERS)

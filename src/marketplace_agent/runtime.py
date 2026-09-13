@@ -31,10 +31,18 @@ class ApplicationRuntime:
 
     async def __aenter__(self) -> ApplicationRuntime:
         self.settings.ensure_directories()
+        assert self.settings.model_config_path is not None
+        assert self.settings.source_config_path is not None
+        assert self.settings.category_profile_path is not None
+        assert self.settings.data_dir is not None
         self.catalog = CatalogRepository(self.settings.catalog_db)
         self.catalog.setup()
         provider = OllamaModelProvider()
-        self.router = ModelRouter.from_yaml(provider, self.settings.model_config_path)
+        self.router = ModelRouter.from_yaml(
+            provider,
+            self.settings.model_config_path,
+            event_sink=self.catalog.record_run_event,
+        )
         self.sessions = BrowserSessionManager(
             self.settings.chrome_profile_dir, headless=self.settings.headless
         )

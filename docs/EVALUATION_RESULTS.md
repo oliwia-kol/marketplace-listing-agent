@@ -1,4 +1,11 @@
-# Wyniki ewaluacji — baseline 2026-09-08
+# Wyniki ewaluacji
+
+Aktualny pełny raport z 120 przypadków oraz eksperymentu LoRA znajduje się w
+[`EVALUATION_RESULTS_2026-09-13.md`](EVALUATION_RESULTS_2026-09-13.md). Poniższy zapis
+jest historycznym baseline'em z 08.09 i pokazuje, dlaczego dodano guardy oraz szersze
+zestawy testowe.
+
+## Baseline 2026-09-08
 
 Datasety są syntetycznymi seed goldenami. Wyniki pokazują zachowanie konkretnej
 wersji promptów i modeli lokalnych; nie są deklaracją jakości produkcyjnej.
@@ -24,3 +31,15 @@ zdjęcia, ręczne etykiety i co najmniej 20 przykładów na kategorię.
 
 Raporty JSON w `reports/` zawierają surowe odpowiedzi, czas, tokeny i load time. Są
 lokalne i ignorowane przez Git, aby przypadkowo nie opublikować przyszłych danych.
+
+## LoRA 2026-09-13
+
+Wykonano rzeczywisty trening MLX-LM `Qwen/Qwen3-0.6B`: 240 przykładów train, 30
+validation i 30 zamrożonych testów, rozdzielonych po rodzinie produktu. Adapter uczył
+1,442 mln parametrów (0,242%), osiągnął szczyt 1,797 GB pamięci i ma 5,78 MB.
+
+Na syntetycznym teście model bazowy powtarzał JSON (`prose_format=0,0`), a LoRA
+zwróciła oczekiwany opis w 30/30 przypadków. Deterministyczny szablon uzyskał taki sam
+wynik, dlatego adapter nie wszedł do domyślnej konfiguracji. Pełne metryki, hashe,
+ograniczenia i decyzja znajdują się w
+[`../experiments/lora/RESULTS.md`](../experiments/lora/RESULTS.md).

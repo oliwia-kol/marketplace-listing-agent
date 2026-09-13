@@ -5,19 +5,23 @@ roles:
     context_tokens: 8192
     think: false
     keep_alive: 30s
+    request_timeout_seconds: 180
   market_expert:
     model: qwen3.5:9b
     fallback: qwen3.5:4b
     context_tokens: 16384
     think: false
     keep_alive: 30s
+    request_timeout_seconds: 180
   polish_copywriter:
     model: hf.co/speakleash/Bielik-11B-v3.0-Instruct-GGUF:Q4_K_M
     context_tokens: 8192
     think: false
     keep_alive: 30s
+    request_timeout_seconds: 180
   gui_fallback:
     model: qwen3.5:4b
     context_tokens: 8192
     think: false
     keep_alive: 30s
+    request_timeout_seconds: 180

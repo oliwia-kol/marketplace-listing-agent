@@ -6,18 +6,20 @@
   <string>pl.marketplace-listing-agent.agent</string>
   <key>ProgramArguments</key>
   <array>
-    <string>__PROJECT_DIR__/.venv/bin/marketplace-listing-agent</string>
+    <string>__EXECUTABLE__</string>
     <string>run</string>
   </array>
   <key>WorkingDirectory</key>
-  <string>__PROJECT_DIR__</string>
+  <string>__APP_DIR__</string>
   <key>RunAtLoad</key>
   <true/>
   <key>KeepAlive</key>
   <true/>
+  <key>ThrottleInterval</key>
+  <integer>10</integer>
   <key>StandardOutPath</key>
-  <string>__PROJECT_DIR__/data/logs/stdout.log</string>
+  <string>__APP_DIR__/logs/agent.stdout.log</string>
   <key>StandardErrorPath</key>
-  <string>__PROJECT_DIR__/data/logs/stderr.log</string>
+  <string>__APP_DIR__/logs/agent.stderr.log</string>
 </dict>
 </plist>

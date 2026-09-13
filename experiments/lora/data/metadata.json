@@ -1,0 +1,12 @@
+{
+  "seed": 20260913,
+  "generator": "generate_dataset.py",
+  "license": "project-authored synthetic data; Apache-2.0 repository license",
+  "counts": {
+    "train": 240,
+    "valid": 30,
+    "test": 30
+  },
+  "split_unit": "family_id",
+  "private_user_data": false
+}

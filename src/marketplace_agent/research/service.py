@@ -68,7 +68,13 @@ class MarketResearchService:
         self._progress_candidates: list[ComparableCandidate] = []
         self._progress_checked_count = 0
 
-    async def create_search_plan(self, facts: dict[str, Any]) -> SearchPlanOutput:
+    async def create_search_plan(
+        self,
+        facts: dict[str, Any],
+        *,
+        run_id: str | None = None,
+        item_id: str | None = None,
+    ) -> SearchPlanOutput:
         profile = self.category_profiles.match(facts) if self.category_profiles else None
         research_facts = redact_sensitive_facts(facts)
         response = await self.router.run(
@@ -87,17 +93,23 @@ class MarketResearchService:
                 indent=2,
             ),
             output_schema=SearchPlanOutput,
+            run_id=run_id,
+            item_id=item_id,
         )
         return response.output
 
     async def run(
-        self, facts: dict[str, Any], *, item_id: str | None = None
+        self,
+        facts: dict[str, Any],
+        *,
+        item_id: str | None = None,
+        run_id: str | None = None,
     ) -> PriceResearchSummary:
         self._progress_candidates = []
         self._progress_checked_count = 0
         try:
             async with asyncio.timeout(self.config.research.timeout_seconds):
-                summary = await self._run_bounded(facts)
+                summary = await self._run_bounded(facts, run_id=run_id, item_id=item_id)
         except TimeoutError:
             summary = summarize_prices(
                 self._progress_candidates,
@@ -113,8 +125,14 @@ class MarketResearchService:
             )
         return summary
 
-    async def _run_bounded(self, facts: dict[str, Any]) -> PriceResearchSummary:
-        plan = await self.create_search_plan(facts)
+    async def _run_bounded(
+        self,
+        facts: dict[str, Any],
+        *,
+        run_id: str | None = None,
+        item_id: str | None = None,
+    ) -> PriceResearchSummary:
+        plan = await self.create_search_plan(facts, run_id=run_id, item_id=item_id)
         logger.info("research.plan queries=%s", len(plan.queries))
         context = await self.browser.research_context()
         try:
@@ -178,7 +196,7 @@ class MarketResearchService:
                         task.cancel()
                 await asyncio.gather(*tasks, return_exceptions=True)
 
-            await self._audit(facts, plan, verified)
+            await self._audit(facts, plan, verified, run_id=run_id, item_id=item_id)
             logger.info("research.audited candidates=%s", len(verified))
             selected = sorted(
                 (candidate for candidate in verified if candidate.comparable),
@@ -204,6 +222,9 @@ class MarketResearchService:
         facts: dict[str, Any],
         plan: SearchPlanOutput,
         candidates: list[ComparableCandidate],
+        *,
+        run_id: str | None = None,
+        item_id: str | None = None,
     ) -> None:
         if not candidates:
             return
@@ -250,6 +271,8 @@ class MarketResearchService:
             system=AUDIT_SYSTEM,
             prompt=prompt,
             output_schema=ComparableAuditOutput,
+            run_id=run_id,
+            item_id=item_id,
         )
         decisions = {decision.index: decision for decision in response.output.decisions}
         for index, candidate in enumerate(candidates):

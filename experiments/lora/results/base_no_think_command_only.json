@@ -1,0 +1,413 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "adapter": null,
+  "test_cases": 30,
+  "environment": {
+    "python": "3.12.13",
+    "machine": "arm64"
+  },
+  "metrics": {
+    "fact_value_coverage": 1.0,
+    "defect_preservation": 1.0,
+    "unsupported_phrase_guard": 1.0,
+    "reference_similarity": 0.2531762915450426,
+    "no_think_markup": 0.0
+  },
+  "mean_latency_seconds": 1.12771088196896,
+  "results": [
+    {
+      "id": "57c28ca4bf3f-0",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.23978201634877383,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1344439999666065,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne pudełko\", \"brand\": \"Nintendo\", \"category\": \"console\", \"color\": \"czerwony Mario\", \"condition\": \"używany\", \"defects\": \"drobne rysy na obudowie\", \"model\": \"Switch OLED\"}"
+    },
+    {
+      "id": "57c28ca4bf3f-1",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.17158176943699732,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0916394169908017,
+      "output": "<think>\n\n{\"accessories\": \"pudełko i przewód\", \"brand\": \"Nintendo\", \"category\": \"console\", \"color\": \"czerwony Mario\", \"condition\": \"bardzo dobry\", \"defects\": \"otarcie na jednym rogu\", \"model\": \"Switch OLED\"}"
+    },
+    {
+      "id": "57c28ca4bf3f-2",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.5069637883008357,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 0.9915623751003295,
+      "output": "<think>\n\n{\"accessories\": \"sam przedmiot\", \"brand\": \"Nintendo\", \"category\": \"console\", \"color\": \"czerwony Mario\", \"condition\": \"dobry\", \"defects\": \"widoczne ślady użytkowania\", \"model\": \"Switch OLED\"}"
+    },
+    {
+      "id": "57c28ca4bf3f-3",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.0921409214092141,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0773477081675082,
+      "output": "<think>\n\n{\"accessories\": \"przewód zasilający\", \"brand\": \"Nintendo\", \"category\": \"console\", \"color\": \"czerwony Mario\", \"condition\": \"używany\", \"defects\": \"rysa widoczna na zdjęciu\", \"model\": \"Switch OLED\"}"
+    },
+    {
+      "id": "57c28ca4bf3f-4",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.07671232876712329,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0386115000583231,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne opakowanie\", \"brand\": \"Nintendo\", \"category\": \"console\", \"color\": \"czerwony Mario\", \"condition\": \"dobry\", \"defects\": \"uszkodzone opakowanie\", \"model\": \"Switch OLED\"}"
+    },
+    {
+      "id": "b128f645df2d-0",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4444444444444444,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1559987920336425,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne pudełko\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"używany\", \"defects\": \"drobne rysy na obudowie\", \"model\": \"Pokémon Violet\"}"
+    },
+    {
+      "id": "b128f645df2d-1",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.18032786885245902,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1131591661833227,
+      "output": "<think>\n\n{\"accessories\": \"pudełko i przewód\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"bardzo dobry\", \"defects\": \"otarcie na jednym rogu\", \"model\": \"Pokémon Violet\"}"
+    },
+    {
+      "id": "b128f645df2d-2",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.48295454545454547,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 0.996592832962051,
+      "output": "<think>\n\n{\"accessories\": \"sam przedmiot\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"dobry\", \"defects\": \"widoczne ślady użytkowania\", \"model\": \"Pokémon Violet\"}"
+    },
+    {
+      "id": "b128f645df2d-3",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4585635359116022,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0709607910830528,
+      "output": "<think>\n\n{\"accessories\": \"przewód zasilający\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"używany\", \"defects\": \"rysa widoczna na zdjęciu\", \"model\": \"Pokémon Violet\"}"
+    },
+    {
+      "id": "b128f645df2d-4",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4245810055865922,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0427432919386774,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne opakowanie\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"dobry\", \"defects\": \"uszkodzone opakowanie\", \"model\": \"Pokémon Violet\"}"
+    },
+    {
+      "id": "7e3775d3d21a-0",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.09574468085106383,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.173988957889378,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne pudełko\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"używany\", \"defects\": \"drobne rysy na obudowie\", \"model\": \"Xenoblade Chronicles 3\"}"
+    },
+    {
+      "id": "7e3775d3d21a-1",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.23036649214659685,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1431276670191437,
+      "output": "<think>\n\n{\"accessories\": \"pudełko i przewód\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"bardzo dobry\", \"defects\": \"otarcie na jednym rogu\", \"model\": \"Xenoblade Chronicles 3\"}"
+    },
+    {
+      "id": "7e3775d3d21a-2",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.20652173913043478,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0510447500273585,
+      "output": "<think>\n\n{\"accessories\": \"sam przedmiot\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"dobry\", \"defects\": \"widoczne ślady użytkowania\", \"model\": \"Xenoblade Chronicles 3\"}"
+    },
+    {
+      "id": "7e3775d3d21a-3",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.14814814814814814,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.132472415920347,
+      "output": "<think>\n\n{\"accessories\": \"przewód zasilający\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"używany\", \"defects\": \"rysa widoczna na zdjęciu\", \"model\": \"Xenoblade Chronicles 3\"}"
+    },
+    {
+      "id": "7e3775d3d21a-4",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.10160427807486631,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0957070000004023,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne opakowanie\", \"brand\": \"Nintendo\", \"category\": \"game\", \"color\": \"pudełkowa\", \"condition\": \"dobry\", \"defects\": \"uszkodzone opakowanie\", \"model\": \"Xenoblade Chronicles 3\"}"
+    },
+    {
+      "id": "0bc7fecebd36-0",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4226190476190476,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1594292500521988,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne pudełko\", \"brand\": \"Fujifilm\", \"category\": \"fuji\", \"color\": \"czarny\", \"condition\": \"używany\", \"defects\": \"drobne rysy na obudowie\", \"model\": \"X-S10\"}"
+    },
+    {
+      "id": "0bc7fecebd36-1",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.45614035087719296,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1377040001098067,
+      "output": "<think>\n\n{\"accessories\": \"pudełko i przewód\", \"brand\": \"Fujifilm\", \"category\": \"fuji\", \"color\": \"czarny\", \"condition\": \"bardzo dobry\", \"defects\": \"otarcie na jednym rogu\", \"model\": \"X-S10\"}"
+    },
+    {
+      "id": "0bc7fecebd36-2",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4634146341463415,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0352117500733584,
+      "output": "<think>\n\n{\"accessories\": \"sam przedmiot\", \"brand\": \"Fujifilm\", \"category\": \"fuji\", \"color\": \"czarny\", \"condition\": \"dobry\", \"defects\": \"widoczne ślady użytkowania\", \"model\": \"X-S10\"}"
+    },
+    {
+      "id": "0bc7fecebd36-3",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4556213017751479,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1221877080388367,
+      "output": "<think>\n\n{\"accessories\": \"przewód zasilający\", \"brand\": \"Fujifilm\", \"category\": \"fuji\", \"color\": \"czarny\", \"condition\": \"używany\", \"defects\": \"rysa widoczna na zdjęciu\", \"model\": \"X-S10\"}"
+    },
+    {
+      "id": "0bc7fecebd36-4",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.40119760479041916,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.0758452080190182,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne opakowanie\", \"brand\": \"Fujifilm\", \"category\": \"fuji\", \"color\": \"czarny\", \"condition\": \"dobry\", \"defects\": \"uszkodzone opakowanie\", \"model\": \"X-S10\"}"
+    },
+    {
+      "id": "466c6ca8adb9-0",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.12466124661246612,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.2325436670798808,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne pudełko\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"srebrny\", \"condition\": \"używany\", \"defects\": \"drobne rysy na obudowie\", \"model\": \"MacBook Air M1 8/256 GB\"}"
+    },
+    {
+      "id": "466c6ca8adb9-1",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.14933333333333335,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.199018375016749,
+      "output": "<think>\n\n{\"accessories\": \"pudełko i przewód\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"srebrny\", \"condition\": \"bardzo dobry\", \"defects\": \"otarcie na jednym rogu\", \"model\": \"MacBook Air M1 8/256 GB\"}"
+    },
+    {
+      "id": "466c6ca8adb9-2",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.4265927977839335,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1067993328906596,
+      "output": "<think>\n\n{\"accessories\": \"sam przedmiot\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"srebrny\", \"condition\": \"dobry\", \"defects\": \"widoczne ślady użytkowania\", \"model\": \"MacBook Air M1 8/256 GB\"}"
+    },
+    {
+      "id": "466c6ca8adb9-3",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.1347708894878706,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1856224171351641,
+      "output": "<think>\n\n{\"accessories\": \"przewód zasilający\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"srebrny\", \"condition\": \"używany\", \"defects\": \"rysa widoczna na zdjęciu\", \"model\": \"MacBook Air M1 8/256 GB\"}"
+    },
+    {
+      "id": "466c6ca8adb9-4",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.1307901907356948,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1590515000279993,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne opakowanie\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"srebrny\", \"condition\": \"dobry\", \"defects\": \"uszkodzone opakowanie\", \"model\": \"MacBook Air M1 8/256 GB\"}"
+    },
+    {
+      "id": "08ad113ab58c-0",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.11488250652741515,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.277096875011921,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne pudełko\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"gwiezdna szarość\", \"condition\": \"używany\", \"defects\": \"drobne rysy na obudowie\", \"model\": \"iPad Pro 11 M2 128 GB\"}"
+    },
+    {
+      "id": "08ad113ab58c-1",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.11311053984575835,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.2526316670700908,
+      "output": "<think>\n\n{\"accessories\": \"pudełko i przewód\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"gwiezdna szarość\", \"condition\": \"bardzo dobry\", \"defects\": \"otarcie na jednym rogu\", \"model\": \"iPad Pro 11 M2 128 GB\"}"
+    },
+    {
+      "id": "08ad113ab58c-2",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.112,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.155605792067945,
+      "output": "<think>\n\n{\"accessories\": \"sam przedmiot\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"gwiezdna szarość\", \"condition\": \"dobry\", \"defects\": \"widoczne ślady użytkowania\", \"model\": \"iPad Pro 11 M2 128 GB\"}"
+    },
+    {
+      "id": "08ad113ab58c-3",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.11948051948051948,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.2306856671348214,
+      "output": "<think>\n\n{\"accessories\": \"przewód zasilający\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"gwiezdna szarość\", \"condition\": \"używany\", \"defects\": \"rysa widoczna na zdjęciu\", \"model\": \"iPad Pro 11 M2 128 GB\"}"
+    },
+    {
+      "id": "08ad113ab58c-4",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.11023622047244094,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 1.1924925839994103,
+      "output": "<think>\n\n{\"accessories\": \"oryginalne opakowanie\", \"brand\": \"Apple\", \"category\": \"apple\", \"color\": \"gwiezdna szarość\", \"condition\": \"dobry\", \"defects\": \"uszkodzone opakowanie\", \"model\": \"iPad Pro 11 M2 128 GB\"}"
+    }
+  ],
+  "limitations": [
+    "String metrics cannot detect every semantically unsupported claim.",
+    "All examples are synthetic and need later validation on approved real examples."
+  ]
+}

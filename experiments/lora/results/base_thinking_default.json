@@ -1,0 +1,413 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "adapter": null,
+  "test_cases": 30,
+  "environment": {
+    "python": "3.12.13",
+    "machine": "arm64"
+  },
+  "metrics": {
+    "fact_value_coverage": 0.5444444444444444,
+    "defect_preservation": 0.2,
+    "unsupported_phrase_guard": 1.0,
+    "reference_similarity": 0.0566956011041277,
+    "no_think_markup": 0.0
+  },
+  "mean_latency_seconds": 2.619378109796283,
+  "results": [
+    {
+      "id": "57c28ca4bf3f-0",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 0.8333333333333334,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.06769230769230769,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 3.255972333950922,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about a Nintendo console. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are \"oryginalne pudełko\" which translates to \"original box\". The brand is Nintendo, category is console, color is czerwony Mario, condition is used, defects are drobne rysy na obudowie (tiny marks on the board), and model is Switch OLED.\n\nI need to structure this into a concise description. The key points are the original box, Nintendo brand, console category, color, condition, defects, and model. I should avoid any explanations or additional details. Let me check if all the facts are included and that there's no"
+    },
+    {
+      "id": "57c28ca4bf3f-1",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.027805362462760674,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5404131249524653,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo console. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are a box and a cable. The brand is Nintendo, category is console, color is red Mario, condition is very good, defects are a crack on one side, and the model is Switch OLED.\n\nI need to structure this into a concise description. Start with the brand and model, mention the accessories, the color, condition, and defects. Keep it simple and only include the facts. Avoid any explanations or additional details. Make sure to use the exact terms from the JSON. Let me check again to ensure I didn't miss any facts. Yep, everything seems to be there. Now, format"
+    },
+    {
+      "id": "57c28ca4bf3f-2",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.01972386587771203,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5521477500442415,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about a Nintendo console. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories mention \"sam przedmiot,\" which translates to \"a single item.\" The brand is Nintendo, category is console, color is czerwony Mario, condition is good, defects include visible user marks, and the model is Switch OLED.\n\nI need to structure this into a concise description. Start with the brand and model, mention the color, condition, and defects. Avoid any explanations or additional details. Make sure to use only the facts provided. Let me check again to ensure I didn't miss any. Yep, everything seems to be covered. Now, format it without any title or comment"
+    },
+    {
+      "id": "57c28ca4bf3f-3",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.038797284190106696,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5422839168459177,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with various details about a Nintendo Switch OLED console. The task is to create a short, religious description using only the given facts, without any text, and only output the description. The user also specified that I should not include any comments, titles, or explanations. \n\nFirst, I need to parse each key-value pair from the JSON. The accessories are the power cord, brand is Nintendo, category is console, color is brown Mario, condition is used, defects are visible on the photo, model is Switch OLED.\n\nNow, I need to combine these into a concise description. The key points are the product details: the power cord, the brand, the console model, color, condition, and any visible defects. Since the user wants it to be religious, maybe using terms related to faith or spiritual aspects? But the facts"
+    },
+    {
+      "id": "57c28ca4bf3f-4",
+      "family_id": "57c28ca4bf3f",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.015640273704789834,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5438033749815077,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo console. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories mention original packaging. The brand is Nintendo, category is console, color is red Mario, condition is good, defects include broken packaging, and the model is Switch OLED. \n\nI need to structure this into a concise description. Start with the brand and model, mention the color, condition, and defects. Keep it simple and direct. Avoid any explanations or additional details. Make sure to use only the facts provided. Let me check again to ensure I didn't miss any. Yep, everything seems to be there. Now, format it without any title or comment.\n</think>\n\n{\"description\": \"Oryg"
+    },
+    {
+      "id": "b128f645df2d-0",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.048458149779735685,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6219447921030223,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo game accessory. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are \"oryginalne pudełko\" (original box). The brand is Nintendo, category is game, color is pudełkowa (which translates to \"boxy\"), condition is \"używany\" (used), defects are \"drobne rysy na obudowie\" (tiny marks on the structure), and the model is \"Pokémon Violet\".\n\nI need to structure this into a concise description. The key points are the brand, model, color, condition, and defects. The user wants it to be religious, so maybe use some religious terms"
+    },
+    {
+      "id": "b128f645df2d-1",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.04613841524573721,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5410663329530507,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo game. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are a box and a container. The brand is Nintendo, category is game, color is pudełkowa, condition is very good, defects are a hole on one side, and the model is Pokémon Violet.\n\nI need to structure this into a concise description. The key points are the accessories, brand, category, color, condition, defects, and model. I should avoid any explanations or additional details. Let me check if all the facts are included and that there's no markdown. The response should be only the description, no title or comment. Alright, that should do it.\n</think>\n\n"
+    },
+    {
+      "id": "b128f645df2d-2",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 0.8333333333333334,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.04684317718940937,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.540313708828762,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo Pokémon Violet accessory. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are \"sam przedmiot,\" which translates to \"a single item.\" The brand is Nintendo, category is game, color is pudełkowa (which I think means \"pallet\" or \"pallet-like\"), condition is \"dobry\" (good), defects include visible user marks, and the model is Pokémon Violet.\n\nI need to structure this into a concise description. The key points are the brand, model, color, condition, and defects. I should avoid any explanations or additional details. Let me check if all the facts are included and properly formatted. Yes, everything"
+    },
+    {
+      "id": "b128f645df2d-3",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.07489878542510121,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5768959999550134,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about a Nintendo Pokémon Violet game accessory. The task is to create a short, clear, and concise description using only the facts from the JSON. I need to make sure I don't add any extra information or commentary. Also, I have to output only the description without any title or comment.\n\nFirst, I'll check each key in the JSON. The accessories are the power cord, brand is Nintendo, category is game, color is pudełkowa (which I think means \"pallet\" or \"pallet-like\"), condition is used, defects include a visible mark, and the model is Pokémon Violet.\n\nI need to structure this into a sentence that includes all these elements. The key points are the product, its features, condition, and any defects. The color is important, so I should mention"
+    },
+    {
+      "id": "b128f645df2d-4",
+      "family_id": "b128f645df2d",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.087890625,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.621527124894783,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo Pokémon Violet game. They want a short, religious description using only the given facts. I need to make sure I use only the facts provided and avoid any extra information.\n\nFirst, the accessories are original, the brand is Nintendo, category is game, color is pudełkowa, condition is good, defects are broken packaging, and the model is Pokémon Violet. The output should be a concise description without any title or comment.\n\nI need to structure the response in a way that includes all these points. Let me check each key: original packaging, Nintendo brand, game category, pudełkowa color, good condition, broken packaging, and the model. I should present them in a natural flow without any markdown. Make sure to use only the facts and not add any additional details. Alright"
+    },
+    {
+      "id": "7e3775d3d21a-0",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.06680584551148225,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6514577500056475,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about a Nintendo game accessory. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, I'll check the keys: accessories, brand, category, color, condition, defects, model. The model is Xenoblade Chronicles 3, which is a game. The accessories are the original box, brand is Nintendo, category is game, color is pudełkowa (which translates to \"pallet-like\"), condition is used, defects are drobne rysy (which means \"tiny marks\"), and the model is the game.\n\nI need to structure this into a concise description. The user wants it in Polish, so I should use the correct terms. The key points are"
+    },
+    {
+      "id": "7e3775d3d21a-1",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.043912175648702596,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6464935829862952,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo game. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are a box and a container. The brand is Nintendo, category is game, color is pudełkowa, condition is very good, defects are a hole on one side, and the model is Xenoblade Chronicles 3.\n\nI need to structure this into a concise description. The key points are the accessories, the brand, the category, color, condition, defects, and the model. I should avoid any explanations or additional details. Let me check if all the facts are included and that there's no markdown. The response should be a single sentence without any title or comment. Alright,"
+    },
+    {
+      "id": "7e3775d3d21a-2",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.061636556854410204,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.709042957983911,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo game. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are \"sam przedmiot,\" which translates to \"a single item.\" The brand is Nintendo, category is game, color is pudełkowa (which I think means \"pallet\" or \"pallet-like\"), condition is \"dobry,\" so good condition, defects are \"widoczne ślady użytkowania\" (visible user damage), and the model is \"Xenoblade Chronicles 3.\"\n\nI need to structure this into a concise description. The key points are the brand, model, color, condition, and defects. I should avoid any explanations or additional details. Let"
+    },
+    {
+      "id": "7e3775d3d21a-3",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.03718199608610567,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.85733687505126,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Nintendo game. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories mention a power cable. The brand is Nintendo, category is game, color is pudełkowa, condition is used, defects include a visible mark, and the model is Xenoblade Chronicles 3. \n\nI need to structure this into a concise description. Start with the model name, then mention the accessories, brand, category, color, condition, defects, and the game. Avoid any explanations or additional details. Make sure each fact is included exactly as given. Check for any typos or missing elements. Finally, ensure the output is only the description without any title or comment.\n</think>"
+    },
+    {
+      "id": "7e3775d3d21a-4",
+      "family_id": "7e3775d3d21a",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.050880626223091974,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6321428332012147,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about a Nintendo game. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are original packaging. The brand is Nintendo, category is game, color is pudełkowa, condition is good, defects are broken packaging, and the model is Xenoblade Chronicles 3.\n\nI need to structure this into a concise description. The key points are the original packaging, the brand, the game model, color, condition, and the defect. I should avoid any explanations or additional details. Let me check if all the facts are included and that there's no markdown. The response should be only the description, no title or comment. Alright, that should do it.\n</think>"
+    },
+    {
+      "id": "0bc7fecebd36-0",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.059322033898305086,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6535103749483824,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Fujifilm X-S10. They want a short, clear description using only the facts from the JSON. I need to make sure I don't add any extra information or commentary. The key points are the original box, brand, category, color, condition, defects, and model.\n\nFirst, I should start with the main product details. The original box is Fujifilm, category is Fujifilm, color is black, condition is used, defects are minor scratches, and the model is X-S10. I need to present this in a concise way without any explanations. Make sure to use only the facts given. Check for any missing details and ensure that each fact is included. Avoid any markdown and keep it all in one sentence. Let me put that together.\n</think>\n\n{\"description"
+    },
+    {
+      "id": "0bc7fecebd36-1",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.049281314168377825,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6503109999466687,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Fujifilm product. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are a container and a container. The brand is Fujifilm, category is fuji, color is black, condition is very good, defects include a defect on one side, and the model is X-S10.\n\nI need to structure this into a concise description. The key points are the product name, brand, category, color, condition, defect, and model. I should avoid any explanations or additional details. Let me check if all the facts are included and that there's no markdown. The response should be only the description, no title or comment. Alright, that should do"
+    },
+    {
+      "id": "0bc7fecebd36-2",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.07407407407407407,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5675010001286864,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Fujifilm X-S10. I need to create a short, religious description using only the given facts. The key points are the model, brand, category, color, condition, defects, and model. \n\nFirst, the model is X-S10, brand Fujifilm, category Fuji. The color is black, condition good, defects visible damage. I should make sure to use only those facts. No need for additional information. The user wants it to be concise and without any text, just the description. Let me check if all the details are included. Yes, everything is there. Now, format it properly without any title or comment. Just the text. Alright, that should do it.\n</think>\n\n{\"description\": \"Fujifilm X-S10, czarny"
+    },
+    {
+      "id": "0bc7fecebd36-3",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.050955414012738856,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5610198751091957,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Fujifilm X-S10. I need to create a short, clear description based solely on that data. The key points are the accessories, brand, category, color, condition, defects, and model.\n\nFirst, the accessories mention a power supply. The brand is Fujifilm, category is Fuji, color is black, condition is used, defects include a visible mark from the photo. The model is X-S10. \n\nI should make sure to use only the provided JSON values. No extra information or explanations. The output needs to be a single sentence without any title or comment. Let me check the structure again to ensure all fields are included. Yes, everything seems to be there. Alright, time to put it all together concisely.\n</think>\n\n{\"description\": \"Fuj"
+    },
+    {
+      "id": "0bc7fecebd36-4",
+      "family_id": "0bc7fecebd36",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.05895196506550218,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.568420249968767,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about a Fujifilm X-S10. I need to create a short, clear description based solely on that data. The key points are the original packaging, brand, category, color, condition, defects, and model.\n\nFirst, the accessories mention original packaging, so I should note that. The brand is Fujifilm, category is fuji, color is black, condition is good, defects include damaged packaging, and the model is X-S10. I need to make sure all these are included without adding any extra information. The user wants only the description, no title or comments. Let me check if all the fields are covered. Yes, everything seems to be there. Now, format it in a concise way.\n</think>\n\n{\"description\": \"Fujifilm X-S10, cz"
+    },
+    {
+      "id": "466c6ca8adb9-0",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.06531531531531531,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5672832920681685,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about a product. The task is to create a short, religious description using only the facts from the JSON, without any text, and only output the description. Also, I need to make sure to avoid any additional text and only provide the description.\n\nFirst, I need to parse the JSON. The accessories are \"oryginalne pudełko\", brand is \"Apple\", category is \"apple\", color is \"srebrny\", condition is \"używany\", defects are \"drobne rysy na obudowie\", and model is \"MacBook Air M1 8/256 GB\". \n\nNow, I need to structure this into a concise description. The key points are the brand, model, color, condition, and defects. The description should mention the"
+    },
+    {
+      "id": "466c6ca8adb9-1",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.06952965235173825,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5625734170898795,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about an Apple product. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are a container and a container. The brand is Apple, category is apple, color is silver, condition is very good, defects include a hole on one side, and the model is MacBook Air M1 8/256 GB.\n\nI need to structure this into a concise description. The key points are the product details. Since it's a religious context, maybe emphasize the quality and defect. The color is silver, which is a common choice for such products. The condition is very good, so that's a positive note. The defect is a hole, which is a problem, but since"
+    },
+    {
+      "id": "466c6ca8adb9-2",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.06580259222333001,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.557995291892439,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about an Apple product. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are \"sam przedmiot\", which translates to \"a single item\". The brand is Apple, category is apple, color is silver, condition is good, defects include visible user marks, and the model is MacBook Air M1 8/256 GB.\n\nI need to structure this into a concise description. Start with the main product details: the model, color, condition. Mention the brand and category. Then list the accessories and defects. Make sure to use only the facts provided. Avoid any explanations or additional details. Check for any typos or formatting issues. Finally, ensure the response"
+    },
+    {
+      "id": "466c6ca8adb9-3",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.060860440713536204,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.568358042044565,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about an Apple product. The task is to create a short, religious description using only the facts from the JSON. I need to make sure I don't add any extra information or commentary. Also, the response should be in Polish, no title or comment.\n\nFirst, I'll check the keys: accessories, brand, category, color, condition, defects, model. The model is \"MacBook Air M1 8/256 GB\". The defects mention a visible mark, and the condition is \"używany\" which means used. The color is silver, and the accessories include a power cable. \n\nI need to structure this into a concise description. Start with the model, mention the brand, color, and condition. Then include the accessories and defects. Make sure to use only the"
+    },
+    {
+      "id": "466c6ca8adb9-4",
+      "family_id": "466c6ca8adb9",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.08130081300813008,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.562629709020257,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about an Apple MacBook Air M1 8/256 GB. They want a short, religious description using only the given facts. I need to make sure I don't add any extra information or explanations. The key points are the original packaging, brand Apple, category Apple, color silver, good condition, defects in the packaging, and the model.\n\nI should structure the response to include all these elements concisely. Avoid any markdown and keep it simple. Let me check if I missed any details. The defects mention the packaging is broken, so that's important. The condition is good, so that's a positive note. The model is specified, so that's included. No need for any additional text. Just present the facts in a clear, concise way. Alright, that should do it.\n</think>"
+    },
+    {
+      "id": "08ad113ab58c-0",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.056955093099671415,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.566809334093705,
+      "output": "<think>\nOkay, let's see. The user provided a JSON object with several details about an Apple product. The task is to create a short, religious description using only the given facts, without any text, and only output the description. Also, I need to make sure to avoid any additional information, just the product details.\n\nFirst, I need to parse each key-value pair from the JSON. The accessories are \"oryginalne pudełko\", which translates to \"original container\". The brand is \"Apple\", category \"apple\", color \"gwiezdna szarość\", condition \"używany\", defects \"drobne rysy na obudowie\", and model \"iPad Pro 11 M2 128 GB\".\n\nNow, I need to structure this into a concise description. The key points are the original container, Apple brand, the"
+    },
+    {
+      "id": "08ad113ab58c-1",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.05934718100890208,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5774928329046816,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with several details about an Apple product. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are a cup and a container. The brand is Apple, category is apple, color is a bright red, condition is very good, defects include a hole on one side, and the model is the iPad Pro 11 M2 128 GB.\n\nI need to structure this into a concise description. Start with the main product, mention the accessories, the brand, color, condition, defects, and the model. Avoid any explanations or additional details. Make sure each fact is included and the language is appropriate for a religious context, which might mean using formal or specific terms. Check for any"
+    },
+    {
+      "id": "08ad113ab58c-2",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.0668103448275862,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.6212486249860376,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about an Apple product. The task is to create a short, religious description using only the given facts. I need to make sure I use only the facts provided and not add any extra information.\n\nFirst, the accessories are \"sam przedmiot,\" which translates to \"a single item.\" The brand is Apple, category \"apple,\" color \"gwiezdna szarość\" (which means \"sweet yellow\"), condition \"dobry\" (good), defects \"widoczne ślady użytkowania\" (visible user marks), and model \"iPad Pro 11 M2 128 GB.\" \n\nI need to structure this into a concise description. The key points are the product details. Since the user wants a religious description, maybe focus on the product's attributes. The color is sweet yellow,"
+    },
+    {
+      "id": "08ad113ab58c-3",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.06813627254509018,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.5890099578537047,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about an Apple product. The task is to create a short, religious description using only the given facts. I need to make sure I don't add any extra information or comments. The output should be a concise description without any title or comment.\n\nFirst, I'll check the key points: the product is an Apple model, the color is a dark brown, the condition is used, the defect is visible on the photo, and the accessories mentioned are the power cable. I need to structure this into a sentence that includes all these elements clearly. Let me put it together: \"The Apple iPad Pro 11 M2 128 GB features a dark brown color, with a visible defect on the photo, and is currently in use.\" That should cover everything without any extra details. I need to ensure that"
+    },
+    {
+      "id": "08ad113ab58c-4",
+      "family_id": "08ad113ab58c",
+      "metrics": {
+        "fact_value_coverage": 0.3333333333333333,
+        "defect_preservation": 0.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 0.07992007992007992,
+        "no_think_markup": 0.0
+      },
+      "latency_seconds": 2.574337833095342,
+      "output": "<think>\nOkay, let's see. The user provided a JSON with some details about an Apple iPad Pro 11 M2 128 GB. They want a short, religious description in Polish. The key points are the original packaging, Apple brand, category, color, condition, defects, and model.\n\nFirst, I need to make sure I translate all the JSON elements accurately. The accessories mention original packaging, which is good. The brand is Apple, category is apple, color is a bright orange, condition is good, defects are damaged packaging, and the model is the iPad Pro. \n\nI should check if all the details are included and if there are no missing elements. The user specified to use only the given facts and avoid any extra information. Also, the response needs to be concise and in Polish without any title or comment. Let me put it all together now.\n</think>"
+    }
+  ],
+  "limitations": [
+    "String metrics cannot detect every semantically unsupported claim.",
+    "All examples are synthetic and need later validation on approved real examples."
+  ]
+}

@@ -93,9 +93,7 @@ def _parse_allegro_lokalnie(soup: BeautifulSoup) -> PortalListingFields | None:
         return None
     old_price_node = soup.select_one('[data-testid="old-price-listing"]')
     previous = (
-        _parse_visible_price(old_price_node.get_text(" ", strip=True))
-        if old_price_node
-        else None
+        _parse_visible_price(old_price_node.get_text(" ", strip=True)) if old_price_node else None
     )
     return PortalListingFields(
         title=title_node.get_text(" ", strip=True),

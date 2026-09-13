@@ -1,0 +1,36 @@
+from marketplace_agent.diagnostics import build_environment_manifest, core_checks
+from marketplace_agent.settings import Settings
+
+
+def test_settings_install_defaults_outside_checkout(tmp_path) -> None:
+    settings = Settings(app_dir=tmp_path)
+    settings.ensure_directories()
+
+    assert settings.data_dir == tmp_path / "data"
+    assert settings.model_config_path == tmp_path / "config" / "models.yaml"
+    assert settings.model_config_path.is_file()
+    assert settings.source_config_path.is_file()
+    assert settings.category_profile_path.is_file()
+    assert (settings.golden_dir / "price_math.jsonl").is_file()
+    assert settings.data_dir.stat().st_mode & 0o777 == 0o700
+    assert settings.model_config_path.stat().st_mode & 0o777 == 0o600
+
+
+def test_core_doctor_has_machine_readable_failures(tmp_path) -> None:
+    settings = Settings(app_dir=tmp_path)
+    results = core_checks(settings)
+
+    assert results
+    assert all(row.ok for row in results)
+    assert (tmp_path / "data" / "catalog.sqlite").is_file()
+
+
+def test_environment_manifest_has_hashes_but_no_private_paths(tmp_path) -> None:
+    manifest = build_environment_manifest(Settings(app_dir=tmp_path))
+    rendered = str(manifest)
+
+    assert manifest["schema_version"] == 1
+    assert len(manifest["goldens_sha256"]) == 6
+    assert "polish_copywriter" in manifest["models"]
+    assert str(tmp_path) not in rendered
+    assert "telegram" not in rendered.casefold()

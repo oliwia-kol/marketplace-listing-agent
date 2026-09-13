@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-13",
+  "base_model": "Qwen/Qwen3-0.6B",
+  "mlx_lm_version": "0.30.7",
+  "hardware": "Apple M4, 24 GB unified memory",
+  "fine_tune_type": "lora",
+  "trainable_parameters": 1442000,
+  "trainable_percentage": 0.242,
+  "iterations": 200,
+  "gradient_accumulation_steps": 4,
+  "peak_memory_gb": 1.797,
+  "initial_validation_loss": 2.580,
+  "final_validation_loss": 0.005,
+  "final_train_loss": 0.002,
+  "trained_tokens": 13270,
+  "adapter_size_bytes": 5779075,
+  "adapter_sha256": "4466df16b28fd00879aceb13e263184b7c111ddd3b41ab1dbf26d176dc5b2da4",
+  "dataset_sha256": {
+    "train": "0cc06c9457911425432acb663988ac4a578846f085ff8d1668bd86fe6824e91b",
+    "valid": "d1e4400f4c497623ba1b46b64712f6e74184e169b2d1eeb33fa1c08d5f8bba23",
+    "test": "2ff421be37d9e32a16f0c3e80df360018f55bc6a2297f9cf5459359285181423"
+  }
+}

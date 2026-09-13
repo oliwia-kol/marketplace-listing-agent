@@ -20,9 +20,7 @@ def test_olx_parser_reads_only_primary_offer_price() -> None:
 
 
 def test_allegro_parser_ignores_old_delivery_and_recommendation_prices() -> None:
-    result = parse_portal_listing(
-        "allegro_lokalnie", fixture("allegro_lokalnie_listing.html")
-    )
+    result = parse_portal_listing("allegro_lokalnie", fixture("allegro_lokalnie_listing.html"))
     assert result is not None
     assert result.title == "Nintendo Switch OLED"
     assert result.amount == 1100

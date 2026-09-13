@@ -86,6 +86,21 @@ PORTAL_SPECS = {
     ),
 }
 
+
+async def detect_page_blocker(page: Page) -> str | None:
+    """Return a typed blocker without trying to defeat a portal safeguard."""
+    if any(part in page.url.casefold() for part in ("login", "oauth", "signin")):
+        return "login_required"
+    text = (await page.locator("body").inner_text()).casefold()
+    captcha_markers = ("captcha", "nie jestem robotem", "potwierdź, że jesteś człowiekiem")
+    if any(marker in text for marker in captcha_markers):
+        return "captcha"
+    fee_markers = ("opłata za wystawienie", "zapłać za ogłoszenie", "promowanie płatne")
+    if any(marker in text for marker in fee_markers):
+        return "unexpected_fee"
+    return None
+
+
 FORM_MAPPING_SYSTEM = """Mapujesz wyłącznie brakujące pola formularza na widoczne
 kontrolki. `target` musi być dokładnym tekstem label, aria-label albo placeholder z
 listy controls — nigdy indeksem ani selektorem wymyślonym przez model. `value` musi
@@ -162,6 +177,14 @@ class PortalFormFiller:
     async def fill(self, draft: PortalDraft, photo_paths: list[Path]) -> PortalFillResult:
         spec = PORTAL_SPECS[draft.portal]
         page = await self._page_for_portal(spec)
+        blocker = await detect_page_blocker(page)
+        if blocker:
+            return PortalFillResult(
+                portal=draft.portal,
+                status="needs_user",
+                form_url=page.url,
+                message=f"intervention:{blocker}",
+            )
         filled: dict[str, Any] = {}
         missing: dict[str, Any] = {}
         values: dict[str, Any] = {

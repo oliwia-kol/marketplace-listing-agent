@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+          enable-cache: true
+      - name: Install locked development environment
+        run: uv sync --locked --extra dev --no-editable
+      - name: Lint
+        run: uv run --no-sync ruff check src tests scripts experiments/lora
+      - name: Unit and integration tests
+        run: uv run --no-sync pytest
+      - name: Validate golden datasets
+        run: uv run --no-sync python scripts/validate_jsonl.py
+      - name: Scan tracked files for common secret formats
+        run: uv run --no-sync python scripts/scan_secrets.py
+      - name: Build package
+        run: uv build
+      - name: Smoke-test installed wheel outside the checkout
+        shell: bash
+        run: |
+          wheel="$(find dist -name '*.whl' -print -quit)"
+          uv venv /tmp/marketplace-wheel-test --python 3.12
+          uv pip install --python /tmp/marketplace-wheel-test/bin/python "$wheel"
+          cd /tmp
+          MARKETPLACE_AGENT_APP_DIR=/tmp/marketplace-app-test \
+            /tmp/marketplace-wheel-test/bin/marketplace-listing-agent doctor --scope core
+
+  dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "3.12"
+      - name: Audit locked runtime dependencies
+        run: uvx pip-audit -r <(uv export --locked --no-dev --no-emit-project)
+        shell: bash

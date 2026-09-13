@@ -78,9 +78,9 @@ class ComparableCandidate(BaseModel):
     title: str
     price_pln: float = Field(gt=0)
     currency: Literal["PLN", "EUR", "USD", "UNKNOWN"] = "UNKNOWN"
-    price_kind: Literal[
-        "item", "delivery", "installment", "previous", "range", "unknown"
-    ] = "unknown"
+    price_kind: Literal["item", "delivery", "installment", "previous", "range", "unknown"] = (
+        "unknown"
+    )
     delivery_pln: float | None = Field(default=None, ge=0)
     condition: str | None = None
     status: Literal["active", "sold", "unknown"] = "unknown"
@@ -181,6 +181,7 @@ class ItemCase(BaseModel):
     price_summary: PriceResearchSummary | None = None
     selected_price_pln: float | None = None
     portal_drafts: list[PortalDraft] = Field(default_factory=list)
+    snapshot_ids: dict[str, str] = Field(default_factory=dict)
     fill_results: list[PortalFillResult] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

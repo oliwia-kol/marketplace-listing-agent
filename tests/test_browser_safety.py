@@ -45,9 +45,10 @@ def test_marketplace_domain_matching_does_not_accept_substring_attacks() -> None
 
 
 def test_listing_urls_are_canonicalized_before_deduplication() -> None:
-    assert canonicalize_listing_url(
-        "https://www.OLX.pl/d/oferta/test/?utm_source=x#details"
-    ) == "https://olx.pl/d/oferta/test"
+    assert (
+        canonicalize_listing_url("https://www.OLX.pl/d/oferta/test/?utm_source=x#details")
+        == "https://olx.pl/d/oferta/test"
+    )
 
 
 def test_readback_contract_covers_scalar_business_fields_and_photo_count(tmp_path) -> None:

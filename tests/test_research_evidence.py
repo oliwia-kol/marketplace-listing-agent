@@ -56,7 +56,7 @@ async def test_research_service_attaches_written_manifest(tmp_path, monkeypatch)
         data_dir=tmp_path,
     )
 
-    async def fake_run_bounded(facts):
+    async def fake_run_bounded(facts, *, run_id=None, item_id=None):
         service._progress_candidates = [row]
         return summarize_prices([row])
 

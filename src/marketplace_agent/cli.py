@@ -2,20 +2,41 @@ from __future__ import annotations
 
 import asyncio
 import getpass
-import shutil
+import json
+import os
+import socket
+from enum import StrEnum
 from pathlib import Path
+from typing import Annotated
 
 import typer
 
 from marketplace_agent.channels.telegram import TelegramChannel
+from marketplace_agent.diagnostics import (
+    browser_checks,
+    build_environment_manifest,
+    core_checks,
+    model_checks,
+    telegram_checks,
+)
 from marketplace_agent.evaluation.runner import EvaluationRunner
+from marketplace_agent.execution.engine import BrowserExecutionAdapter, ExecutionEngine
 from marketplace_agent.models.ollama_provider import OllamaModelProvider
 from marketplace_agent.models.router import ModelRouter
+from marketplace_agent.monitoring.report import write_run_report
 from marketplace_agent.runtime import ApplicationRuntime
 from marketplace_agent.secrets import read_keychain_token, save_keychain_token
 from marketplace_agent.settings import Settings
 
 app = typer.Typer(no_args_is_help=True, help="Lokalny asystent przygotowywania ofert.")
+
+
+class DoctorScope(StrEnum):
+    CORE = "core"
+    TELEGRAM = "telegram"
+    MODELS = "models"
+    BROWSER = "browser"
+    ALL = "all"
 
 
 def _settings() -> Settings:
@@ -35,40 +56,40 @@ def configure_token() -> None:
 
 
 @app.command()
-def doctor() -> None:
+def doctor(
+    scope: Annotated[DoctorScope, typer.Option("--scope")] = DoctorScope.CORE,
+    probe: Annotated[bool, typer.Option("--probe/--no-probe")] = True,
+) -> None:
     """Sprawdź środowisko, konfigurację i dostępność modeli."""
 
-    async def inspect() -> None:
-        settings = _settings()
-        token = settings.telegram_token or read_keychain_token()
-        chrome_paths = [
-            Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"),
-            Path("/Applications/Chromium.app/Contents/MacOS/Chromium"),
-        ]
-        typer.echo(f"Python/config: OK ({settings.model_config_path})")
-        typer.echo(f"Chrome: {'OK' if any(path.exists() for path in chrome_paths) else 'BRAK'}")
-        typer.echo(f"Ollama CLI: {'OK' if shutil.which('ollama') else 'BRAK'}")
-        typer.echo(f"Telegram token: {'OK' if token else 'BRAK'}")
-        typer.echo(
-            f"Telegram chat ID: {'OK' if settings.telegram_allowed_chat_id is not None else 'BRAK'}"
+    async def inspect() -> bool:
+        settings = Settings()
+        selected = (
+            {scope}
+            if scope != DoctorScope.ALL
+            else {
+                DoctorScope.CORE,
+                DoctorScope.TELEGRAM,
+                DoctorScope.MODELS,
+                DoctorScope.BROWSER,
+            }
         )
-        try:
-            router = ModelRouter.from_yaml(OllamaModelProvider(), settings.model_config_path)
-            status = await router.validate_installation()
-        except Exception as error:
-            typer.echo(f"Ollama server: BŁĄD ({error})")
-            return
-        typer.echo("Modele:")
-        for role, row in status.items():
-            marker = "OK" if row["installed"] else "BRAK"
-            fallback = (
-                f"; fallback={row['fallback']} ({'OK' if row['fallback_installed'] else 'BRAK'})"
-                if row["fallback"]
-                else ""
-            )
-            typer.echo(f"  {role}: {row['model']} ({marker}){fallback}")
+        results = []
+        if DoctorScope.CORE in selected:
+            results.extend(core_checks(settings))
+        if DoctorScope.TELEGRAM in selected:
+            results.extend(telegram_checks(settings))
+        if DoctorScope.BROWSER in selected:
+            results.extend(browser_checks(settings))
+        if DoctorScope.MODELS in selected:
+            settings.ensure_directories()
+            results.extend(await model_checks(settings, probe=probe))
+        for row in results:
+            typer.echo(f"[{'OK' if row.ok else 'FAIL'}] {row.name}: {row.detail}")
+        return all(row.ok for row in results)
 
-    asyncio.run(inspect())
+    if not asyncio.run(inspect()):
+        raise typer.Exit(code=1)
 
 
 @app.command()
@@ -82,6 +103,7 @@ def run() -> None:
             raise RuntimeError("Brak tokenu. Uruchom: marketplace-listing-agent configure-token")
         if settings.telegram_allowed_chat_id is None:
             raise RuntimeError("Ustaw MARKETPLACE_AGENT_TELEGRAM_ALLOWED_CHAT_ID w .env")
+        assert settings.data_dir is not None
         async with ApplicationRuntime(settings) as runtime:
             assert runtime.catalog is not None
             channel = TelegramChannel(
@@ -103,10 +125,25 @@ def run() -> None:
 def show_config() -> None:
     """Pokaż bezpieczną część konfiguracji."""
     settings = _settings()
+    assert settings.data_dir is not None
     typer.echo(f"Dane: {settings.data_dir}")
     typer.echo(f"Modele: {settings.model_config_path}")
     typer.echo(f"Źródła: {settings.source_config_path}")
     typer.echo(f"Tryb headless: {settings.headless}")
+
+
+@app.command("manifest")
+def manifest(
+    destination: Annotated[
+        Path, typer.Option(help="Plik JSON na bezpieczne metadane odtwarzalności")
+    ] = Path("environment-manifest.json"),
+) -> None:
+    """Zapisz wersje i hashe konfiguracji bez sekretów i treści prywatnych."""
+    payload = build_environment_manifest(_settings())
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    destination.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n")
+    destination.chmod(0o600)
+    typer.echo(f"Manifest: {destination}")
 
 
 @app.command("eval")
@@ -120,13 +157,163 @@ def evaluate(
 
     async def execute() -> None:
         settings = _settings()
+        assert settings.model_config_path is not None
+        assert settings.data_dir is not None
+        assert settings.golden_dir is not None
+        assert settings.reports_dir is not None
         router = ModelRouter.from_yaml(OllamaModelProvider(), settings.model_config_path)
         runner = EvaluationRunner(
             router,
-            settings.model_config_path.parent.parent / "goldens",
+            settings.golden_dir,
             settings.reports_dir,
         )
         report = await runner.run(suite, model)
         typer.echo(f"Raport: {report}")
 
     asyncio.run(execute())
+
+
+@app.command("report")
+def report(
+    run_id: str = typer.Option(..., help="Identyfikator przebiegu zapisany w SQLite"),
+) -> None:
+    """Wygeneruj lokalny, pozbawiony treści wrażliwych raport HTML."""
+    settings = _settings()
+    assert settings.reports_dir is not None
+    from marketplace_agent.domain.catalog import CatalogRepository
+
+    catalog = CatalogRepository(settings.catalog_db)
+    catalog.setup()
+    events = catalog.list_run_events(run_id)
+    if not events:
+        raise typer.BadParameter("Nie znaleziono zdarzeń dla tego przebiegu")
+    typer.echo(f"Raport: {write_run_report(events, settings.reports_dir, run_id)}")
+
+
+@app.command("worker")
+def worker(
+    once: bool = typer.Option(False, "--once", help="Obsłuż najwyżej jedno zadanie"),
+) -> None:
+    """Uruchom oddzielny proces deterministycznego wykonawcy formularzy."""
+
+    async def execute() -> None:
+        settings = _settings()
+        assert settings.model_config_path is not None
+        from marketplace_agent.browser.session import BrowserSessionManager
+        from marketplace_agent.domain.catalog import CatalogRepository
+
+        catalog = CatalogRepository(settings.catalog_db)
+        catalog.setup()
+        router = ModelRouter.from_yaml(
+            OllamaModelProvider(), settings.model_config_path, event_sink=catalog.record_run_event
+        )
+        sessions = BrowserSessionManager(settings.chrome_profile_dir, headless=False)
+        engine = ExecutionEngine(
+            catalog,
+            BrowserExecutionAdapter(
+                sessions,
+                router,
+                settings.data_dir,
+                allow_live_submit=settings.allow_live_submit,
+            ),
+            f"{socket.gethostname()}:{os.getpid()}",
+        )
+        try:
+            while True:
+                recovered = catalog.recover_stale_executions()
+                if any(recovered.values()):
+                    typer.echo(f"Odzyskane dzierżawy: {recovered}")
+                result = await engine.run_once()
+                if result:
+                    typer.echo(f"{result['job_id']}: {result['status']}")
+                if once:
+                    return
+                await asyncio.sleep(2)
+        finally:
+            await sessions.close()
+
+    asyncio.run(execute())
+
+
+@app.command("resume-job")
+def resume_job(job_id: str, intervention_id: str) -> None:
+    """Wznów jedno zadanie po ręcznym usunięciu przeszkody."""
+    from marketplace_agent.domain.catalog import CatalogRepository
+
+    settings = _settings()
+    catalog = CatalogRepository(settings.catalog_db)
+    catalog.setup()
+    catalog.resume_intervention(job_id, intervention_id)
+    typer.echo("Zadanie wróciło do kolejki; worker ponownie sprawdzi stronę.")
+
+
+@app.command("cancel-job")
+def cancel_job(job_id: str) -> None:
+    """Anuluj jedno zadanie wykonawcze."""
+    from marketplace_agent.domain.catalog import CatalogRepository
+
+    settings = _settings()
+    catalog = CatalogRepository(settings.catalog_db)
+    catalog.setup()
+    catalog.cancel_execution(job_id)
+    typer.echo("Zadanie anulowane.")
+
+
+@app.command("emergency-stop")
+def emergency_stop() -> None:
+    """Anuluj wszystkie oczekujące i aktywne zadania wykonawcze."""
+    from marketplace_agent.domain.catalog import CatalogRepository
+
+    settings = _settings()
+    catalog = CatalogRepository(settings.catalog_db)
+    catalog.setup()
+    typer.echo(f"Anulowane zadania: {catalog.emergency_stop()}")
+
+
+@app.command("reconcile-job")
+def reconcile_job(job_id: str) -> None:
+    """Sprawdź niepewny wynik publikacji bez ponownego klikania submit."""
+
+    async def execute() -> None:
+        settings = _settings()
+        assert settings.model_config_path is not None
+        assert settings.data_dir is not None
+        from marketplace_agent.browser.session import BrowserSessionManager
+        from marketplace_agent.domain.catalog import CatalogRepository
+
+        catalog = CatalogRepository(settings.catalog_db)
+        catalog.setup()
+        router = ModelRouter.from_yaml(OllamaModelProvider(), settings.model_config_path)
+        sessions = BrowserSessionManager(settings.chrome_profile_dir, headless=False)
+        engine = ExecutionEngine(
+            catalog,
+            BrowserExecutionAdapter(sessions, router, settings.data_dir),
+            "reconciler",
+        )
+        try:
+            result = await engine.reconcile(job_id)
+            typer.echo(f"{job_id}: {result['status']}")
+        finally:
+            await sessions.close()
+
+    asyncio.run(execute())
+
+
+@app.command("backup")
+def backup(
+    destination: Annotated[Path, typer.Option(help="Katalog nadrzędny kopii")],
+) -> None:
+    """Utwórz spójną kopię baz SQLite za pomocą SQLite Backup API."""
+    from marketplace_agent.operations.backup import create_backup
+
+    settings = _settings()
+    typer.echo(f"Kopia: {create_backup(settings.catalog_db, settings.checkpoint_db, destination)}")
+
+
+@app.command("restore-backup")
+def restore(source: Path, destination_data_dir: Path) -> None:
+    """Odtwórz kopię do nowego, pustego katalogu danych."""
+    from marketplace_agent.operations.backup import restore_backup
+
+    restored = restore_backup(source, destination_data_dir)
+    typer.echo("Odtworzono: " + ", ".join(str(path) for path in restored))

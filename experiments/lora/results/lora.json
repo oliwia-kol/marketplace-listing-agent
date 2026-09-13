@@ -1,0 +1,444 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "adapter": "experiments/lora/adapters/qwen3-0.6b-copy",
+  "test_cases": 30,
+  "environment": {
+    "python": "3.12.13",
+    "machine": "arm64"
+  },
+  "metrics": {
+    "fact_value_coverage": 1.0,
+    "defect_preservation": 1.0,
+    "unsupported_phrase_guard": 1.0,
+    "reference_similarity": 1.0,
+    "no_think_markup": 1.0,
+    "prose_format": 1.0
+  },
+  "mean_latency_seconds": 1.024512725082847,
+  "results": [
+    {
+      "id": "140776d11f19-0",
+      "family_id": "140776d11f19",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0124229160137475,
+      "output": "Sprzedaję Nintendo Switch OLED. Kolor lub wariant: czerwony Mario. Stan: używany. Wada lub ślad użytkowania: drobne rysy na obudowie. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "140776d11f19-1",
+      "family_id": "140776d11f19",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9764777079690248,
+      "output": "Sprzedaję Nintendo Switch OLED. Kolor lub wariant: czerwony Mario. Stan: bardzo dobry. Wada lub ślad użytkowania: otarcie na jednym rogu. W zestawie: pudełko i przewód."
+    },
+    {
+      "id": "140776d11f19-2",
+      "family_id": "140776d11f19",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.8877346250228584,
+      "output": "Sprzedaję Nintendo Switch OLED. Kolor lub wariant: czerwony Mario. Stan: dobry. Wada lub ślad użytkowania: widoczne ślady użytkowania. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "140776d11f19-3",
+      "family_id": "140776d11f19",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9792197078932077,
+      "output": "Sprzedaję Nintendo Switch OLED. Kolor lub wariant: czerwony Mario. Stan: używany. Wada lub ślad użytkowania: rysa widoczna na zdjęciu. W zestawie: przewód zasilający."
+    },
+    {
+      "id": "140776d11f19-4",
+      "family_id": "140776d11f19",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9311922090128064,
+      "output": "Sprzedaję Nintendo Switch OLED. Kolor lub wariant: czerwony Mario. Stan: dobry. Wada lub ślad użytkowania: uszkodzone opakowanie. W zestawie: oryginalne opakowanie."
+    },
+    {
+      "id": "27627fcca0c3-0",
+      "family_id": "27627fcca0c3",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0109869169536978,
+      "output": "Sprzedaję Nintendo Pokémon Violet. Kolor lub wariant: pudełkowa. Stan: używany. Wada lub ślad użytkowania: drobne rysy na obudowie. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "27627fcca0c3-1",
+      "family_id": "27627fcca0c3",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9768099999055266,
+      "output": "Sprzedaję Nintendo Pokémon Violet. Kolor lub wariant: pudełkowa. Stan: bardzo dobry. Wada lub ślad użytkowania: otarcie na jednym rogu. W zestawie: pudełko i przewód."
+    },
+    {
+      "id": "27627fcca0c3-2",
+      "family_id": "27627fcca0c3",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.8916002090554684,
+      "output": "Sprzedaję Nintendo Pokémon Violet. Kolor lub wariant: pudełkowa. Stan: dobry. Wada lub ślad użytkowania: widoczne ślady użytkowania. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "27627fcca0c3-3",
+      "family_id": "27627fcca0c3",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9813879590947181,
+      "output": "Sprzedaję Nintendo Pokémon Violet. Kolor lub wariant: pudełkowa. Stan: używany. Wada lub ślad użytkowania: rysa widoczna na zdjęciu. W zestawie: przewód zasilający."
+    },
+    {
+      "id": "27627fcca0c3-4",
+      "family_id": "27627fcca0c3",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9440347920171916,
+      "output": "Sprzedaję Nintendo Pokémon Violet. Kolor lub wariant: pudełkowa. Stan: dobry. Wada lub ślad użytkowania: uszkodzone opakowanie. W zestawie: oryginalne opakowanie."
+    },
+    {
+      "id": "3cc326633c0a-0",
+      "family_id": "3cc326633c0a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.06481312494725,
+      "output": "Sprzedaję Nintendo Xenoblade Chronicles 3. Kolor lub wariant: pudełkowa. Stan: używany. Wada lub ślad użytkowania: drobne rysy na obudowie. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "3cc326633c0a-1",
+      "family_id": "3cc326633c0a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0363054580520838,
+      "output": "Sprzedaję Nintendo Xenoblade Chronicles 3. Kolor lub wariant: pudełkowa. Stan: bardzo dobry. Wada lub ślad użytkowania: otarcie na jednym rogu. W zestawie: pudełko i przewód."
+    },
+    {
+      "id": "3cc326633c0a-2",
+      "family_id": "3cc326633c0a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9500703748781234,
+      "output": "Sprzedaję Nintendo Xenoblade Chronicles 3. Kolor lub wariant: pudełkowa. Stan: dobry. Wada lub ślad użytkowania: widoczne ślady użytkowania. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "3cc326633c0a-3",
+      "family_id": "3cc326633c0a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0366095839999616,
+      "output": "Sprzedaję Nintendo Xenoblade Chronicles 3. Kolor lub wariant: pudełkowa. Stan: używany. Wada lub ślad użytkowania: rysa widoczna na zdjęciu. W zestawie: przewód zasilający."
+    },
+    {
+      "id": "3cc326633c0a-4",
+      "family_id": "3cc326633c0a",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9987597500439733,
+      "output": "Sprzedaję Nintendo Xenoblade Chronicles 3. Kolor lub wariant: pudełkowa. Stan: dobry. Wada lub ślad użytkowania: uszkodzone opakowanie. W zestawie: oryginalne opakowanie."
+    },
+    {
+      "id": "da3707d03d3c-0",
+      "family_id": "da3707d03d3c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0367478330153972,
+      "output": "Sprzedaję Fujifilm X-S10. Kolor lub wariant: czarny. Stan: używany. Wada lub ślad użytkowania: drobne rysy na obudowie. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "da3707d03d3c-1",
+      "family_id": "da3707d03d3c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.010926082963124,
+      "output": "Sprzedaję Fujifilm X-S10. Kolor lub wariant: czarny. Stan: bardzo dobry. Wada lub ślad użytkowania: otarcie na jednym rogu. W zestawie: pudełko i przewód."
+    },
+    {
+      "id": "da3707d03d3c-2",
+      "family_id": "da3707d03d3c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9305890421383083,
+      "output": "Sprzedaję Fujifilm X-S10. Kolor lub wariant: czarny. Stan: dobry. Wada lub ślad użytkowania: widoczne ślady użytkowania. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "da3707d03d3c-3",
+      "family_id": "da3707d03d3c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.013825416797772,
+      "output": "Sprzedaję Fujifilm X-S10. Kolor lub wariant: czarny. Stan: używany. Wada lub ślad użytkowania: rysa widoczna na zdjęciu. W zestawie: przewód zasilający."
+    },
+    {
+      "id": "da3707d03d3c-4",
+      "family_id": "da3707d03d3c",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 0.9676997908391058,
+      "output": "Sprzedaję Fujifilm X-S10. Kolor lub wariant: czarny. Stan: dobry. Wada lub ślad użytkowania: uszkodzone opakowanie. W zestawie: oryginalne opakowanie."
+    },
+    {
+      "id": "d7afe16deb2d-0",
+      "family_id": "d7afe16deb2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.1246247089002281,
+      "output": "Sprzedaję Apple MacBook Air M1 8/256 GB. Kolor lub wariant: srebrny. Stan: używany. Wada lub ślad użytkowania: drobne rysy na obudowie. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "d7afe16deb2d-1",
+      "family_id": "d7afe16deb2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.102835833095014,
+      "output": "Sprzedaję Apple MacBook Air M1 8/256 GB. Kolor lub wariant: srebrny. Stan: bardzo dobry. Wada lub ślad użytkowania: otarcie na jednym rogu. W zestawie: pudełko i przewód."
+    },
+    {
+      "id": "d7afe16deb2d-2",
+      "family_id": "d7afe16deb2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0070960419252515,
+      "output": "Sprzedaję Apple MacBook Air M1 8/256 GB. Kolor lub wariant: srebrny. Stan: dobry. Wada lub ślad użytkowania: widoczne ślady użytkowania. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "d7afe16deb2d-3",
+      "family_id": "d7afe16deb2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0949544999748468,
+      "output": "Sprzedaję Apple MacBook Air M1 8/256 GB. Kolor lub wariant: srebrny. Stan: używany. Wada lub ślad użytkowania: rysa widoczna na zdjęciu. W zestawie: przewód zasilający."
+    },
+    {
+      "id": "d7afe16deb2d-4",
+      "family_id": "d7afe16deb2d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.052760292077437,
+      "output": "Sprzedaję Apple MacBook Air M1 8/256 GB. Kolor lub wariant: srebrny. Stan: dobry. Wada lub ślad użytkowania: uszkodzone opakowanie. W zestawie: oryginalne opakowanie."
+    },
+    {
+      "id": "aecc44edb78d-0",
+      "family_id": "aecc44edb78d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.181905083823949,
+      "output": "Sprzedaję Apple iPad Pro 11 M2 128 GB. Kolor lub wariant: gwiezdna szarość. Stan: używany. Wada lub ślad użytkowania: drobne rysy na obudowie. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "aecc44edb78d-1",
+      "family_id": "aecc44edb78d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.1782540001440793,
+      "output": "Sprzedaję Apple iPad Pro 11 M2 128 GB. Kolor lub wariant: gwiezdna szarość. Stan: bardzo dobry. Wada lub ślad użytkowania: otarcie na jednym rogu. W zestawie: pudełko i przewód."
+    },
+    {
+      "id": "aecc44edb78d-2",
+      "family_id": "aecc44edb78d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.0731159998103976,
+      "output": "Sprzedaję Apple iPad Pro 11 M2 128 GB. Kolor lub wariant: gwiezdna szarość. Stan: dobry. Wada lub ślad użytkowania: widoczne ślady użytkowania. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "aecc44edb78d-3",
+      "family_id": "aecc44edb78d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.1683727919589728,
+      "output": "Sprzedaję Apple iPad Pro 11 M2 128 GB. Kolor lub wariant: gwiezdna szarość. Stan: używany. Wada lub ślad użytkowania: rysa widoczna na zdjęciu. W zestawie: przewód zasilający."
+    },
+    {
+      "id": "aecc44edb78d-4",
+      "family_id": "aecc44edb78d",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "reference_similarity": 1.0,
+        "no_think_markup": 1.0,
+        "prose_format": 1.0
+      },
+      "latency_seconds": 1.1132490001618862,
+      "output": "Sprzedaję Apple iPad Pro 11 M2 128 GB. Kolor lub wariant: gwiezdna szarość. Stan: dobry. Wada lub ślad użytkowania: uszkodzone opakowanie. W zestawie: oryginalne opakowanie."
+    }
+  ],
+  "limitations": [
+    "String metrics cannot detect every semantically unsupported claim.",
+    "All examples are synthetic and need later validation on approved real examples."
+  ]
+}

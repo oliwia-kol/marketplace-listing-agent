@@ -31,3 +31,24 @@ def test_safe_template_uses_only_approved_values() -> None:
     assert result.title == "płaszcz damski - M"
     assert "Materiał: wełna." in result.description
     assert "Stan" not in result.description
+
+
+def test_guard_catches_benchmark_accessory_and_operability_inventions() -> None:
+    draft = PortalDraft(
+        portal="olx",
+        title="Nintendo Switch Lite",
+        description=(
+            "W pełni sprawna, wszystkie funkcje działają bez zarzutu. "
+            "W zestawie ładowarka i kabel HDMI."
+        ),
+        category="Elektronika",
+        price_pln=500,
+    )
+    findings = obvious_unsupported_claims(
+        draft,
+        {"brand": "Nintendo", "model": "Switch Lite", "defects": "otarcie obudowy"},
+    )
+
+    assert {"sprawn", "wszystkie funkcje", "bez zarzutu", "ładowark", "kabel", "hdmi"} <= set(
+        findings
+    )

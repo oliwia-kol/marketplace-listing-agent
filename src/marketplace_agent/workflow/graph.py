@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from typing import Any
+from uuid import uuid4
 
 from langgraph.graph import END, START, StateGraph
 from langgraph.types import interrupt
@@ -68,6 +69,7 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
 
     async def analyze_item(state: ListingState) -> ListingState:
         item = _item(state)
+        run_id = state.get("run_id") or uuid4().hex
         response = await deps.router.run(
             ModelRole.VISION_FAST,
             system=FACT_SYSTEM,
@@ -78,6 +80,8 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
             ),
             output_schema=FactExtractionOutput,
             images=item.photo_paths,
+            run_id=run_id,
+            item_id=item.item_id,
         )
         item.facts.proposals = response.output.facts
         profile_catalog = getattr(deps.research, "category_profiles", None)
@@ -87,6 +91,7 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
         item.status = WorkflowStatus.FACTS_REVIEW
         return {
             "item": _save(deps, item),
+            "run_id": run_id,
             "missing_questions": list(
                 dict.fromkeys(
                     response.output.missing_questions + (profile.questions if profile else [])
@@ -124,6 +129,8 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
             system=PORTAL_SYSTEM,
             prompt=json.dumps(item.facts.approved_dict(), ensure_ascii=False),
             output_schema=PortalRecommendationOutput,
+            run_id=state.get("run_id"),
+            item_id=item.item_id,
         )
         item.recommended_portals = list(dict.fromkeys(response.output.portals))
         item.recommended_portals = [
@@ -142,32 +149,33 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
         if not questions:
             return {}
         item = _item(state)
-        response = interrupt(
-            {
-                "kind": "missing_info",
-                "item_id": item.item_id,
-                "questions": questions,
-                "question": (
-                    "Możesz dodać brakujące fakty jako JSON albo zaakceptować pominięcie."
-                ),
-            }
-        )
-        if isinstance(response, dict) and response.get("action") == "edit":
-            values = response.get("value", {})
-            if not isinstance(values, dict):
-                raise ValueError("Brakujące fakty muszą być obiektem JSON")
-            for name, value in values.items():
-                item.facts.proposals.append(
-                    FactProposal(
-                        name=name,
-                        value=value,
-                        confidence=1,
-                        source="user",
-                        approved=True,
+        for offset in range(0, len(questions), 3):
+            response = interrupt(
+                {
+                    "kind": "missing_info",
+                    "item_id": item.item_id,
+                    "questions": questions[offset : offset + 3],
+                    "question": (
+                        "Możesz dodać brakujące fakty jako JSON albo zaakceptować pominięcie."
+                    ),
+                }
+            )
+            if isinstance(response, dict) and response.get("action") == "edit":
+                values = response.get("value", {})
+                if not isinstance(values, dict):
+                    raise ValueError("Brakujące fakty muszą być obiektem JSON")
+                for name, value in values.items():
+                    item.facts.proposals.append(
+                        FactProposal(
+                            name=name,
+                            value=value,
+                            confidence=1,
+                            source="user",
+                            approved=True,
+                        )
                     )
-                )
-        elif not (isinstance(response, dict) and response.get("action") == "accept"):
-            raise ValueError("Brakujące informacje wymagają decyzji")
+            elif not (isinstance(response, dict) and response.get("action") == "accept"):
+                raise ValueError("Brakujące informacje wymagają decyzji")
         return {"item": _save(deps, item), "missing_questions": []}
 
     async def review_portals(state: ListingState) -> ListingState:
@@ -199,7 +207,7 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
     async def research_price(state: ListingState) -> ListingState:
         item = _item(state)
         item.price_summary = await deps.research.run(
-            item.facts.approved_dict(), item_id=item.item_id
+            item.facts.approved_dict(), item_id=item.item_id, run_id=state.get("run_id")
         )
         item.status = WorkflowStatus.PRICE_REVIEW
         return {"item": _save(deps, item)}
@@ -245,6 +253,8 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
                 ensure_ascii=False,
             ),
             output_schema=CopyDraftOutput,
+            run_id=state.get("run_id"),
+            item_id=item.item_id,
         )
         requested = set(item.selected_portals)
         item.portal_drafts = [
@@ -290,6 +300,8 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
                 ensure_ascii=False,
             ),
             output_schema=CopyAuditOutput,
+            run_id=state.get("run_id"),
+            item_id=item.item_id,
         )
         decisions = {decision.portal: decision for decision in response.output.decisions}
         warnings: dict[str, list[str]] = {}
@@ -342,38 +354,73 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
                 draft.delivery = edited.delivery
                 draft.attributes = edited.attributes
             draft.approved = True
+        item.snapshot_ids = {
+            draft.portal: deps.catalog.create_listing_snapshot(item, draft)
+            for draft in item.portal_drafts
+        }
         return {"item": _save(deps, item)}
 
     async def authorize_fill(state: ListingState) -> ListingState:
         item = _item(state)
+        previews = []
+        for portal, snapshot_id in item.snapshot_ids.items():
+            snapshot = deps.catalog.get_snapshot(snapshot_id)
+            if snapshot:
+                previews.append(
+                    {
+                        "portal": portal,
+                        "snapshot_id": snapshot_id,
+                        "version": snapshot["version"],
+                        "content_hash": snapshot["content_hash"][:16],
+                        "draft": snapshot["payload"]["draft"],
+                        "photos": [
+                            {"name": photo["file_name"], "sha256": photo["sha256"][:16]}
+                            for photo in snapshot["payload"]["photos"]
+                        ],
+                    }
+                )
         response = interrupt(
             {
                 "kind": "fill_authorization",
                 "item_id": item.item_id,
                 "portals": item.selected_portals,
+                "snapshot_ids": item.snapshot_ids,
+                "previews": previews,
                 "question": "Wypełnić formularze w Chrome? Bot nie kliknie publikacji.",
             }
         )
         approved, _ = approval_value(response, True)
         if not approved:
             raise ValueError("Wypełnianie formularzy wymaga jawnej akceptacji")
+        approval_id = response.get("approval_id") if isinstance(response, dict) else None
+        if not approval_id or not deps.catalog.validate_consumed_approval(
+            approval_id,
+            item.item_id,
+            "fill_authorization",
+            list(item.snapshot_ids.values()),
+        ):
+            raise PermissionError("Zgoda nie odpowiada bieżącym snapshotom")
         item.status = WorkflowStatus.FORM_FILLING
-        return {"item": _save(deps, item)}
+        return {"item": _save(deps, item), "fill_approval_id": approval_id}
 
     async def fill_forms(state: ListingState) -> ListingState:
         item = _item(state)
-        item.fill_results = await deps.browser_fill.fill_all(
-            item.item_id,
-            [draft for draft in item.portal_drafts if draft.approved],
-            item.photo_paths,
-        )
-        if not item.fill_results or any(result.status == "failed" for result in item.fill_results):
-            item.status = WorkflowStatus.FAILED
-        elif any(result.status == "needs_user" for result in item.fill_results):
-            item.status = WorkflowStatus.FORM_NEEDS_USER
-        else:
-            item.status = WorkflowStatus.READY_TO_PUBLISH
-        return {"item": _save(deps, item)}
+        approval_id = state.get("fill_approval_id")
+        if not approval_id:
+            raise PermissionError("Brak zgody wykonawczej w stanie grafu")
+        jobs = [
+            deps.catalog.enqueue_execution(
+                approval_id=approval_id,
+                snapshot_id=snapshot_id,
+                portal=portal,
+            )
+            for portal, snapshot_id in item.snapshot_ids.items()
+        ]
+        item.status = WorkflowStatus.FORM_FILLING
+        return {
+            "item": _save(deps, item),
+            "execution_job_ids": [job["job_id"] for job in jobs],
+        }
 
     builder = StateGraph(ListingState)
     builder.add_node("analyze_item", analyze_item)
