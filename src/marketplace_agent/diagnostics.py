@@ -46,27 +46,30 @@ def build_environment_manifest(settings: Settings) -> dict[str, object]:
     model_config = RouterConfig.model_validate(
         yaml.safe_load(settings.model_config_path.read_text(encoding="utf-8"))
     )
-    try:
-        commit = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=Path(__file__).resolve().parents[2],
-            check=True,
-            capture_output=True,
-            text=True,
-            timeout=3,
-        ).stdout.strip()
-        dirty = bool(
-            subprocess.run(
-                ["git", "status", "--porcelain"],
-                cwd=Path(__file__).resolve().parents[2],
+    commit, dirty = "unavailable", None
+    for candidate in (Path.cwd(), Path(__file__).resolve().parents[2]):
+        try:
+            commit = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=candidate,
                 check=True,
                 capture_output=True,
                 text=True,
                 timeout=3,
             ).stdout.strip()
-        )
-    except (OSError, subprocess.SubprocessError):
-        commit, dirty = "unavailable", None
+            dirty = bool(
+                subprocess.run(
+                    ["git", "status", "--porcelain"],
+                    cwd=candidate,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                    timeout=3,
+                ).stdout.strip()
+            )
+            break
+        except (OSError, subprocess.SubprocessError):
+            continue
     return {
         "schema_version": 1,
         "git": {"commit": commit, "dirty": dirty},
