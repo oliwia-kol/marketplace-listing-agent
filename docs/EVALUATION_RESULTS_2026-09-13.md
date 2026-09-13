@@ -80,3 +80,16 @@ testem i porównaniem do prostszego baseline'u. Szczegółowy zapis znajduje si�
 4. Zbudować kolejny dataset z realnych, zanonimizowanych przypadków oraz podwójnej
    ręcznej adnotacji; syntetyczne przypadki zachować jako regresje.
 5. Mierzyć osobno jakość, bezpieczeństwo, koszt pamięci i czas każdej roli.
+
+## Pilot większego copywritera — Qwen3.5 27B
+
+Po zamknięciu głównego benchmarku wykonano krótki test niezmienionego promptu na
+czterech pierwotnych przypadkach i lokalnym `qwen3.5:27b`. Model uzyskał 2/4 według
+metryki dosłownych fraz, ale 4/4 dla zakazanych fraz. Dwie porażki wynikały z parafrazy
+faktu, np. innego sposobu napisania „bez pudełka”, a nie z niepopartego twierdzenia.
+Średni czas wyniósł 57,39 s, przy maksimum 83,37 s.
+
+Pilot nie jest porównywalny z pełnym wynikiem Bielika 7/20 i nie uzasadnia zmiany modelu.
+Pokazuje natomiast, że obecna metryka miesza wierność semantyczną z literalnym
+dopasowaniem tekstu. Następna iteracja powinna mierzyć claim-level grounding, zachowanie
+wady i kompletności oraz ocenianą w ciemno użyteczność językową.
