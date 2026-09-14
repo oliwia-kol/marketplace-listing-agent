@@ -151,7 +151,7 @@ def evaluate(
     suite: str = typer.Option(
         "price_math",
         help=(
-            "price_math, facts, comparables, copy, copy_quality, copy_audit, "
+            "price_math, facts, comparables, copy, copy_quality, copy_real_anonymized, copy_audit, "
             "copy_audit_mutations albo forms"
         ),
     ),
@@ -165,6 +165,13 @@ def evaluate(
         None, help="Opcjonalny split zestawu, np. development, selection lub frozen"
     ),
     limit: int | None = typer.Option(None, min=1, help="Maksymalna liczba przypadków na próbę"),
+    case_ids: str | None = typer.Option(
+        None,
+        help=(
+            "Lista identyfikatorów rozdzielonych przecinkami; przydatna do "
+            "zbalansowanego screeningu"
+        ),
+    ),
 ) -> None:
     """Uruchom wybrany zestaw golden i zapisz raport JSON."""
 
@@ -192,6 +199,9 @@ def evaluate(
             },
             split=split,
             limit=limit,
+            case_ids={value.strip() for value in case_ids.split(",") if value.strip()}
+            if case_ids
+            else None,
         )
         typer.echo(f"Raport: {report}")
 
@@ -230,9 +240,7 @@ def copy_report(
     if not diagnostics:
         raise typer.BadParameter("Nie znaleziono diagnostyki opisu dla tego przebiegu")
     ratings = catalog.list_copy_ratings(run_id)
-    typer.echo(
-        f"Raport: {write_copy_report(diagnostics, settings.reports_dir, run_id, ratings)}"
-    )
+    typer.echo(f"Raport: {write_copy_report(diagnostics, settings.reports_dir, run_id, ratings)}")
 
 
 @app.command("copy-rate")

@@ -52,13 +52,32 @@ Audytor Qwen3.5 9B uzyskał 6/6 na pierwszych sześciu przypadkach splitu `selec
 produkcyjną. Pełna próba musi objąć wszystkie rodziny mutacji, powtórzenia i realne
 teksty.
 
+## Uzupełnienie: eksperyment na 30 publicznych przypadkach
+
+Po pierwszym wdrożeniu utworzono `copy_real_anonymized.jsonl`: 30 przypadków
+znormalizowanych z publicznych ofert OLX i Allegro Lokalnie. Są to twierdzenia
+sprzedających, a nie zweryfikowany stan rzeczy. Eksporter usuwa URL i pola
+identyfikujące; prywatny manifest źródeł pozostaje poza Gitem.
+
+Pełne porównanie dało Qwen3.5 9B wynik 14/30, a Bielikowi 11B v3 Q4 wynik 3/30.
+Zbalansowany screening Qwen3.5 27B dał 5/9 wobec 4/9 Qwen 9B, ale był około 4,4 raza
+wolniejszy i miał słabszy guard. Szczegóły i ograniczenia zapisano w
+[`EVALUATION_RESULTS_2026-09-14_REAL_COPY.md`](EVALUATION_RESULTS_2026-09-14_REAL_COPY.md).
+
+Runner przyjmuje teraz konkretne `case_ids`, dzięki czemu screening nie zależy od
+kolejności rekordów. Dodano też wersjonowane przeliczanie zachowanych odpowiedzi i
+generator ślepego pakietu A/B/C z lokalnym zapisem oraz eksportem ocen.
+
 ## Co jest nadal otwarte
 
-- Brakuje 30–50 zanonimizowanych, ręcznie sprawdzonych ofert z własnego użycia.
+- Brakuje 30–50 ręcznie sprawdzonych przypadków z własnych zdjęć i notatek. Publiczny
+  zbiór 30 ofert jest użytecznym testem realistycznego języka faktów, ale nie dowodem
+  prawdziwego stanu przedmiotów.
 - Specyfikacje producenta można zapisać, lecz automatyczne pobieranie i weryfikacja
   źródeł producenta nie są jeszcze wdrożone.
-- Nie wykonano pełnego benchmarku wszystkich 120/60 przypadków ani ślepego porównania
-  A/B. Pilot nie uzasadnia zmiany domyślnego modelu.
+- Pakiet ślepego porównania A/B/C jest gotowy, lecz nie ma jeszcze ocen użytkowniczki.
+  Pełne 120/60 syntetycznych przypadków nadal służy regresji, a nie decyzji
+  produkcyjnej.
 - LoRA nie powinna wejść do runtime. Dotychczasowy eksperyment pokonał model bazowy w
   formatowaniu, lecz zremisował z prostym szablonem. Najpierw trzeba wykazać powtarzalny
   błąd semantyczny na realnym zbiorze.
@@ -79,9 +98,20 @@ teksty.
 ## Weryfikacja
 
 - Ruff: passed.
-- Pytest z `ResourceWarning`: **95 passed**.
+- Pytest z `ResourceWarning`: stan końcowy jest raportowany po pełnej walidacji poniżej.
 - JSONL: **180 nowych przypadków**, poprawny format i unikalne identyfikatory w repo.
 - Lokalnie dostępne: Qwen3.5 4B/9B/27B i Bielik 11B v3 Q4.
 - Wheel i sdist zbudowane; wheel zawiera oba nowe zestawy golden i przeszedł core doctor
   po instalacji do izolowanego katalogu.
 - Niczego nie opublikowano i niczego nie wysłano do GitHuba.
+
+## Walidacja końcowa po eksperymencie real-copy
+
+- Ruff: passed.
+- Pytest z `ResourceWarning` jako błąd: **100 passed**.
+- Wszystkie pliki JSONL: poprawne i z unikalnymi identyfikatorami.
+- Wheel i sdist: zbudowane ponownie; wheel zawiera
+  `copy_real_anonymized.jsonl` oraz aktualny `models.yaml`.
+- Core doctor na świeżym katalogu aplikacji: passed; SQLite schema **5**.
+- Blind review: 9 wspólnych przypadków × 3 modele, bez nazw modeli w pakiecie.
+- Prywatny manifest URL: potwierdzony jako ignorowany przez Git.

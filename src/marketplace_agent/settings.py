@@ -96,6 +96,7 @@ class Settings(BaseSettings):
             "comparables.jsonl",
             "copy.jsonl",
             "copy_quality.jsonl",
+            "copy_real_anonymized.jsonl",
             "copy_audit.jsonl",
             "copy_audit_mutations.jsonl",
             "facts.jsonl",

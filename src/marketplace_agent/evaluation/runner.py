@@ -62,6 +62,7 @@ class EvaluationRunner:
         self.reports_dir = reports_dir
         self._effective_config_json: str | None = None
         self._evaluation_scope: dict[str, Any] = {}
+        self._dataset_kind = "synthetic_seed_golden"
 
     async def run(
         self,
@@ -72,11 +73,13 @@ class EvaluationRunner:
         generation_overrides: dict[str, Any] | None = None,
         split: str | None = None,
         limit: int | None = None,
+        case_ids: set[str] | None = None,
     ) -> Path:
         self._effective_config_json = None
         self._evaluation_scope = {
             "split": split,
             "limit": limit,
+            "case_ids": sorted(case_ids) if case_ids else None,
             "repeats": repeats,
             "generation_overrides": generation_overrides or {},
         }
@@ -87,6 +90,7 @@ class EvaluationRunner:
             "comparables",
             "copy",
             "copy_quality",
+            "copy_real_anonymized",
             "copy_audit",
             "copy_audit_mutations",
             "forms",
@@ -98,6 +102,7 @@ class EvaluationRunner:
                 generation_overrides=generation_overrides or {},
                 split=split,
                 limit=limit,
+                case_ids=case_ids,
             )
         else:
             raise ValueError(f"Nieznany zestaw: {suite}")
@@ -147,6 +152,7 @@ class EvaluationRunner:
         generation_overrides: dict[str, Any],
         split: str | None,
         limit: int | None,
+        case_ids: set[str] | None,
     ) -> list[CaseResult]:
         if repeats < 1 or repeats > 10:
             raise ValueError("repeats must be between 1 and 10")
@@ -157,6 +163,7 @@ class EvaluationRunner:
             "comparables": ModelRole.MARKET_EXPERT,
             "copy": ModelRole.POLISH_COPYWRITER,
             "copy_quality": ModelRole.POLISH_COPYWRITER,
+            "copy_real_anonymized": ModelRole.POLISH_COPYWRITER,
             "copy_audit": ModelRole.MARKET_EXPERT,
             "copy_audit_mutations": ModelRole.MARKET_EXPERT,
             "forms": ModelRole.GUI_FALLBACK,
@@ -173,12 +180,20 @@ class EvaluationRunner:
         rows = load_jsonl(path)
         if split:
             rows = [row for row in rows if row.get("split") == split]
+        if case_ids:
+            known_ids = {row["id"] for row in rows}
+            missing_ids = case_ids - known_ids
+            if missing_ids:
+                raise ValueError(f"Unknown case ids: {sorted(missing_ids)}")
+            rows = [row for row in rows if row["id"] in case_ids]
         if limit is not None:
             if limit < 1:
                 raise ValueError("limit must be positive")
             rows = rows[:limit]
         if not rows:
             raise ValueError(f"No cases selected for suite={suite}, split={split!r}")
+        provenance = {row.get("provenance") for row in rows}
+        self._dataset_kind = provenance.pop() if len(provenance) == 1 else "mixed_provenance"
         self._effective_config_json = self.router.config.model_dump_json()
         self._evaluation_scope.update(
             {
@@ -256,7 +271,7 @@ class EvaluationRunner:
                 if len(actual) == len(expected)
                 else {"accuracy": 0.0, "precision": 0.0, "recall": 0.0, "f1": 0.0}
             )
-        elif suite in {"copy", "copy_quality"}:
+        elif suite in {"copy", "copy_quality", "copy_real_anonymized"}:
             facts = row["input"]["facts"]
             proposals = [
                 FactProposal(
@@ -300,9 +315,7 @@ class EvaluationRunner:
                 )
                 for value in response.output.drafts
             ]
-            text = " ".join(
-                f"{draft.title} {draft.description}" for draft in drafts
-            ).lower()
+            text = " ".join(f"{draft.title} {draft.description}" for draft in drafts).lower()
             forbidden = [value.lower() for value in row["forbidden_phrases"]]
             assessments = [assess_draft(draft, brief) for draft in drafts]
             required_count = sum(claim.required for claim in brief.claims) * len(drafts)
@@ -408,9 +421,7 @@ class EvaluationRunner:
             git_commit = "unavailable"
         metric_names = sorted({name for result in results for name in result.metrics})
         aggregate_metrics = {
-            name: statistics.fmean(
-                result.metrics.get(name, 0.0) for result in results
-            )
+            name: statistics.fmean(result.metrics.get(name, 0.0) for result in results)
             for name in metric_names
         }
         latencies = [result.latency_seconds for result in results]
@@ -418,7 +429,7 @@ class EvaluationRunner:
         p95_index = max(0, math.ceil(0.95 * len(sorted_latencies)) - 1)
         payload = {
             "suite": suite,
-            "dataset_kind": "synthetic_seed_golden",
+            "dataset_kind": self._dataset_kind,
             "dataset_sha256": dataset_hash,
             "model_config_sha256": hashlib.sha256(config_json.encode()).hexdigest(),
             "git_commit": git_commit,

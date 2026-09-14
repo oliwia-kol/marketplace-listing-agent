@@ -1,6 +1,8 @@
 # Wyniki ewaluacji
 
-Aktualny pełny raport z 120 przypadków oraz eksperymentu LoRA znajduje się w
+Aktualny wybór generatora na 30 zanonimizowanych przypadkach publicznych znajduje się
+w [`EVALUATION_RESULTS_2026-09-14_REAL_COPY.md`](EVALUATION_RESULTS_2026-09-14_REAL_COPY.md).
+Pełny raport z 120 przypadków syntetycznych oraz eksperymentu LoRA znajduje się w
 [`EVALUATION_RESULTS_2026-09-13.md`](EVALUATION_RESULTS_2026-09-13.md). Poniższy zapis
 jest historycznym baseline'em z 08.09 i pokazuje, dlaczego dodano guardy oraz szersze
 zestawy testowe.
@@ -22,8 +24,9 @@ wersji promptów i modeli lokalnych; nie są deklaracją jakości produkcyjnej.
 
 Przy `copy` część porażek wynika z literalnej metryki fraz i polskiej fleksji, ale
 dwa błędy są merytoryczne: model dopisał „nie wpływa na funkcjonalność/jakość”.
-Dlatego Bielik pozostaje generatorem szkicu, a nie źródłem prawdy. Każdy szkic
-przechodzi audyt 9B i reguły deterministyczne; przy ostrzeżeniu używany jest szablon.
+Dlatego żaden model nie jest źródłem prawdy. Od 14.09 Qwen3.5 9B jest domyślnym
+generatorem, a Bielik technicznym fallbackiem. Każdy szkic przechodzi audyt 9B i
+reguły deterministyczne; przy ostrzeżeniu używany jest szablon.
 
 Porównanie faktów wykonano na tym samym rozszerzonym zbiorze i instrukcji. 9B jest
 modelem głównym, 4B fallbackiem. Przed utrwaleniem tej decyzji trzeba dodać prawdziwe

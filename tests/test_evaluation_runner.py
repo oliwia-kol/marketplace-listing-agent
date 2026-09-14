@@ -42,6 +42,10 @@ async def test_copy_eval_can_select_split_limit_and_repeats(tmp_path: Path) -> N
         "copy_quality",
         split="selection",
         limit=2,
+        case_ids={
+            "copy-quality-nintendo-switch-oled-20",
+            "copy-quality-nintendo-switch-oled-22",
+        },
         repeats=2,
         generation_overrides={"seed": 7},
     )
@@ -51,5 +55,9 @@ async def test_copy_eval_can_select_split_limit_and_repeats(tmp_path: Path) -> N
     assert report["pass_rate"] == 1
     assert report["aggregate_metrics"]["schema_valid"] == 1
     assert report["evaluation_scope"]["effective_role_config"]["seed"] == 7
+    assert report["evaluation_scope"]["case_ids"] == [
+        "copy-quality-nintendo-switch-oled-20",
+        "copy-quality-nintendo-switch-oled-22",
+    ]
     assert report["latency_seconds"]["p95"] >= 0
     assert all("#run-" in result["case_id"] for result in report["results"])

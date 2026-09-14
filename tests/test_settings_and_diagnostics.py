@@ -9,9 +9,11 @@ def test_settings_install_defaults_outside_checkout(tmp_path) -> None:
     assert settings.data_dir == tmp_path / "data"
     assert settings.model_config_path == tmp_path / "config" / "models.yaml"
     assert settings.model_config_path.is_file()
+    assert "polish_copywriter:\n    model: qwen3.5:9b" in settings.model_config_path.read_text()
     assert settings.source_config_path.is_file()
     assert settings.category_profile_path.is_file()
     assert (settings.golden_dir / "price_math.jsonl").is_file()
+    assert (settings.golden_dir / "copy_real_anonymized.jsonl").is_file()
     assert settings.data_dir.stat().st_mode & 0o777 == 0o700
     assert settings.model_config_path.stat().st_mode & 0o777 == 0o600
 
@@ -30,7 +32,7 @@ def test_environment_manifest_has_hashes_but_no_private_paths(tmp_path) -> None:
     rendered = str(manifest)
 
     assert manifest["schema_version"] == 1
-    assert len(manifest["goldens_sha256"]) == 8
+    assert len(manifest["goldens_sha256"]) == 9
     assert "polish_copywriter" in manifest["models"]
     assert str(tmp_path) not in rendered
     assert "telegram" not in rendered.casefold()

@@ -52,3 +52,32 @@ def test_guard_catches_benchmark_accessory_and_operability_inventions() -> None:
     assert {"sprawn", "wszystkie funkcje", "bez zarzutu", "ładowark", "kabel", "hdmi"} <= set(
         findings
     )
+
+
+def test_battery_and_operability_claims_accept_typed_evidence() -> None:
+    draft = PortalDraft(
+        portal="olx",
+        title="iPhone 13",
+        description="Bateria ma 81%. Telefon działa i jest sprawny.",
+        category="Telefony",
+        price_pln=1,
+    )
+    facts = {
+        "model": "iPhone 13",
+        "attribute.battery_health": "81%",
+        "attribute.seller_test_claim": "test egzemplarza wykonany przez sprzedającego",
+    }
+
+    assert obvious_unsupported_claims(draft, facts) == []
+
+
+def test_battery_word_without_battery_fact_is_rejected() -> None:
+    draft = PortalDraft(
+        portal="olx",
+        title="iPhone 13",
+        description="Bateria ma świetną kondycję.",
+        category="Telefony",
+        price_pln=1,
+    )
+
+    assert "bateri" in obvious_unsupported_claims(draft, {"model": "iPhone 13"})
