@@ -25,7 +25,7 @@ jobs:
       - name: Install locked development environment
         run: uv sync --locked --extra dev --no-editable
       - name: Lint
-        run: uv run --no-sync ruff check src tests scripts experiments/lora
+        run: uv run --no-sync ruff check src tests scripts experiments/lora experiments/lora_v2
       - name: Unit and integration tests
         run: uv run --no-sync pytest
       - name: Validate golden datasets

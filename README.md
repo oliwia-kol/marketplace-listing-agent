@@ -112,10 +112,10 @@ the same SQLite authorization rules used by Telegram.
 
 ## LoRA experiment
 
-A real MLX-LM LoRA run trained Qwen3-0.6B on 240 synthetic examples and evaluated 30
-held-out product-family cases. The adapter fixed the base model's JSON-echo behavior,
-but only tied a deterministic template. It is documented and reproducible, but not
-enabled in the product. See [experiment results](experiments/lora/RESULTS.md).
+Two reproducible MLX-LM experiments trained Qwen3-0.6B adapters. The second used 400
+training, 100 validation and 100 frozen-test examples with product families held out.
+Both adapters learned prose but lost exact facts on unseen families, so neither is
+enabled in the product. See the [latest experiment results](experiments/lora_v2/RESULTS.md).
 
 ## Documentation
 
@@ -126,6 +126,6 @@ enabled in the product. See [experiment results](experiments/lora/RESULTS.md).
 - [Technical learning textbook in Polish](docs/course/PODRECZNIK_TECHNICZNY.md)
 - [Competency and evidence matrix](docs/COMPETENCY_MATRIX.md)
 - [Model failure atlas](docs/FAILURE_ATLAS.md)
-- [Current verified status](docs/PROJECT_STATUS_2026-09-13.md)
+- [Current verified status and remaining work](docs/PROJECT_STATUS_2026-09-15.md)
 - [Copy-quality implementation status](docs/IMPLEMENTATION_LOG_2026-09-14.md)
 - [Architecture decisions](docs/adr/)

@@ -15,10 +15,10 @@ and exposed unsupported operability and accessory claims. The production pipelin
 therefore combines an independent audit, deterministic claim guards, a safe template
 fallback and user approval.
 
-Ran a controlled MLX-LM LoRA experiment on Apple Silicon: 240 train, 30 validation and
-30 frozen test examples for Qwen3-0.6B. The adapter fixed a narrow output-format failure,
-but tied a deterministic template, so it was documented and deliberately not promoted
-to the product without real anonymized data.
+Ran reproducible MLX-LM LoRA experiments on Apple Silicon. The second experiment used
+400 training, 100 validation and 100 frozen-test examples with entire product families
+held out. The adapters learned prose but lost exact facts on unseen families, so they
+were documented and deliberately rejected for runtime use.
 
 ## Short CV bullet options
 
@@ -31,8 +31,8 @@ to the product without real anonymized data.
   hallucinations.
 - Implemented local metadata-only observability, GitHub Actions quality gates, MCP v2
   tools, Docker isolation controls and reproducible wheel packaging.
-- Trained and evaluated a Qwen3-0.6B LoRA adapter with MLX-LM and rejected deployment
-  when a deterministic baseline matched its synthetic frozen-test result.
+- Trained and evaluated Qwen3-0.6B LoRA adapters with MLX-LM and rejected deployment
+  after frozen-family tests exposed loss of exact product facts.
 
 Use only bullets that match the repository version shown to the interviewer. Describe
 the work as AI-assisted engineering and be ready to explain the decisions, tests and
