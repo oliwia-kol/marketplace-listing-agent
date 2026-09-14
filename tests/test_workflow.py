@@ -22,7 +22,7 @@ from marketplace_agent.models.tasks import (
     PortalRecommendationOutput,
 )
 from marketplace_agent.workflow.dependencies import WorkflowDependencies
-from marketplace_agent.workflow.graph import build_graph
+from marketplace_agent.workflow.graph import build_graph, select_essential_questions
 
 
 class ResearchStub:
@@ -72,6 +72,17 @@ def test_vinted_is_not_an_execution_portal() -> None:
     from marketplace_agent.workflow.graph import EXECUTION_PORTALS
 
     assert {"olx", "allegro_lokalnie"} == EXECUTION_PORTALS
+
+
+def test_only_identity_or_conflict_questions_block_description() -> None:
+    facts = [FactProposal(name="category", value="lokówka", confidence=1, source="user")]
+    questions = [
+        "Jaki jest dokładny model?",
+        "Czy lokówka jednocześnie działa i nie nagrzewa się? To wygląda na sprzeczność.",
+        "Czy jest pudełko?",
+    ]
+
+    assert select_essential_questions(facts, questions) == [questions[1]]
 
 
 @pytest.mark.asyncio

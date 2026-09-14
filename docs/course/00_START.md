@@ -26,6 +26,7 @@ Kolejność czytania:
 9. [cybersecurity i dynamic cloaking](09_CYBERSECURITY_CLOAKING.md),
 10. [laboratoria architektoniczne](10_LABORATORIA_ARCHITEKTONICZNE.md),
 11. [wiarygodny opis oferty](11_WIARYGODNY_OPIS_OFERTY.md).
+12. [generalizacja i LoRA v2](12_GENERALIZACJA_I_LORA_V2.md).
 
 Rzeczywiste porażki modeli i odpowiadające im zabezpieczenia opisuje
 [`../FAILURE_ATLAS.md`](../FAILURE_ATLAS.md), a wyniki 120 przypadków i LoRA są w

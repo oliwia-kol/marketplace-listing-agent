@@ -63,7 +63,7 @@ def render_interrupt(value: dict[str, Any]) -> str:
         questions = "\n".join(f"• {question}" for question in value["questions"])
         return (
             f"Model zauważył możliwe braki:\n{questions}\n\n"
-            "Możesz je pominąć albo dodać: /zmien material=wełna; size=M"
+            "Odpowiedz zwykłym zdaniem, użyj /zmien pole=wartość albo napisz „nie wiem”."
         )
     if kind == "price":
         summary = value["summary"]
@@ -244,13 +244,18 @@ class TelegramChannel:
         if (
             pending
             and pending["step"] == "missing_info"
-            and text.casefold()
-            in {
-                "nie wiem",
-                "pomijam",
-            }
         ):
-            await self._consume_and_resume(update, pending["token"], pending)
+            if text.casefold() in {"nie wiem", "pomijam"}:
+                await self._consume_and_resume(update, pending["token"], pending)
+            else:
+                self.catalog.revoke_pending_approval(str(update.effective_chat.id), item_id or "")
+                await self._resume(
+                    update,
+                    {
+                        "action": "edit",
+                        "value": {"attribute.additional_details": text},
+                    },
+                )
             return
         if item is None or item.status != WorkflowStatus.NEW:
             return

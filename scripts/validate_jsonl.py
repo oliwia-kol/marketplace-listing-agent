@@ -32,7 +32,9 @@ def validate_jsonl(paths: list[Path]) -> list[str]:
             else:
                 seen_ids[case_id] = path
             required = (
-                {"notes", "expected_fields"}
+                {"facts", "messages", "family_id"}
+                if "messages" in row
+                else {"notes", "expected_fields"}
                 if path.name == "facts.jsonl"
                 else {"candidates", "expected"}
                 if path.name == "price_math.jsonl"

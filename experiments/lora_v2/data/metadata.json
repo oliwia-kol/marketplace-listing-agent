@@ -1,0 +1,32 @@
+{
+  "seed": 20260914,
+  "counts": {
+    "train": 400,
+    "valid": 100,
+    "test": 100
+  },
+  "split_unit": "product_family",
+  "families": {
+    "train": [
+      "coffee",
+      "console",
+      "curler",
+      "earbuds",
+      "lens",
+      "monitor",
+      "phone",
+      "vacuum"
+    ],
+    "valid": [
+      "mixer",
+      "router"
+    ],
+    "test": [
+      "drill",
+      "dryer"
+    ]
+  },
+  "dataset_sha256": "b4555804f677cdff105c91d1e6e4dee1f27ac8a1aef0a4e0da652d72ce1c3688",
+  "human_reviewed": false,
+  "private_user_data": false
+}

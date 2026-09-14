@@ -65,7 +65,7 @@ def test_battery_and_operability_claims_accept_typed_evidence() -> None:
     facts = {
         "model": "iPhone 13",
         "attribute.battery_health": "81%",
-        "attribute.seller_test_claim": "test egzemplarza wykonany przez sprzedającego",
+        "attribute.seller_test_claim": "sprzedający deklaruje pełną sprawność",
     }
 
     assert obvious_unsupported_claims(draft, facts) == []
@@ -81,3 +81,23 @@ def test_battery_word_without_battery_fact_is_rejected() -> None:
     )
 
     assert "bateri" in obvious_unsupported_claims(draft, {"model": "iPhone 13"})
+
+
+def test_partial_test_does_not_support_full_operability() -> None:
+    draft = PortalDraft(
+        portal="olx",
+        title="Lokówka Remington",
+        description="W pełni sprawna, wszystkie funkcje działają.",
+        category="AGD",
+        price_pln=60,
+    )
+
+    findings = obvious_unsupported_claims(
+        draft,
+        {
+            "model": "Remington",
+            "attribute.seller_test_claim": "sprzedająca sprawdziła tylko nagrzewanie",
+        },
+    )
+
+    assert {"sprawn", "wszystkie funkcje", "działa"} <= set(findings)

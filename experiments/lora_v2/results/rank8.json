@@ -1,0 +1,1420 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "adapter": "experiments/lora_v2/adapters/rank8",
+  "test_cases": 100,
+  "metrics": {
+    "fact_value_coverage": 0.8033333333333332,
+    "item_preservation": 0.5,
+    "defect_preservation": 1.0,
+    "unsupported_phrase_guard": 1.0,
+    "prose_format": 1.0,
+    "opening_word_boundary": 0.53
+  },
+  "latency_seconds": {
+    "median": 0.8143865210004151,
+    "p95": 1.1921910000965
+  },
+  "results": [
+    {
+      "id": "dryer-00",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.0,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.39080108306370676,
+      "output": "Sprzedajęuszarkę do włosów Philips BHD530."
+    },
+    {
+      "id": "dryer-01",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.4943727080244571,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie."
+    },
+    {
+      "id": "dryer-02",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.8045505830086768,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: pęknięcie obudowy."
+    },
+    {
+      "id": "dryer-03",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9424617080949247,
+      "output": "Wystawiamuszuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "dryer-04",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.6130229169502854,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "dryer-05",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 1.1313647078350186,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-06",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7247219590935856,
+      "output": "Wystawiamuszarkę do włosów Philips BHD530. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "dryer-07",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7411275829654187,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak."
+    },
+    {
+      "id": "dryer-08",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.012977457838133,
+      "output": "Wystawiam oferujęuszarkę do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-09",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9279125831089914,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "dryer-10",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.0,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.3729797499254346,
+      "output": "Sprzedajęuszarkę do włosów Philips BHD530."
+    },
+    {
+      "id": "dryer-11",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.5258170838933438,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania."
+    },
+    {
+      "id": "dryer-12",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.8631382500752807,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: używany. Widoczna wada lub informacja o wadach: rysa na obudowie."
+    },
+    {
+      "id": "dryer-13",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9702023749705404,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "dryer-14",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7278527091257274,
+      "output": "Wystawiamuszarkę do włosów Philips BHD530. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "dryer-15",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 1.1125345840118825,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-16",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.6212150410283357,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "dryer-17",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7774235839024186,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu."
+    },
+    {
+      "id": "dryer-18",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9707721669692546,
+      "output": "Wystawiamuszko. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: brak. W zestawie: oryginalne pudełko. Stan: używany kilka razy."
+    },
+    {
+      "id": "dryer-19",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9217822081409395,
+      "output": "Wystawiamuszuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "dryer-20",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.0,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.37385475006885827,
+      "output": "Sprzedajęuszarkę do włosów Philips BHD530."
+    },
+    {
+      "id": "dryer-21",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.4918603750411421,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie."
+    },
+    {
+      "id": "dryer-22",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7996189161203802,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: pęknięcie obudowy."
+    },
+    {
+      "id": "dryer-23",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9205704999621958,
+      "output": "Wystawiamuszuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "dryer-24",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.6090041671413928,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "dryer-25",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 1.1272417500149459,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-26",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7279229999985546,
+      "output": "Wystawiamuszarkę do włosów Philips BHD530. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "dryer-27",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7401310419663787,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak."
+    },
+    {
+      "id": "dryer-28",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.001393917016685,
+      "output": "Wystawiam oferujęuszarkę do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-29",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9539474998600781,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "dryer-30",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.0,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.4313150839880109,
+      "output": "Sprzedajęuszarkę do włosów Philips BHD530."
+    },
+    {
+      "id": "dryer-31",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.5604858750011772,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania."
+    },
+    {
+      "id": "dryer-32",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7693161251954734,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: używany. Widoczna wada lub informacja o wadach: rysa na obudowie."
+    },
+    {
+      "id": "dryer-33",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9259746670722961,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "dryer-34",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7486503338441253,
+      "output": "Wystawiamuszarkę do włosów Philips BHD530. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "dryer-35",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 1.1102032919880003,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-36",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.6094425411429256,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "dryer-37",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.785990082891658,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu."
+    },
+    {
+      "id": "dryer-38",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.9716342501342297,
+      "output": "Wystawiamuszko. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: brak. W zestawie: oryginalne pudełko. Stan: używany kilka razy."
+    },
+    {
+      "id": "dryer-39",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.923937999876216,
+      "output": "Wystawiamuszuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "dryer-40",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.0,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.371631917078048,
+      "output": "Sprzedajęuszarkę do włosów Philips BHD530."
+    },
+    {
+      "id": "dryer-41",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.49182787514291704,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie."
+    },
+    {
+      "id": "dryer-42",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.8002729578875005,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: pęknięcie obudowy."
+    },
+    {
+      "id": "dryer-43",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.927190292160958,
+      "output": "Wystawiamuszuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "dryer-44",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.6121679579373449,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "dryer-45",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 1.129657959099859,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-46",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.739513540873304,
+      "output": "Wystawiamuszarkę do włosów Philips BHD530. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "dryer-47",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.6666666666666666,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 0.7351349161472172,
+      "output": "Oferujęuszarkę do włosów Philips BHD530. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak."
+    },
+    {
+      "id": "dryer-48",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.0728217498399317,
+      "output": "Wystawiam oferujęuszarkę do włosów Philips BHD530. Stan: używany. W zestawie: sam przedmiot. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "dryer-49",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.75,
+        "item_preservation": 0.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 0.0
+      },
+      "latency_seconds": 1.024731625104323,
+      "output": "Wystawiamusz arkusz do włosów Philips BHD530. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "drill-00",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.44419974996708333,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482."
+    },
+    {
+      "id": "drill-01",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5830392499919981,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie."
+    },
+    {
+      "id": "drill-02",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.879113458096981,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: pęknięcie obudowy."
+    },
+    {
+      "id": "drill-03",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9702157920692116,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "drill-04",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6860535000450909,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "drill-05",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.198911749990657,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-06",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.794357042061165,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "drill-07",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8090603749733418,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak."
+    },
+    {
+      "id": "drill-08",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.0677378750406206,
+      "output": "Wystawiam oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-09",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9400487500242889,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "drill-10",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.4434805419296026,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482."
+    },
+    {
+      "id": "drill-11",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5997137089725584,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania."
+    },
+    {
+      "id": "drill-12",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8248781668953598,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany. Widoczna wada lub informacja o wadach: rysa na obudowie."
+    },
+    {
+      "id": "drill-13",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9402920410502702,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "drill-14",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7951108331326395,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "drill-15",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1921910000965,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-16",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7742902080062777,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "drill-17",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8862239578738809,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu."
+    },
+    {
+      "id": "drill-18",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.205910624936223,
+      "output": "Wystawiam do sprzedania wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-19",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9719127079006284,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "drill-20",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.448863583849743,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482."
+    },
+    {
+      "id": "drill-21",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5889604170806706,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie."
+    },
+    {
+      "id": "drill-22",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8639550830703229,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: pęknięcie obudowy."
+    },
+    {
+      "id": "drill-23",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9270726658869535,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "drill-24",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.678801457863301,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "drill-25",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1999379170592874,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-26",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.796979958890006,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "drill-27",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8175469171255827,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak."
+    },
+    {
+      "id": "drill-28",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.0800423750188202,
+      "output": "Wystawiam oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-29",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9495762910228223,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "drill-30",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.454995125066489,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482."
+    },
+    {
+      "id": "drill-31",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5971152500715107,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania."
+    },
+    {
+      "id": "drill-32",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8290033328812569,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany. Widoczna wada lub informacja o wadach: rysa na obudowie."
+    },
+    {
+      "id": "drill-33",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.076932291034609,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    },
+    {
+      "id": "drill-34",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8370090830139816,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "drill-35",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1593551670666784,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-36",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7058265840169042,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "drill-37",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8784870409872383,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu."
+    },
+    {
+      "id": "drill-38",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.2035145408008248,
+      "output": "Wystawiam do sprzedania wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-39",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9262624580878764,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "drill-40",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.44414879102259874,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482."
+    },
+    {
+      "id": "drill-41",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5814211668912321,
+      "output": "Sprzedaję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie."
+    },
+    {
+      "id": "drill-42",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8640302908606827,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. Widoczna wada lub informacja o wadach: pęknięcie obudowy."
+    },
+    {
+      "id": "drill-43",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9234376668464392,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak. W zestawie: bez pudełka."
+    },
+    {
+      "id": "drill-44",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6821096250787377,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot."
+    },
+    {
+      "id": "drill-45",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.2021255840081722,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-46",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.798422500025481,
+      "output": "Wystawiam wiertarko-wkrętarkę Makita DDF482. Stan: używany kilka razy. W zestawie: oryginalne pudełko."
+    },
+    {
+      "id": "drill-47",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8112261248752475,
+      "output": "Oferuję wiertarko-wkrętarkę Makita DDF482. Stan: ze śladami używania. Widoczna wada lub informacja o wadach: brak."
+    },
+    {
+      "id": "drill-48",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.07417883281596,
+      "output": "Wystawiam oferuję wiertarko-wkrętarkę Makita DDF482. Stan: używany. W zestawie: sam przedmiot. Zakres sprawdzenia: użytkowniczka deklaruje, że urządzenie się włącza."
+    },
+    {
+      "id": "drill-49",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 1.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.0400044170673937,
+      "output": "Wiertarko-wkrętarkę Makita DDF482. Stan: w dobrym stanie. Widoczna wada lub informacja o wadach: otarcie na rogu. W zestawie: przewód."
+    }
+  ],
+  "scorer_version": "lora_v2_semantic_surface_v2"
+}

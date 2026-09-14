@@ -38,6 +38,21 @@ def test_brief_separates_item_evidence_from_sourced_product_specification() -> N
     assert by_key["attribute.mount"].source_url == "https://example.test/manual"
 
 
+def test_brief_keeps_category_as_copy_evidence() -> None:
+    brief = build_copy_brief(
+        [
+            approved_fact("category", "lokówka"),
+            approved_fact("brand", "Remington"),
+            approved_fact("model", "CI9532"),
+        ],
+        ["olx"],
+    )
+
+    by_key = {claim.key: claim for claim in brief.claims}
+    assert by_key["category"].value == "lokówka"
+    assert by_key["category"].required
+
+
 def test_product_specs_are_not_item_form_facts() -> None:
     facts = ItemFacts(
         proposals=[

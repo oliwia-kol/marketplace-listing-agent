@@ -7,6 +7,10 @@ monitoringiem. Najnowszy etap dodał realistyczniejszą ewaluację generatorów,
 błąd guarda i przygotował ślepą ocenę człowieka. Żadna oferta nie została
 opublikowana, a GitHub nie został zmieniony.
 
+Późniejszy etap tego samego dnia uprościł rozmowę, dodał 120 przypadków z 12 rodzin i
+przeprowadził LoRA v2. Szczegóły znajdują się w
+[`IMPLEMENTATION_LOG_2026-09-14_GENERALIZATION.md`](IMPLEMENTATION_LOG_2026-09-14_GENERALIZATION.md).
+
 ## Co jest zweryfikowane
 
 - pipeline opisu ogranicza model do tytułu i opisu;
@@ -35,6 +39,8 @@ większego opóźnienia. Każdy model nadal podlega pełnej bramce bezpieczeńst
 - zalogowane formularze OLX i Allegro Lokalnie nie przeszły kontrolowanego testu;
 - CI jest skonfigurowane, ale bieżąca gałąź nie została wysłana na GitHub;
 - LoRA pozostaje eksperymentem i nie jest częścią runtime.
+- LoRA v2 rank 8 i 16 rzeczywiście wytrenowano; oba odrzucono po frozen teście z
+  powodu utraty części nazw i wartości faktów.
 
 ## Kolejne bramki
 

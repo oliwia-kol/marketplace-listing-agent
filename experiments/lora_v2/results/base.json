@@ -1,0 +1,1420 @@
+{
+  "model": "Qwen/Qwen3-0.6B",
+  "adapter": null,
+  "test_cases": 100,
+  "metrics": {
+    "fact_value_coverage": 0.99,
+    "item_preservation": 1.0,
+    "defect_preservation": 1.0,
+    "unsupported_phrase_guard": 1.0,
+    "prose_format": 0.0,
+    "opening_word_boundary": 1.0
+  },
+  "latency_seconds": {
+    "median": 0.7870338956126943,
+    "p95": 1.1286230410914868
+  },
+  "results": [
+    {
+      "id": "dryer-00",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.3795957500115037,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-01",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5291200000792742,
+      "output": "{\"condition\": \"w dobrym stanie\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-02",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7225521658547223,
+      "output": "{\"condition\": \"używany kilka razy\", \"defects\": \"pęknięcie obudowy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-03",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7950748330913484,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-04",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6301725420635194,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-05",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1037279160227627,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"suszarkę do włosów Philips BHD530\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "dryer-06",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7323414159473032,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-07",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6676176670007408,
+      "output": "{\"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\", \"condition\": \"ze śladami używania\"}"
+    },
+    {
+      "id": "dryer-08",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9627517079934478,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-09",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8161657089367509,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-10",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.36252362513914704,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-11",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5437835420016199,
+      "output": "{\"condition\": \"ze śladami używania\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-12",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7756642908789217,
+      "output": "{\"defects\": \"rysa na obudowie\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-13",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8697262089699507,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-14",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7297472078353167,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-15",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9929926251061261,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-16",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6640513748861849,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-17",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7598357498645782,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"suszarkę do włosów Philips BHD530\"\n}"
+    },
+    {
+      "id": "dryer-18",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9637143339496106,
+      "output": "{\"accessories\": \"oryginalne\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-19",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7954427080694586,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-20",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.36705295788124204,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-21",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5307972088921815,
+      "output": "{\"condition\": \"w dobrym stanie\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-22",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.720450083957985,
+      "output": "{\"condition\": \"używany kilka razy\", \"defects\": \"pęknięcie obudowy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-23",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7994127080310136,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-24",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6282764589414,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-25",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1095675001852214,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"suszarkę do włosów Philips BHD530\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "dryer-26",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7320420839823782,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-27",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6546851249877363,
+      "output": "{\"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\", \"condition\": \"ze śladami używania\"}"
+    },
+    {
+      "id": "dryer-28",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9702369999140501,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-29",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8201125420164317,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-30",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.36356466682627797,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-31",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6236091661266983,
+      "output": "{\"condition\": \"ze śladami używania\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-32",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7503974169958383,
+      "output": "{\"defects\": \"rysa na obudowie\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-33",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.813405874883756,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-34",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.74127033399418,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-35",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.0342048341408372,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-36",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.643366500036791,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-37",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7617617920041084,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"suszarkę do włosów Philips BHD530\"\n}"
+    },
+    {
+      "id": "dryer-38",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 0.5,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9709810840431601,
+      "output": "{\"accessories\": \"oryginalne\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-39",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7987506249919534,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-40",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.36451979214325547,
+      "output": "{\"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-41",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5201995831448585,
+      "output": "{\"condition\": \"w dobrym stanie\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-42",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7207231670618057,
+      "output": "{\"condition\": \"używany kilka razy\", \"defects\": \"pęknięcie obudowy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-43",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8114519170485437,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-44",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6166837499476969,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-45",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1074152907822281,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"suszarkę do włosów Philips BHD530\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "dryer-46",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7320167908910662,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "dryer-47",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6631197910755873,
+      "output": "{\"defects\": \"brak\", \"item\": \"suszarkę do włosów Philips BHD530\", \"condition\": \"ze śladami używania\"}"
+    },
+    {
+      "id": "dryer-48",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9686674170661718,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"suszarkę do włosów Philips BHD530\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "dryer-49",
+      "family_id": "dryer",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8212796249426901,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"suszarkę do włosów Philips BHD530\"}"
+    },
+    {
+      "id": "drill-00",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.47581912484019995,
+      "output": "{\"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-01",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6585549581795931,
+      "output": "{\"condition\": \"w dobrym stanie\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-02",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8683882090263069,
+      "output": "{\n  \"condition\": \"używany kilka razy\",\n  \"defects\": \"pęknięcie obudowy\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-03",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8604386250954121,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-04",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7021215420681983,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-05",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.2082806669641286,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "drill-06",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7922595001291484,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-07",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7755967911798507,
+      "output": "{\n  \"condition\": \"ze śladami używania\",\n  \"defects\": \"brak\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-08",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.0189505000598729,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "drill-09",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8720840001478791,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-10",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.4249790001194924,
+      "output": "{\"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-11",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5890872080344707,
+      "output": "{\"condition\": \"ze śladami używania\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-12",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7872393750585616,
+      "output": "{\n  \"condition\": \"używany\",\n  \"defects\": \"rysa na obudowie\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-13",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.868211709195748,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-14",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7916578748263419,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-15",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1286230410914868,
+      "output": "{\n  \"condition\": \"ze śladami używania\",\n  \"defects\": \"brak\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "drill-16",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6825328331906348,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-17",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8096781659405679,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-18",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.3046481250785291,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "drill-19",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8611809590365738,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-20",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.42570383311249316,
+      "output": "{\"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-21",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5781181671191007,
+      "output": "{\"condition\": \"w dobrym stanie\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-22",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9030490419827402,
+      "output": "{\n  \"condition\": \"używany kilka razy\",\n  \"defects\": \"pęknięcie obudowy\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-23",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8778587088454515,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-24",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.685816332930699,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-25",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1613716250285506,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "drill-26",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7922028750181198,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-27",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7750603328458965,
+      "output": "{\n  \"condition\": \"ze śladami używania\",\n  \"defects\": \"brak\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-28",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.025557667016983,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "drill-29",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.876701665809378,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-30",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.4196635000407696,
+      "output": "{\"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-31",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5875650411471725,
+      "output": "{\"condition\": \"ze śladami używania\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-32",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7849527499638498,
+      "output": "{\n  \"condition\": \"używany\",\n  \"defects\": \"rysa na obudowie\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-33",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8740307081025094,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-34",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7868284161668271,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-35",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1674370840191841,
+      "output": "{\n  \"condition\": \"ze śladami używania\",\n  \"defects\": \"brak\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "drill-36",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7712236251682043,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-37",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8252070830203593,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-38",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.128370667109266,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "drill-39",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.9181734169833362,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-40",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.42888095905072987,
+      "output": "{\"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-41",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.5836784590501338,
+      "output": "{\"condition\": \"w dobrym stanie\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-42",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8410962501075119,
+      "output": "{\n  \"condition\": \"używany kilka razy\",\n  \"defects\": \"pęknięcie obudowy\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-43",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.8534943331032991,
+      "output": "{\"accessories\": \"bez pudełka\", \"condition\": \"ze śladami używania\", \"defects\": \"brak\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-44",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.6843880831729621,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-45",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.1619340409524739,
+      "output": "{\n  \"condition\": \"w dobrym stanie\",\n  \"defects\": \"otarcie na rogu\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\",\n  \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"\n}"
+    },
+    {
+      "id": "drill-46",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7898072500247508,
+      "output": "{\"accessories\": \"oryginalne pudełko\", \"condition\": \"używany kilka razy\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    },
+    {
+      "id": "drill-47",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.7822807079646736,
+      "output": "{\n  \"condition\": \"ze śladami używania\",\n  \"defects\": \"brak\",\n  \"item\": \"wiertarko-wkrętarkę Makita DDF482\"\n}"
+    },
+    {
+      "id": "drill-48",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 1.018994583049789,
+      "output": "{\"accessories\": \"sam przedmiot\", \"condition\": \"używany\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\", \"test_scope\": \"użytkowniczka deklaruje, że urządzenie się włącza\"}"
+    },
+    {
+      "id": "drill-49",
+      "family_id": "drill",
+      "metrics": {
+        "fact_value_coverage": 1.0,
+        "item_preservation": 1.0,
+        "defect_preservation": 1.0,
+        "unsupported_phrase_guard": 1.0,
+        "prose_format": 0.0,
+        "opening_word_boundary": 1.0
+      },
+      "latency_seconds": 0.870639167027548,
+      "output": "{\"accessories\": \"przewód\", \"condition\": \"w dobrym stanie\", \"defects\": \"otarcie na rogu\", \"item\": \"wiertarko-wkrętarkę Makita DDF482\"}"
+    }
+  ],
+  "scorer_version": "lora_v2_semantic_surface_v2"
+}

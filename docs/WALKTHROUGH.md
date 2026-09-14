@@ -35,8 +35,10 @@ flowchart TD
     K --> L[enqueue execution jobs]
 ```
 
-Każdy `review_*` używa interrupt. Pytania o braki są grupowane po maksymalnie trzy, a
-„nie wiem” jest prawidłową decyzją o pominięciu.
+Każdy `review_*` używa interrupt. Fakty oznaczone jako bezpośrednio podane przez
+użytkowniczkę są akceptowane bez osobnego klikania. Pytanie pojawia się tylko przy
+sprzeczności lub braku rozpoznania rodzaju przedmiotu, najwyżej trzy naraz. Zwykłe
+zdanie oraz „nie wiem” są prawidłowymi odpowiedziami.
 
 ## 4. Research i opis
 
@@ -44,7 +46,8 @@ Każdy `review_*` używa interrupt. Pytania o braki są grupowane po maksymalnie
 rekord przez jedną bramkę cenową. `evidence.py` zapisuje zredagowany manifest.
 `draft_copy` buduje `CopyBrief` z dwóch jawnych zakresów: faktów o egzemplarzu i
 źródłowych specyfikacji modelu. Copywriter zwraca tylko tytuł oraz opis; pola formularza
-składa kod. `audit_copy` łączy kontrolę wymaganych faktów i znanych twierdzeń ryzykownych
+składa kod. Kategoria trafia do briefu jako dowód językowy, ale jej wartość w formularzu
+nadal ustala kod. `audit_copy` łączy kontrolę wymaganych faktów i znanych twierdzeń ryzykownych
 z audytem claim-level, wykonuje najwyżej jedną naprawę i przy dalszym błędzie używa
 bezpiecznego szablonu. Cały pipeline ma wspólny deadline pięciu minut.
 

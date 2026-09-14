@@ -22,7 +22,15 @@ DESCRIPTION_KEYS = {
     "accessories",
     "identifiers",
 }
-CRITICAL_KEYS = {"brand", "model", "defects", "completeness", "accessories", "identifiers"}
+CRITICAL_KEYS = {
+    "category",
+    "brand",
+    "model",
+    "defects",
+    "completeness",
+    "accessories",
+    "identifiers",
+}
 PROHIBITED_CLAIMS = [
     "sprawność bez udokumentowanego testu egzemplarza",
     "brak innych wad",
@@ -47,7 +55,7 @@ def build_copy_brief(
 ) -> CopyBrief:
     claims: list[CopyClaim] = []
     for fact in facts:
-        if not fact.approved or fact.value in (None, "") or fact.name == "category":
+        if not fact.approved or fact.value in (None, ""):
             continue
         claims.append(
             CopyClaim(

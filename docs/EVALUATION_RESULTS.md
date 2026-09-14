@@ -7,6 +7,11 @@ Pełny raport z 120 przypadków syntetycznych oraz eksperymentu LoRA znajduje si
 jest historycznym baseline'em z 08.09 i pokazuje, dlaczego dodano guardy oraz szersze
 zestawy testowe.
 
+Eksperyment generalizacji oraz drugi trening LoRA opisują
+[`IMPLEMENTATION_LOG_2026-09-14_GENERALIZATION.md`](IMPLEMENTATION_LOG_2026-09-14_GENERALIZATION.md)
+i [`../experiments/lora_v2/RESULTS.md`](../experiments/lora_v2/RESULTS.md). Adapter v2
+nie został wdrożony, ponieważ na niewidzianych rodzinach obniżył wierność faktom.
+
 ## Baseline 2026-09-08
 
 Datasety są syntetycznymi seed goldenami. Wyniki pokazują zachowanie konkretnej

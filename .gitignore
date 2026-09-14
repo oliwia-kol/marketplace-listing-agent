@@ -15,3 +15,4 @@ work/
 playwright-report/
 test-results/
 experiments/lora/adapters/
+experiments/lora_v2/adapters/

@@ -151,8 +151,8 @@ def evaluate(
     suite: str = typer.Option(
         "price_math",
         help=(
-            "price_math, facts, comparables, copy, copy_quality, copy_real_anonymized, copy_audit, "
-            "copy_audit_mutations albo forms"
+            "price_math, facts, comparables, copy, copy_quality, copy_generalization, "
+            "copy_real_anonymized, copy_audit, copy_audit_mutations albo forms"
         ),
     ),
     model: str | None = typer.Option(None, help="Jednorazowa podmiana modelu dla roli"),

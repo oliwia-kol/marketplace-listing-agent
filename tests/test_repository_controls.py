@@ -16,6 +16,26 @@ def test_jsonl_validator_rejects_duplicate_ids(tmp_path) -> None:
     assert any("duplicate id" in error for error in errors)
 
 
+def test_jsonl_validator_accepts_mlx_conversation_dataset(tmp_path) -> None:
+    dataset = tmp_path / "train.jsonl"
+    dataset.write_text(
+        json.dumps(
+            {
+                "id": "case-1",
+                "family_id": "family-1",
+                "facts": {"item": "lokówka"},
+                "messages": [
+                    {"role": "user", "content": "lokówka"},
+                    {"role": "assistant", "content": "Sprzedaję lokówkę."},
+                ],
+            }
+        )
+        + "\n"
+    )
+
+    assert validate_jsonl([dataset]) == []
+
+
 def test_secret_scanner_detects_token_without_echoing_it(tmp_path) -> None:
     secret = tmp_path / "secret.txt"
     token = "ghp_" + "a" * 30

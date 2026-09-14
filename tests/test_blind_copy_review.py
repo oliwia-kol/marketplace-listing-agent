@@ -36,12 +36,18 @@ def test_blind_packet_hides_models_and_keeps_reveal_key(tmp_path: Path) -> None:
     packet = tmp_path / "packet.html"
     key = tmp_path / "key.json"
 
-    build_packet([first, second], packet, key)
+    dataset = tmp_path / "dataset.jsonl"
+    dataset.write_text(
+        json.dumps({"id": "case-1", "input": {"facts": {"defects": "rysa"}}}) + "\n"
+    )
+
+    build_packet([first, second], packet, key, dataset_path=dataset)
 
     html = packet.read_text()
     assert "model-secret" not in html
     assert "localStorage" in html
     assert "Eksportuj oceny" in html
+    assert "rysa" in html
     reveal = json.loads(key.read_text())["reveal"]
     assert {row["model"] for row in reveal} == {"model-secret-a", "model-secret-b"}
     assert packet.stat().st_mode & 0o777 == 0o600

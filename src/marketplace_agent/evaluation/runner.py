@@ -90,6 +90,7 @@ class EvaluationRunner:
             "comparables",
             "copy",
             "copy_quality",
+            "copy_generalization",
             "copy_real_anonymized",
             "copy_audit",
             "copy_audit_mutations",
@@ -163,6 +164,7 @@ class EvaluationRunner:
             "comparables": ModelRole.MARKET_EXPERT,
             "copy": ModelRole.POLISH_COPYWRITER,
             "copy_quality": ModelRole.POLISH_COPYWRITER,
+            "copy_generalization": ModelRole.POLISH_COPYWRITER,
             "copy_real_anonymized": ModelRole.POLISH_COPYWRITER,
             "copy_audit": ModelRole.MARKET_EXPERT,
             "copy_audit_mutations": ModelRole.MARKET_EXPERT,
@@ -271,7 +273,7 @@ class EvaluationRunner:
                 if len(actual) == len(expected)
                 else {"accuracy": 0.0, "precision": 0.0, "recall": 0.0, "f1": 0.0}
             )
-        elif suite in {"copy", "copy_quality", "copy_real_anonymized"}:
+        elif suite in {"copy", "copy_quality", "copy_generalization", "copy_real_anonymized"}:
             facts = row["input"]["facts"]
             proposals = [
                 FactProposal(

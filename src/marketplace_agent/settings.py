@@ -95,6 +95,7 @@ class Settings(BaseSettings):
         for name in (
             "comparables.jsonl",
             "copy.jsonl",
+            "copy_generalization.jsonl",
             "copy_quality.jsonl",
             "copy_real_anonymized.jsonl",
             "copy_audit.jsonl",

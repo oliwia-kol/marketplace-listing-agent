@@ -32,7 +32,7 @@ def test_environment_manifest_has_hashes_but_no_private_paths(tmp_path) -> None:
     rendered = str(manifest)
 
     assert manifest["schema_version"] == 1
-    assert len(manifest["goldens_sha256"]) == 9
+    assert len(manifest["goldens_sha256"]) == 10
     assert "polish_copywriter" in manifest["models"]
     assert str(tmp_path) not in rendered
     assert "telegram" not in rendered.casefold()

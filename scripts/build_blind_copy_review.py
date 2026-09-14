@@ -23,6 +23,7 @@ def build_packet(
     key_path: Path,
     *,
     seed: int = 42,
+    dataset_path: Path | None = None,
 ) -> tuple[Path, Path]:
     reports = [(path, _load_json(path)) for path in report_paths]
     if len(reports) < 2:
@@ -36,6 +37,18 @@ def build_packet(
         raise ValueError("Reports have no shared cases")
 
     rng = random.Random(seed)
+    dataset = (
+        {
+            row["id"]: row.get("input", {}).get("facts", {})
+            for row in (
+                json.loads(line)
+                for line in dataset_path.read_text().splitlines()
+                if line.strip()
+            )
+        }
+        if dataset_path
+        else {}
+    )
     cases: list[dict[str, Any]] = []
     reveal: list[dict[str, str]] = []
     for case_id in shared_ids:
@@ -61,7 +74,9 @@ def build_packet(
                 }
             )
         rng.shuffle(candidates)
-        cases.append({"case_id": case_id, "candidates": candidates})
+        cases.append(
+            {"case_id": case_id, "facts": dataset.get(case_id), "candidates": candidates}
+        )
 
     packet = {
         "protocol": "blind_copy_review_v1",
@@ -91,6 +106,13 @@ def build_packet(
 def _render_html(packet: dict[str, Any]) -> str:
     sections = []
     for case in packet["cases"]:
+        facts = ""
+        if case.get("facts"):
+            facts = (
+                "<details><summary>Dane wejściowe</summary><pre>"
+                + html.escape(json.dumps(case["facts"], ensure_ascii=False, indent=2))
+                + "</pre></details>"
+            )
         cards = []
         for index, candidate in enumerate(case["candidates"], start=1):
             drafts = []
@@ -123,7 +145,7 @@ def _render_html(packet: dict[str, Any]) -> str:
                 "</article>"
             )
         sections.append(
-            f"<section><h2>{html.escape(case['case_id'])}</h2>{''.join(cards)}</section>"
+            f"<section><h2>{html.escape(case['case_id'])}</h2>{facts}{''.join(cards)}</section>"
         )
     return f"""<!doctype html>
 <html lang="pl"><meta charset="utf-8"><title>Ślepa ocena opisów</title>
@@ -187,8 +209,15 @@ def main() -> None:
     parser.add_argument("--packet", required=True, type=Path)
     parser.add_argument("--key", required=True, type=Path)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--dataset", type=Path)
     args = parser.parse_args()
-    packet, key = build_packet(args.reports, args.packet, args.key, seed=args.seed)
+    packet, key = build_packet(
+        args.reports,
+        args.packet,
+        args.key,
+        seed=args.seed,
+        dataset_path=args.dataset,
+    )
     print(packet)
     print(key)
 

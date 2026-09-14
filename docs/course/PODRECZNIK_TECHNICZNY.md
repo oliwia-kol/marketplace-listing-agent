@@ -1,5 +1,8 @@
 # Marketplace Listing Agent — podręcznik techniczny
 
+Aktualne studium prostego przepływu wielu kategorii oraz eksperyment LoRA v2 opisuje
+[`12_GENERALIZACJA_I_LORA_V2.md`](12_GENERALIZACJA_I_LORA_V2.md).
+
 ## Jak korzystać z materiału
 
 Ten tekst nie służy do zapamiętywania każdej linii Pythona. Jego celem jest zbudowanie

@@ -69,8 +69,16 @@ def _risky_claim_supported(claim: str, facts: dict[str, Any], evidence: str) -> 
     keys = {key.casefold() for key in facts}
     if claim == "bateri":
         return any("battery" in key or "bateria" in key for key in keys)
-    if claim in {"sprawn", "działa", "bez zarzutu", "gotow", "wszystkie funkcje"}:
-        return any("test_claim" in key for key in keys)
+    if claim == "wszystkie funkcje":
+        return "wszystkie funkcje" in evidence or (
+            "pełn" in evidence and "sprawn" in evidence
+        )
+    if claim in {"sprawn", "działa", "bez zarzutu", "gotow"}:
+        full_scope = any(
+            token in evidence
+            for token in ("pełna sprawność", "pełną sprawność", "bez zarzutu", "gotowość do użycia")
+        )
+        return full_scope and any("test_claim" in key for key in keys)
     if claim in {"pudełk", "opakowanie"}:
         return any(token in evidence for token in ("pudeł", "karton", "opakowanie"))
     if claim == "ładowark":
