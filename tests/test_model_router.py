@@ -99,3 +99,37 @@ async def test_router_times_out_and_records_only_error_metadata() -> None:
     assert events[-1][4] == "error"
     assert events[-1][5]["error_type"] == "TimeoutError"
     assert "sensitive" not in repr(events)
+
+
+@pytest.mark.asyncio
+async def test_router_passes_versioned_generation_parameters() -> None:
+    class CaptureProvider(FallbackProvider):
+        def __init__(self) -> None:
+            super().__init__()
+            self.options = {}
+
+        async def structured(self, *, model: str, **kwargs):
+            self.options = kwargs
+            return StructuredModelResponse(output=Output(value="ok"), model=model)
+
+    provider = CaptureProvider()
+    role_config = RoleConfig(
+        model="writer",
+        temperature=0.7,
+        top_p=0.8,
+        top_k=20,
+        seed=42,
+    )
+    router = ModelRouter(provider, RouterConfig(roles={role: role_config for role in ModelRole}))
+
+    await router.run(
+        ModelRole.POLISH_COPYWRITER,
+        system="system",
+        prompt="prompt",
+        output_schema=Output,
+    )
+
+    assert provider.options["temperature"] == 0.7
+    assert provider.options["top_p"] == 0.8
+    assert provider.options["top_k"] == 20
+    assert provider.options["seed"] == 42

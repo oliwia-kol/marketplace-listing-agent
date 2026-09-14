@@ -14,3 +14,5 @@ class WorkflowDependencies:
     research: MarketResearchService
     browser_fill: BrowserFillService
     catalog: CatalogRepository
+    copy_diagnostics_retention_days: int = 30
+    copy_pipeline_timeout_seconds: float = 300.0

@@ -23,12 +23,15 @@ Kolejność czytania:
 6. [sterowanie Chrome](06_BROWSER.md),
 7. [ewaluacja](07_EWALUACJA.md),
 8. [obrona architektury](08_OBRONA.md),
-9. [cybersecurity i dynamic cloaking](09_CYBERSECURITY_CLOAKING.md).
-10. [laboratoria architektoniczne](10_LABORATORIA_ARCHITEKTONICZNE.md).
+9. [cybersecurity i dynamic cloaking](09_CYBERSECURITY_CLOAKING.md),
+10. [laboratoria architektoniczne](10_LABORATORIA_ARCHITEKTONICZNE.md),
+11. [wiarygodny opis oferty](11_WIARYGODNY_OPIS_OFERTY.md).
 
 Rzeczywiste porażki modeli i odpowiadające im zabezpieczenia opisuje
 [`../FAILURE_ATLAS.md`](../FAILURE_ATLAS.md), a wyniki 120 przypadków i LoRA są w
-[`../EVALUATION_RESULTS_2026-09-13.md`](../EVALUATION_RESULTS_2026-09-13.md).
+[`../EVALUATION_RESULTS_2026-09-13.md`](../EVALUATION_RESULTS_2026-09-13.md). Nową
+warstwę copy i jej ograniczenia zapisuje
+[`../IMPLEMENTATION_LOG_2026-09-14.md`](../IMPLEMENTATION_LOG_2026-09-14.md).
 
 Po każdej lekcji wykonaj `uv run --no-editable pytest`. Po lekcjach modelowych uruchom właściwy
 zestaw `marketplace-listing-agent eval`. Swoje wnioski zapisuj w nowym `docs/lab-notes.md`; nie

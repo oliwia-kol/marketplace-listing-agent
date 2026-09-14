@@ -98,11 +98,16 @@ before switching the application configuration.
 ```bash
 .venv/bin/marketplace-listing-agent eval --suite price_math
 .venv/bin/marketplace-listing-agent eval --suite facts
+.venv/bin/marketplace-listing-agent eval --suite copy_quality --split selection --limit 10
 .venv/bin/marketplace-listing-agent report --run-id RUN_ID
+.venv/bin/marketplace-listing-agent copy-report --run-id RUN_ID
 ```
 
 Model fallback is disabled during evaluation. Reports include dataset/config hashes,
-commit and environment metadata. The local run report includes only allow-listed telemetry.
+commit and environment metadata. Use `--repeats`, `--temperature`, `--top-p`, `--top-k`
+and `--seed` for reproducible comparisons. The local run report includes only allow-listed
+telemetry. Copy diagnostics retain redacted brief/draft/audit stages for 30 days; a manual
+`copy-rate` score is bound to the displayed variant hash.
 
 ## Docker
 

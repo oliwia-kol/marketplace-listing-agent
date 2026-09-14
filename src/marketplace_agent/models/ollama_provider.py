@@ -30,6 +30,10 @@ class OllamaModelProvider:
         context_tokens: int = 8192,
         think: bool | str = False,
         keep_alive: int | str = 0,
+        temperature: float = 0.0,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        seed: int | None = None,
     ) -> StructuredModelResponse[OutputT]:
         image_payload = [base64.b64encode(path.read_bytes()).decode() for path in images or []]
         message: dict[str, Any] = {"role": "user", "content": prompt}
@@ -37,6 +41,13 @@ class OllamaModelProvider:
             message["images"] = image_payload
 
         async with self._lock:  # hard guarantee: this process never runs two models concurrently
+            options: dict[str, Any] = {"num_ctx": context_tokens, "temperature": temperature}
+            if top_p is not None:
+                options["top_p"] = top_p
+            if top_k is not None:
+                options["top_k"] = top_k
+            if seed is not None:
+                options["seed"] = seed
             response = await self.client.chat(
                 model=model,
                 messages=[{"role": "system", "content": system}, message],
@@ -44,7 +55,7 @@ class OllamaModelProvider:
                 stream=False,
                 think=think,
                 keep_alive=keep_alive,
-                options={"num_ctx": context_tokens, "temperature": 0},
+                options=options,
             )
         raw = response.message.content
         try:

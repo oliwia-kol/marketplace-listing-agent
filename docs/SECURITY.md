@@ -23,6 +23,12 @@ sales browser.
 | Token or private content in telemetry | fixed event allow-list and error types | data is not collected |
 | MCP overreach | local stdio, identifier-only tools, repository-side authorization | reject call |
 
+Copy diagnostics are stored only in local SQLite, with a 30-day expiry. Email addresses
+and common token/password patterns are redacted before storage. Redaction is a reducing
+control, not a proof that arbitrary personal text is anonymous, so prompts and images are
+still excluded from general run telemetry. Product specifications are source-tagged and
+kept separate from observations about the sold item.
+
 The persistent sales profile is separate from personal Chrome and is never mounted into
 the research container. Passwords and OTPs are entered directly into the portal. A local
 profile still contains valuable session cookies; 2FA does not protect a stolen valid

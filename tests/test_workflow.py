@@ -6,7 +6,6 @@ from marketplace_agent.domain.catalog import CatalogRepository
 from marketplace_agent.domain.models import (
     FactProposal,
     ItemCase,
-    PortalDraft,
     PortalFillResult,
     PriceRecommendation,
     PriceResearchSummary,
@@ -17,7 +16,8 @@ from marketplace_agent.models.router import ModelRole, ModelRouter, RoleConfig, 
 from marketplace_agent.models.tasks import (
     CopyAuditItem,
     CopyAuditOutput,
-    CopyDraftOutput,
+    CopyTextDraft,
+    CopyTextOutput,
     FactExtractionOutput,
     PortalRecommendationOutput,
 )
@@ -87,14 +87,12 @@ async def test_graph_pauses_before_each_human_decision(tmp_path) -> None:
             PortalRecommendationOutput: PortalRecommendationOutput(
                 portals=["olx"], reasons={"olx": "lokalny odbiór"}
             ),
-            CopyDraftOutput: CopyDraftOutput(
+            CopyTextOutput: CopyTextOutput(
                 drafts=[
-                    PortalDraft(
+                    CopyTextDraft(
                         portal="olx",
                         title="Lampa",
                         description="Używana lampa.",
-                        category="Dom",
-                        price_pln=100,
                     )
                 ]
             ),
@@ -134,6 +132,8 @@ async def test_graph_pauses_before_each_human_decision(tmp_path) -> None:
     assert finished.status == WorkflowStatus.FORM_FILLING
     assert finished.portal_drafts[0].approved
     assert catalog.list_execution_jobs(item.item_id)[0]["status"] == "queued"
+    copy_stages = {row["stage"] for row in catalog.list_copy_diagnostics(result["run_id"])}
+    assert {"brief", "draft", "audit_initial", "final"} <= copy_stages
 
 
 @pytest.mark.asyncio
@@ -146,14 +146,12 @@ async def test_graph_does_not_open_browser_in_orchestrator_process(tmp_path) -> 
             PortalRecommendationOutput: PortalRecommendationOutput(
                 portals=["olx"], reasons={"olx": "lokalny odbiór"}
             ),
-            CopyDraftOutput: CopyDraftOutput(
+            CopyTextOutput: CopyTextOutput(
                 drafts=[
-                    PortalDraft(
+                    CopyTextDraft(
                         portal="olx",
                         title="Lampa",
                         description="Używana lampa.",
-                        category="Dom",
-                        price_pln=100,
                     )
                 ]
             ),

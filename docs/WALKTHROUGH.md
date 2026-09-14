@@ -42,8 +42,16 @@ Każdy `review_*` używa interrupt. Pytania o braki są grupowane po maksymalnie
 
 `MarketResearchService` tworzy plan wyszukiwania, zbiera kandydatów i przepuszcza każdy
 rekord przez jedną bramkę cenową. `evidence.py` zapisuje zredagowany manifest.
-`draft_copy` wysyła copywriterowi wyłącznie zatwierdzone fakty po redakcji pól
-wrażliwych. `audit_copy` łączy audyt modelowy z regułą `obvious_unsupported_claims`.
+`draft_copy` buduje `CopyBrief` z dwóch jawnych zakresów: faktów o egzemplarzu i
+źródłowych specyfikacji modelu. Copywriter zwraca tylko tytuł oraz opis; pola formularza
+składa kod. `audit_copy` łączy kontrolę wymaganych faktów i znanych twierdzeń ryzykownych
+z audytem claim-level, wykonuje najwyżej jedną naprawę i przy dalszym błędzie używa
+bezpiecznego szablonu. Cały pipeline ma wspólny deadline pięciu minut.
+
+Brief, wersje tekstu, audyty i ostrzeżenia są lokalnie przechowywane przez 30 dni.
+`copy-report` pokazuje przepływ i hash każdej wersji, a `copy-rate` wiąże ocenę człowieka
+z tym hashem. Materiał teoretyczny i protokół eksperymentu opisuje
+[`course/11_WIARYGODNY_OPIS_OFERTY.md`](course/11_WIARYGODNY_OPIS_OFERTY.md).
 
 ## 5. Snapshot i zgoda
 

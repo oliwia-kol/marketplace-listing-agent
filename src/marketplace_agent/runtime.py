@@ -37,6 +37,7 @@ class ApplicationRuntime:
         assert self.settings.data_dir is not None
         self.catalog = CatalogRepository(self.settings.catalog_db)
         self.catalog.setup()
+        self.catalog.purge_expired_copy_diagnostics()
         provider = OllamaModelProvider()
         self.router = ModelRouter.from_yaml(
             provider,
@@ -60,6 +61,8 @@ class ApplicationRuntime:
             ),
             browser_fill=BrowserFillService(self.sessions, self.router, self.settings.data_dir),
             catalog=self.catalog,
+            copy_diagnostics_retention_days=self.settings.copy_diagnostics_retention_days,
+            copy_pipeline_timeout_seconds=self.settings.copy_pipeline_timeout_seconds,
         )
         self.graph = build_graph(deps, saver)
         return self

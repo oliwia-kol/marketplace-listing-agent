@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import secrets
 import sqlite3
 from collections.abc import Iterator
@@ -13,7 +14,7 @@ from uuid import uuid4
 
 from marketplace_agent.domain.models import ItemCase, PortalDraft
 
-SCHEMA_VERSION = 3
+SCHEMA_VERSION = 5
 
 
 @contextmanager
@@ -33,6 +34,24 @@ def _canonical_json(value: Any) -> str:
 
 def _sha256_bytes(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
+
+
+def _redact_copy_diagnostic(value: Any) -> Any:
+    """Remove contact details and common secrets while preserving copy evidence."""
+    if isinstance(value, dict):
+        return {str(key): _redact_copy_diagnostic(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_redact_copy_diagnostic(item) for item in value]
+    if not isinstance(value, str):
+        return value
+    redacted = re.sub(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", "[REDACTED_EMAIL]", value)
+    redacted = re.sub(r"\b\d{8,10}:[A-Za-z0-9_-]{20,}\b", "[REDACTED_TOKEN]", redacted)
+    redacted = re.sub(
+        r"(?i)\b(api[_-]?key|token|password|hasło)\s*[:=]\s*\S+",
+        r"\1=[REDACTED]",
+        redacted,
+    )
+    return redacted
 
 
 def _file_record(path: Path, index: int) -> dict[str, Any]:
@@ -151,6 +170,36 @@ class CatalogRepository:
                     payload_json TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS copy_diagnostics (
+                    diagnostic_id TEXT PRIMARY KEY,
+                    run_id TEXT NOT NULL,
+                    item_id TEXT NOT NULL,
+                    portal TEXT,
+                    stage TEXT NOT NULL,
+                    payload_json TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    expires_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS copy_diagnostics_run_idx
+                    ON copy_diagnostics(run_id, created_at);
+                CREATE INDEX IF NOT EXISTS copy_diagnostics_expiry_idx
+                    ON copy_diagnostics(expires_at);
+                CREATE TABLE IF NOT EXISTS copy_ratings (
+                    rating_id TEXT PRIMARY KEY,
+                    run_id TEXT NOT NULL,
+                    item_id TEXT NOT NULL,
+                    portal TEXT NOT NULL,
+                    variant_hash TEXT NOT NULL,
+                    naturalness INTEGER NOT NULL CHECK(naturalness BETWEEN 1 AND 5),
+                    clarity INTEGER NOT NULL CHECK(clarity BETWEEN 1 AND 5),
+                    factual_trust INTEGER NOT NULL CHECK(factual_trust BETWEEN 1 AND 5),
+                    portal_fit INTEGER NOT NULL CHECK(portal_fit BETWEEN 1 AND 5),
+                    usefulness INTEGER NOT NULL CHECK(usefulness BETWEEN 1 AND 5),
+                    notes TEXT,
+                    created_at TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS copy_ratings_run_idx
+                    ON copy_ratings(run_id, created_at);
                 """
             )
             job_columns = {
@@ -603,6 +652,145 @@ class CatalogRepository:
             }
             for row in rows
         ]
+
+    def record_copy_diagnostic(
+        self,
+        *,
+        run_id: str,
+        item_id: str,
+        stage: str,
+        payload: dict[str, Any],
+        portal: str | None = None,
+        retention_days: int = 30,
+    ) -> str:
+        if retention_days < 1:
+            raise ValueError("copy diagnostic retention must be at least one day")
+        now = datetime.now(UTC)
+        diagnostic_id = uuid4().hex
+        safe_payload = _redact_copy_diagnostic(payload)
+        with _connection(self.database_path) as connection:
+            connection.execute(
+                """
+                INSERT INTO copy_diagnostics(
+                    diagnostic_id, run_id, item_id, portal, stage,
+                    payload_json, created_at, expires_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    diagnostic_id,
+                    run_id,
+                    item_id,
+                    portal,
+                    stage,
+                    _canonical_json(safe_payload),
+                    now.isoformat(),
+                    (now + timedelta(days=retention_days)).isoformat(),
+                ),
+            )
+        return diagnostic_id
+
+    def list_copy_diagnostics(self, run_id: str) -> list[dict[str, Any]]:
+        with _connection(self.database_path) as connection:
+            rows = connection.execute(
+                """
+                SELECT diagnostic_id, run_id, item_id, portal, stage,
+                       payload_json, created_at, expires_at
+                FROM copy_diagnostics WHERE run_id = ?
+                ORDER BY created_at, diagnostic_id
+                """,
+                (run_id,),
+            ).fetchall()
+        keys = (
+            "diagnostic_id",
+            "run_id",
+            "item_id",
+            "portal",
+            "stage",
+            "payload",
+            "created_at",
+            "expires_at",
+        )
+        diagnostics = []
+        for row in rows:
+            values = list(row)
+            values[5] = json.loads(values[5])
+            diagnostic = dict(zip(keys, values, strict=True))
+            diagnostic["payload_sha256"] = _sha256_bytes(
+                _canonical_json(diagnostic["payload"]).encode()
+            )
+            diagnostics.append(diagnostic)
+        return diagnostics
+
+    def purge_expired_copy_diagnostics(self, now: datetime | None = None) -> int:
+        cutoff = (now or datetime.now(UTC)).isoformat()
+        with _connection(self.database_path) as connection:
+            return connection.execute(
+                "DELETE FROM copy_diagnostics WHERE expires_at <= ?", (cutoff,)
+            ).rowcount
+
+    def record_copy_rating(
+        self,
+        *,
+        run_id: str,
+        item_id: str,
+        portal: str,
+        variant_hash: str,
+        naturalness: int,
+        clarity: int,
+        factual_trust: int,
+        portal_fit: int,
+        usefulness: int,
+        notes: str | None = None,
+    ) -> str:
+        scores = (naturalness, clarity, factual_trust, portal_fit, usefulness)
+        if any(score < 1 or score > 5 for score in scores):
+            raise ValueError("copy ratings must be integers from 1 to 5")
+        rating_id = uuid4().hex
+        safe_notes = _redact_copy_diagnostic(notes) if notes else None
+        with _connection(self.database_path) as connection:
+            connection.execute(
+                """INSERT INTO copy_ratings(
+                    rating_id, run_id, item_id, portal, variant_hash,
+                    naturalness, clarity, factual_trust, portal_fit, usefulness,
+                    notes, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                (
+                    rating_id,
+                    run_id,
+                    item_id,
+                    portal,
+                    variant_hash,
+                    *scores,
+                    safe_notes,
+                    datetime.now(UTC).isoformat(),
+                ),
+            )
+        return rating_id
+
+    def list_copy_ratings(self, run_id: str) -> list[dict[str, Any]]:
+        with _connection(self.database_path) as connection:
+            rows = connection.execute(
+                """SELECT rating_id, run_id, item_id, portal, variant_hash,
+                          naturalness, clarity, factual_trust, portal_fit, usefulness,
+                          notes, created_at
+                   FROM copy_ratings WHERE run_id = ? ORDER BY created_at""",
+                (run_id,),
+            ).fetchall()
+        keys = (
+            "rating_id",
+            "run_id",
+            "item_id",
+            "portal",
+            "variant_hash",
+            "naturalness",
+            "clarity",
+            "factual_trust",
+            "portal_fit",
+            "usefulness",
+            "notes",
+            "created_at",
+        )
+        return [dict(zip(keys, row, strict=True)) for row in rows]
 
     def enqueue_execution(
         self, *, approval_id: str, snapshot_id: str, portal: str

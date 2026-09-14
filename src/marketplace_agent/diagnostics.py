@@ -84,6 +84,10 @@ def build_environment_manifest(settings: Settings) -> dict[str, object]:
                 "fallback": config.fallback,
                 "context_tokens": config.context_tokens,
                 "request_timeout_seconds": config.request_timeout_seconds,
+                "temperature": config.temperature,
+                "top_p": config.top_p,
+                "top_k": config.top_k,
+                "seed": config.seed,
             }
             for role, config in model_config.roles.items()
         },

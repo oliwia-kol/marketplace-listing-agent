@@ -28,6 +28,10 @@ class RoleConfig(BaseModel):
     think: bool | str = False
     keep_alive: int | str = 0
     request_timeout_seconds: float = Field(default=180.0, ge=0.01)
+    temperature: float = Field(default=0.0, ge=0, le=2)
+    top_p: float | None = Field(default=None, gt=0, le=1)
+    top_k: int | None = Field(default=None, ge=1)
+    seed: int | None = None
 
 
 class RouterConfig(BaseModel):
@@ -88,6 +92,10 @@ class ModelRouter:
                         context_tokens=role_config.context_tokens,
                         think=role_config.think,
                         keep_alive=role_config.keep_alive,
+                        temperature=role_config.temperature,
+                        top_p=role_config.top_p,
+                        top_k=role_config.top_k,
+                        seed=role_config.seed,
                     )
                 self._record(
                     effective_run_id,

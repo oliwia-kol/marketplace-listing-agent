@@ -41,6 +41,8 @@ class Settings(BaseSettings):
     headless: bool = False
     allow_live_submit: bool = False
     log_level: str = "INFO"
+    copy_diagnostics_retention_days: int = Field(default=30, ge=1, le=365)
+    copy_pipeline_timeout_seconds: float = Field(default=300.0, ge=30, le=900)
 
     @model_validator(mode="after")
     def resolve_paths(self) -> Settings:
@@ -93,7 +95,9 @@ class Settings(BaseSettings):
         for name in (
             "comparables.jsonl",
             "copy.jsonl",
+            "copy_quality.jsonl",
             "copy_audit.jsonl",
+            "copy_audit_mutations.jsonl",
             "facts.jsonl",
             "forms.jsonl",
             "price_math.jsonl",

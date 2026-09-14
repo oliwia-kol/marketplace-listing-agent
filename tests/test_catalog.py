@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 import pytest
 
 from marketplace_agent.domain.catalog import CatalogRepository
@@ -107,3 +109,50 @@ def test_run_events_round_trip_metadata(tmp_path) -> None:
     rows = repo.list_run_events("run-1")
     assert rows[0]["item_id"] == "item-1"
     assert rows[0]["payload"] == {"model": "small", "prompt_tokens": 7}
+
+
+def test_copy_diagnostics_are_redacted_and_expire(tmp_path) -> None:
+    repo = CatalogRepository(tmp_path / "catalog.sqlite")
+    repo.setup()
+    repo.record_copy_diagnostic(
+        run_id="run-1",
+        item_id="item-1",
+        portal="olx",
+        stage="draft",
+        payload={
+            "description": "Kontakt: osoba@example.com",
+            "token": "token=sekret",
+            "model": "iPhone 15 Pro 256 GB",
+        },
+        retention_days=1,
+    )
+
+    row = repo.list_copy_diagnostics("run-1")[0]
+    assert "osoba@example.com" not in str(row["payload"])
+    assert "sekret" not in str(row["payload"])
+    assert row["payload"]["model"] == "iPhone 15 Pro 256 GB"
+    assert repo.purge_expired_copy_diagnostics(datetime.now(UTC) + timedelta(days=2)) == 1
+    assert repo.list_copy_diagnostics("run-1") == []
+
+
+def test_copy_rating_is_version_bound_and_redacts_notes(tmp_path) -> None:
+    repo = CatalogRepository(tmp_path / "catalog.sqlite")
+    repo.setup()
+    rating_id = repo.record_copy_rating(
+        run_id="run-rating",
+        item_id="item-rating",
+        portal="olx",
+        variant_hash="abc123",
+        naturalness=4,
+        clarity=5,
+        factual_trust=5,
+        portal_fit=4,
+        usefulness=4,
+        notes="kontakt user@example.com token=very-secret-value",
+    )
+
+    ratings = repo.list_copy_ratings("run-rating")
+    assert ratings[0]["rating_id"] == rating_id
+    assert ratings[0]["variant_hash"] == "abc123"
+    assert "user@example.com" not in ratings[0]["notes"]
+    assert "very-secret-value" not in ratings[0]["notes"]

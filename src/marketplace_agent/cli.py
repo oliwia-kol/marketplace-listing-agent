@@ -23,7 +23,7 @@ from marketplace_agent.evaluation.runner import EvaluationRunner
 from marketplace_agent.execution.engine import BrowserExecutionAdapter, ExecutionEngine
 from marketplace_agent.models.ollama_provider import OllamaModelProvider
 from marketplace_agent.models.router import ModelRouter
-from marketplace_agent.monitoring.report import write_run_report
+from marketplace_agent.monitoring.report import write_copy_report, write_run_report
 from marketplace_agent.runtime import ApplicationRuntime
 from marketplace_agent.secrets import read_keychain_token, save_keychain_token
 from marketplace_agent.settings import Settings
@@ -149,9 +149,22 @@ def manifest(
 @app.command("eval")
 def evaluate(
     suite: str = typer.Option(
-        "price_math", help="price_math, facts, comparables, copy, copy_audit albo forms"
+        "price_math",
+        help=(
+            "price_math, facts, comparables, copy, copy_quality, copy_audit, "
+            "copy_audit_mutations albo forms"
+        ),
     ),
     model: str | None = typer.Option(None, help="Jednorazowa podmiana modelu dla roli"),
+    repeats: int = typer.Option(1, min=1, max=10, help="Liczba powtórzeń każdego przypadku"),
+    temperature: float | None = typer.Option(None, min=0, max=2),
+    top_p: float | None = typer.Option(None, min=0.01, max=1),
+    top_k: int | None = typer.Option(None, min=1),
+    seed: int | None = typer.Option(None),
+    split: str | None = typer.Option(
+        None, help="Opcjonalny split zestawu, np. development, selection lub frozen"
+    ),
+    limit: int | None = typer.Option(None, min=1, help="Maksymalna liczba przypadków na próbę"),
 ) -> None:
     """Uruchom wybrany zestaw golden i zapisz raport JSON."""
 
@@ -167,7 +180,19 @@ def evaluate(
             settings.golden_dir,
             settings.reports_dir,
         )
-        report = await runner.run(suite, model)
+        report = await runner.run(
+            suite,
+            model,
+            repeats=repeats,
+            generation_overrides={
+                "temperature": temperature,
+                "top_p": top_p,
+                "top_k": top_k,
+                "seed": seed,
+            },
+            split=split,
+            limit=limit,
+        )
         typer.echo(f"Raport: {report}")
 
     asyncio.run(execute())
@@ -188,6 +213,60 @@ def report(
     if not events:
         raise typer.BadParameter("Nie znaleziono zdarzeń dla tego przebiegu")
     typer.echo(f"Raport: {write_run_report(events, settings.reports_dir, run_id)}")
+
+
+@app.command("copy-report")
+def copy_report(
+    run_id: str = typer.Option(..., help="Identyfikator przebiegu zapisany w SQLite"),
+) -> None:
+    """Wygeneruj lokalny raport briefu, draftów, audytu i poprawek opisu."""
+    settings = _settings()
+    assert settings.reports_dir is not None
+    from marketplace_agent.domain.catalog import CatalogRepository
+
+    catalog = CatalogRepository(settings.catalog_db)
+    catalog.setup()
+    diagnostics = catalog.list_copy_diagnostics(run_id)
+    if not diagnostics:
+        raise typer.BadParameter("Nie znaleziono diagnostyki opisu dla tego przebiegu")
+    ratings = catalog.list_copy_ratings(run_id)
+    typer.echo(
+        f"Raport: {write_copy_report(diagnostics, settings.reports_dir, run_id, ratings)}"
+    )
+
+
+@app.command("copy-rate")
+def copy_rate(
+    run_id: str = typer.Option(...),
+    item_id: str = typer.Option(...),
+    portal: str = typer.Option(...),
+    variant_hash: str = typer.Option(..., help="Hash wariantu z raportu lub eksperymentu"),
+    naturalness: int = typer.Option(..., min=1, max=5),
+    clarity: int = typer.Option(..., min=1, max=5),
+    factual_trust: int = typer.Option(..., min=1, max=5),
+    portal_fit: int = typer.Option(..., min=1, max=5),
+    usefulness: int = typer.Option(..., min=1, max=5),
+    notes: str | None = typer.Option(None),
+) -> None:
+    """Zapisz lokalną ocenę człowieka dla konkretnej wersji opisu."""
+    from marketplace_agent.domain.catalog import CatalogRepository
+
+    settings = _settings()
+    catalog = CatalogRepository(settings.catalog_db)
+    catalog.setup()
+    rating_id = catalog.record_copy_rating(
+        run_id=run_id,
+        item_id=item_id,
+        portal=portal,
+        variant_hash=variant_hash,
+        naturalness=naturalness,
+        clarity=clarity,
+        factual_trust=factual_trust,
+        portal_fit=portal_fit,
+        usefulness=usefulness,
+        notes=notes,
+    )
+    typer.echo(f"Ocena: {rating_id}")
 
 
 @app.command("worker")

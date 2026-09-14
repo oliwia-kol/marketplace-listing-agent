@@ -34,13 +34,18 @@ submit becomes `unknown`; reconciliation reads portal state before any retry.
 ## Safety properties
 
 - Models propose data; deterministic code grants authority and computes price statistics.
+- Copy claims distinguish observed item facts from sourced product-model specifications.
+- The writer returns text only; deterministic checks, an independent claim audit, one repair,
+  and a safe template run before human review.
 - A shared admission gate rejects unverified, suspicious, non-PLN and non-item prices.
 - Active asking prices and explicitly sold listings are reported separately.
 - Web content cannot select tools or publication actions.
 - URL and DNS checks reject private, loopback, link-local and special destinations.
 - CAPTCHA, login expiry, unknown fields, manual differences and unexpected fees pause one job.
 - Passwords, OTPs, cookies and card data never enter Telegram, models, MCP or reports.
-- Monitoring stores operational metadata, prompt hashes and error types, without prompt text.
+- General monitoring stores operational metadata, prompt hashes and error types, without
+  prompt text. A separate local copy-quality trace retains redacted briefs, versions and
+  audits for 30 days and binds human ratings to a variant hash.
 - Exact snapshot hashes, one-time tokens and transactional job claims limit stale/replayed work.
 
 These controls have defined limits. Unit and fixture tests do not prove that a current,
@@ -122,4 +127,5 @@ enabled in the product. See [experiment results](experiments/lora/RESULTS.md).
 - [Competency and evidence matrix](docs/COMPETENCY_MATRIX.md)
 - [Model failure atlas](docs/FAILURE_ATLAS.md)
 - [Current verified status](docs/PROJECT_STATUS_2026-09-13.md)
+- [Copy-quality implementation status](docs/IMPLEMENTATION_LOG_2026-09-14.md)
 - [Architecture decisions](docs/adr/)

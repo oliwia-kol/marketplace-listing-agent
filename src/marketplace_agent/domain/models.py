@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, HttpUrl, field_validator, model_validator
 
 
 class WorkflowStatus(StrEnum):
@@ -38,7 +38,11 @@ class FactProposal(BaseModel):
     )
     value: str | int | float | bool | None
     confidence: float = Field(ge=0, le=1)
-    source: Literal["image", "user", "model", "derived"]
+    source: Literal["image", "user", "model", "derived", "manufacturer"]
+    scope: Literal["item", "product_spec"] = "item"
+    source_url: HttpUrl | None = None
+    source_excerpt: str | None = Field(default=None, max_length=500)
+    observed_at: datetime | None = None
     approved: bool = False
 
     @field_validator("name")
@@ -64,12 +68,24 @@ class FactProposal(BaseModel):
             return value
         raise ValueError("Fact name must use a canonical key")
 
+    @model_validator(mode="after")
+    def sourced_product_specification(self) -> FactProposal:
+        if self.scope == "product_spec" and self.source_url is None:
+            raise ValueError("product specifications require source_url")
+        return self
+
 
 class ItemFacts(BaseModel):
     proposals: list[FactProposal] = Field(default_factory=list)
 
-    def approved_dict(self) -> dict[str, Any]:
-        return {fact.name: fact.value for fact in self.proposals if fact.approved}
+    def approved_dict(
+        self, *, scope: Literal["item", "product_spec"] | None = None
+    ) -> dict[str, Any]:
+        return {
+            fact.name: fact.value
+            for fact in self.proposals
+            if fact.approved and (scope is None or fact.scope == scope)
+        }
 
 
 class ComparableCandidate(BaseModel):
