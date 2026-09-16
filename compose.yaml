@@ -22,26 +22,8 @@ services:
     security_opt: [no-new-privileges:true]
     networks: [research-internal, public-egress]
     mem_limit: 128m
-
-  research-worker:
-    build: .
-    profiles: [research]
-    command: ["doctor", "--scope", "core"]
-    read_only: true
-    tmpfs:
-      - /tmp:size=256m,mode=1777
-      - /app-data:size=64m,uid=999,gid=999,mode=0700
-    environment:
-      MARKETPLACE_AGENT_APP_DIR: /app-data
-      HTTPS_PROXY: http://research-proxy:8080
-      HTTP_PROXY: http://research-proxy:8080
-      NO_PROXY: research-proxy
-    cap_drop: [ALL]
-    security_opt: [no-new-privileges:true]
-    networks: [research-internal]
-    mem_limit: 2g
-    cpus: 2.0
-    depends_on: [research-proxy]
+    ports:
+      - "127.0.0.1:18080:8080"
 
 networks:
   research-internal:

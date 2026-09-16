@@ -1,5 +1,6 @@
 import pytest
 from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 from langgraph.types import Command
 
 from marketplace_agent.domain.catalog import CatalogRepository
@@ -22,7 +23,11 @@ from marketplace_agent.models.tasks import (
     PortalRecommendationOutput,
 )
 from marketplace_agent.workflow.dependencies import WorkflowDependencies
-from marketplace_agent.workflow.graph import build_graph, select_essential_questions
+from marketplace_agent.workflow.graph import (
+    build_graph,
+    normalize_fact_provenance,
+    select_essential_questions,
+)
 
 
 class ResearchStub:
@@ -83,6 +88,59 @@ def test_only_identity_or_conflict_questions_block_description() -> None:
     ]
 
     assert select_essential_questions(facts, questions) == [questions[1]]
+
+
+def test_model_cannot_self_declare_a_fact_as_user_provided() -> None:
+    facts = [
+        FactProposal(name="condition", value="dobry", confidence=0.9, source="user"),
+        FactProposal(name="model", value="ABC-123", confidence=0.9, source="user"),
+    ]
+
+    normalized = normalize_fact_provenance(facts, "Stan dobry, modelu nie pamiętam")
+
+    assert normalized[0].source == "user"
+    assert normalized[0].source_ref.startswith("user_note_sha256:")
+    assert normalized[1].source == "model"
+    assert normalized[1].source_ref is None
+
+
+@pytest.mark.asyncio
+async def test_sqlite_checkpoint_resumes_after_process_restart(tmp_path) -> None:
+    provider = StaticModelProvider(
+        {
+            FactExtractionOutput: FactExtractionOutput(
+                facts=[FactProposal(name="category", value="lampa", confidence=0.9, source="image")]
+            ),
+            PortalRecommendationOutput: PortalRecommendationOutput(
+                portals=["olx"], reasons={"olx": "lokalny odbiór"}
+            ),
+        }
+    )
+    router = ModelRouter(
+        provider,
+        RouterConfig(roles={role: RoleConfig(model="static") for role in ModelRole}),
+    )
+    catalog = CatalogRepository(tmp_path / "catalog.sqlite")
+    catalog.setup()
+    dependencies = WorkflowDependencies(router, ResearchStub(), BrowserStub(), catalog)
+    photo = tmp_path / "fixture.jpg"
+    photo.write_bytes(b"fixture")
+    item = ItemCase(photo_paths=[photo])
+    config = {"configurable": {"thread_id": item.item_id}}
+    checkpoint_path = tmp_path / "checkpoints.sqlite"
+
+    async with AsyncSqliteSaver.from_conn_string(str(checkpoint_path)) as saver:
+        first_graph = build_graph(dependencies, saver)
+        result = await first_graph.ainvoke({"item": item.model_dump(mode="json")}, config=config)
+        assert interrupt_kind(result) == "fact"
+
+    async with AsyncSqliteSaver.from_conn_string(str(checkpoint_path)) as saver:
+        restarted_graph = build_graph(dependencies, saver)
+        result = await restarted_graph.ainvoke(
+            Command(resume={"action": "accept"}), config=config
+        )
+
+    assert interrupt_kind(result) == "portals"
 
 
 @pytest.mark.asyncio

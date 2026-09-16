@@ -29,15 +29,15 @@ control, not a proof that arbitrary personal text is anonymous, so prompts and i
 still excluded from general run telemetry. Product specifications are source-tagged and
 kept separate from observations about the sold item.
 
-The persistent sales profile is separate from personal Chrome and is never mounted into
-the research container. Passwords and OTPs are entered directly into the portal. A local
+The persistent sales profile is separate from personal Chrome and is not used by the
+research browser. Passwords and OTPs are entered directly into the portal. A local
 profile still contains valuable session cookies; 2FA does not protect a stolen valid
 cookie, so filesystem and host security remain necessary.
 
 The Docker egress proxy permits HTTPS CONNECT only to ports 80/443, rejects any DNS set
-containing private or special addresses, and connects to the checked IP. Containers run
-without capabilities, with a read-only root and without host home, Keychain, Docker socket,
-approval database or sales profile mounts.
+containing private or special addresses, and connects to the checked IP. The application
+refuses to create its research browser without a configured proxy. The browser itself
+runs on the Mac, so this constrains network destinations but is not a filesystem sandbox.
 
 No control here guarantees protection after full host compromise or detects perfectly
 consistent cloaking. Portal UI and terms can change. Real-account use requires a dated

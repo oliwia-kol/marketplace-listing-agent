@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from playwright.async_api import BrowserContext, Locator, Page
 
@@ -140,8 +141,36 @@ def _readback_expected(draft: PortalDraft, photo_paths: list[Path]) -> dict[str,
         "sale_type": draft.sale_type,
         "location": draft.location,
         "photos": len(photo_paths),
+        **{f"delivery.{key}": value for key, value in draft.delivery.items()},
+        **{f"attribute.{key}": value for key, value in draft.attributes.items()},
     }
     return {field: value for field, value in values.items() if value not in (None, "", [])}
+
+
+def _form_values(draft: PortalDraft, photo_paths: list[Path]) -> dict[str, Any]:
+    return {
+        "title": draft.title,
+        "description": draft.description,
+        "price_pln": draft.price_pln,
+        "category": draft.category,
+        "photos": photo_paths,
+        "condition": draft.condition,
+        "sale_type": draft.sale_type,
+        "location": draft.location,
+        **{f"delivery.{key}": value for key, value in draft.delivery.items()},
+        **{f"attribute.{key}": value for key, value in draft.attributes.items()},
+    }
+
+
+def _field_labels(spec: PortalSpec, field: str) -> tuple[str, ...]:
+    fallback = field.split(".", 1)[-1].replace("_", " ")
+    return spec.field_labels.get(field, (fallback,))
+
+
+def _url_matches_portal(url: str, spec: PortalSpec) -> bool:
+    actual = (urlsplit(url).hostname or "").casefold().rstrip(".")
+    expected = (urlsplit(spec.create_url).hostname or "").casefold().rstrip(".")
+    return actual == expected or actual.endswith(f".{expected}")
 
 
 class SafeActionExecutor:
@@ -187,22 +216,11 @@ class PortalFormFiller:
             )
         filled: dict[str, Any] = {}
         missing: dict[str, Any] = {}
-        values: dict[str, Any] = {
-            "title": draft.title,
-            "description": draft.description,
-            "price_pln": draft.price_pln,
-            "category": draft.category,
-            "photos": photo_paths,
-            "condition": draft.condition,
-            "sale_type": draft.sale_type,
-            "location": draft.location,
-            "delivery": draft.delivery,
-            **draft.attributes,
-        }
+        values = _form_values(draft, photo_paths)
         for field, value in values.items():
             if value in (None, "", []):
                 continue
-            labels = spec.field_labels.get(field, (field,))
+            labels = _field_labels(spec, field)
             success = await self._fill_by_labels(page, field, labels, value, photo_paths)
             if success:
                 filled[field] = value if field != "photos" else [path.name for path in photo_paths]
@@ -235,15 +253,15 @@ class PortalFormFiller:
 
     async def _page_for_portal(self, spec: PortalSpec) -> Page:
         for page in self.context.pages:
-            if spec.portal == "olx" and "olx.pl" in page.url:
+            if spec.portal == "olx" and _url_matches_portal(page.url, spec):
                 if "/d/nowe-ogloszenie" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
-            if spec.portal == "vinted" and "vinted.pl" in page.url:
+            if spec.portal == "vinted" and _url_matches_portal(page.url, spec):
                 if "/items/new" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
-            if spec.portal == "allegro_lokalnie" and "allegrolokalnie.pl" in page.url:
+            if spec.portal == "allegro_lokalnie" and _url_matches_portal(page.url, spec):
                 if "/oferty/wystaw" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
@@ -366,7 +384,7 @@ class PortalFormFiller:
             if field not in filled:
                 continue
             actual: str | None = None
-            for label in spec.field_labels[field]:
+            for label in _field_labels(spec, field):
                 try:
                     locator = await self._unique_control(page, label)
                     if locator is None:

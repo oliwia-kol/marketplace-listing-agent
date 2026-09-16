@@ -17,6 +17,7 @@ from marketplace_agent.diagnostics import (
     build_environment_manifest,
     core_checks,
     model_checks,
+    research_checks,
     telegram_checks,
 )
 from marketplace_agent.evaluation.runner import EvaluationRunner
@@ -36,6 +37,7 @@ class DoctorScope(StrEnum):
     TELEGRAM = "telegram"
     MODELS = "models"
     BROWSER = "browser"
+    RESEARCH = "research"
     ALL = "all"
 
 
@@ -72,6 +74,7 @@ def doctor(
                 DoctorScope.TELEGRAM,
                 DoctorScope.MODELS,
                 DoctorScope.BROWSER,
+                DoctorScope.RESEARCH,
             }
         )
         results = []
@@ -81,6 +84,8 @@ def doctor(
             results.extend(telegram_checks(settings))
         if DoctorScope.BROWSER in selected:
             results.extend(browser_checks(settings))
+        if DoctorScope.RESEARCH in selected:
+            results.extend(research_checks(settings))
         if DoctorScope.MODELS in selected:
             settings.ensure_directories()
             results.extend(await model_checks(settings, probe=probe))
@@ -394,13 +399,34 @@ def backup(
     from marketplace_agent.operations.backup import create_backup
 
     settings = _settings()
-    typer.echo(f"Kopia: {create_backup(settings.catalog_db, settings.checkpoint_db, destination)}")
+    assert settings.data_dir is not None
+    config_paths = tuple(
+        path
+        for path in (
+            settings.model_config_path,
+            settings.source_config_path,
+            settings.category_profile_path,
+        )
+        if path is not None
+    )
+    typer.echo(
+        "Kopia: "
+        + str(
+            create_backup(
+                settings.catalog_db,
+                settings.checkpoint_db,
+                destination,
+                data_dir=settings.data_dir,
+                config_paths=config_paths,
+            )
+        )
+    )
 
 
 @app.command("restore-backup")
-def restore(source: Path, destination_data_dir: Path) -> None:
-    """Odtwórz kopię do nowego, pustego katalogu danych."""
+def restore(source: Path, destination_app_dir: Path) -> None:
+    """Odtwórz kopię do nowego, pustego katalogu aplikacji."""
     from marketplace_agent.operations.backup import restore_backup
 
-    restored = restore_backup(source, destination_data_dir)
+    restored = restore_backup(source, destination_app_dir)
     typer.echo("Odtworzono: " + ", ".join(str(path) for path in restored))

@@ -3,7 +3,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from marketplace_agent.domain.catalog import CatalogRepository
-from marketplace_agent.domain.models import ItemCase, PortalDraft
+from marketplace_agent.domain.models import FactProposal, ItemCase, ItemFacts, PortalDraft
 
 
 def test_catalog_roundtrip_and_channel_session(tmp_path) -> None:
@@ -41,7 +41,21 @@ def test_snapshot_is_content_addressed_and_detects_changed_photo(tmp_path) -> No
     repo.setup()
     photo = tmp_path / "item.jpg"
     photo.write_bytes(b"first")
-    item = ItemCase(photo_paths=[photo])
+    item = ItemCase(
+        photo_paths=[photo],
+        facts=ItemFacts(
+            proposals=[
+                FactProposal(
+                    name="condition",
+                    value="dobry",
+                    confidence=1,
+                    source="user",
+                    source_ref="user_note_sha256:abc",
+                    approved=True,
+                )
+            ]
+        ),
+    )
     draft = PortalDraft(
         portal="olx", title="Konsola", description="Opis", category="Konsole", price_pln=900
     )
@@ -52,6 +66,9 @@ def test_snapshot_is_content_addressed_and_detects_changed_photo(tmp_path) -> No
     second = repo.create_listing_snapshot(item, draft)
 
     assert second != first
+    assert repo.get_snapshot(first)["payload"]["fact_records"][0]["source_ref"] == (
+        "user_note_sha256:abc"
+    )
     assert repo.get_snapshot(first)["version"] == 1
     assert repo.get_snapshot(second)["version"] == 2
     assert (

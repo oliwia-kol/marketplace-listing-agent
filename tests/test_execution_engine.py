@@ -10,6 +10,7 @@ from marketplace_agent.execution.engine import (
     BrowserExecutionAdapter,
     ExecutionEngine,
     PreparationResult,
+    listing_identity,
 )
 
 
@@ -29,6 +30,11 @@ class AdapterStub:
     async def reconcile(self, snapshot):
         self.calls += 1
         return self.result
+
+
+class PublishFailureStub(AdapterStub):
+    async def publish(self, snapshot, previous_result):
+        raise RuntimeError("connection lost after click")
 
 
 def approved_job(tmp_path: Path) -> tuple[CatalogRepository, dict]:
@@ -175,3 +181,42 @@ async def test_publication_requires_separate_snapshot_bound_approval(tmp_path: P
     result = await ExecutionEngine(repo, adapter, "worker-1").run_once()
     assert result["status"] == "published"
     assert result["attempt"] == 1
+
+
+@pytest.mark.asyncio
+async def test_publish_exception_becomes_unknown_instead_of_failed(tmp_path: Path) -> None:
+    repo, job = approved_job(tmp_path)
+    repo.set_execution_status(job["job_id"], "ready", {"readback": "matched"})
+    snapshot = repo.get_snapshot(job["snapshot_id"])
+    approval = repo.issue_approval(
+        channel_id="owner",
+        item_id=snapshot["item_id"],
+        step="publish_authorization",
+        payload={"job_id": job["job_id"]},
+        snapshot_ids=[job["snapshot_id"]],
+    )
+    consumed = repo.consume_approval(
+        token=approval["token"],
+        channel_id="owner",
+        item_id=snapshot["item_id"],
+        expected_step="publish_authorization",
+    )
+    repo.attach_publish_approval(job["job_id"], consumed["approval_id"])
+
+    result = await ExecutionEngine(
+        repo,
+        PublishFailureStub(PreparationResult("failed", {})),
+        "worker-1",
+    ).run_once()
+
+    assert result["status"] == "unknown"
+    assert result["result"]["error_type"] == "RuntimeError"
+
+
+def test_listing_identity_requires_a_concrete_portal_listing_url() -> None:
+    assert listing_identity("olx", "https://www.olx.pl/d/oferta/lampa-IDabc.html") == {
+        "url": "https://www.olx.pl/d/oferta/lampa-IDabc.html",
+        "portal_listing_ref": "lampa-IDabc.html",
+    }
+    assert listing_identity("olx", "https://www.olx.pl/d/nowe-ogloszenie/") is None
+    assert listing_identity("olx", "https://olx.pl.evil.example/d/oferta/fake") is None

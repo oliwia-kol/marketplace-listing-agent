@@ -39,6 +39,7 @@ class FactProposal(BaseModel):
     value: str | int | float | bool | None
     confidence: float = Field(ge=0, le=1)
     source: Literal["image", "user", "model", "derived", "manufacturer"]
+    source_ref: str | None = Field(default=None, max_length=128)
     scope: Literal["item", "product_spec"] = "item"
     source_url: HttpUrl | None = None
     source_excerpt: str | None = Field(default=None, max_length=500)

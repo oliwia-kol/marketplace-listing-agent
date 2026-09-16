@@ -2,6 +2,8 @@
 
 Aktualne studium prostego przepływu wielu kategorii oraz eksperyment LoRA v2 opisuje
 [`12_GENERALIZACJA_I_LORA_V2.md`](12_GENERALIZACJA_I_LORA_V2.md).
+Domknięcie proweniencji, readbacku, stanów `unknown`, backupu i proxy opisuje
+[`13_GOTOWOSC_OPERACYJNA.md`](13_GOTOWOSC_OPERACYJNA.md).
 
 ## Jak korzystać z materiału
 
@@ -290,11 +292,11 @@ macOS, ponieważ runner CI ich nie posiada.
 
 ## 15. Eksploatacja i recovery
 
-`doctor` ma zakresy core, Telegram, models i browser. Błąd daje niezerowy exit code,
+`doctor` ma zakresy core, Telegram, models, browser i research. Błąd daje niezerowy exit code,
 więc może zatrzymać instalację lub automatyzację. Dane aplikacji żyją poza repozytorium.
 LaunchAgent wskazuje zainstalowany executable, nie przypadkowe `.venv` developera.
 
-Backup tworzy spójne kopie obu baz. Restore odbywa się do nowego katalogu, po czym
+Backup obejmuje obie bazy, zdjęcia, konfiguracje i manifest SHA-256. Restore odbywa się do nowego katalogu, po czym
 uruchamia się `doctor`, testuje status i dopiero ręcznie przełącza konfigurację. Taki
 dry run ogranicza ryzyko utraty jedynej działającej kopii.
 
@@ -303,17 +305,13 @@ dry run ogranicza ryzyko utraty jedynej działającej kopii.
 Obraz to niezmienny zestaw plików i zależności. Kontener jest procesem uruchomionym z
 tego obrazu. Wolumen dostarcza jawnie wybrane dane, a sieć definiuje osiągalne usługi.
 
-Kontener projektu działa jako nieuprzywilejowany użytkownik, z read-only root,
-`no-new-privileges`, bez capabilities i z limitami CPU/pamięci. Worker researchu nie
-montuje katalogu domowego, Keychain, profilu sprzedaży ani bazy zgód. Wewnętrzna sieć
-prowadzi wyjście przez proxy odrzucający adresy prywatne.
+Proxy projektu działa jako nieuprzywilejowany użytkownik, z read-only root,
+`no-new-privileges`, bez capabilities i z limitami pamięci. Research Chrome działa na
+Macu, lecz wymaga tego proxy, które odrzuca adresy prywatne i specjalne.
 
-Docker Desktop na macOS działa wewnątrz maszyny wirtualnej. Jest mocną redukcją
-uprawnień, ale nie formalną gwarancją bezpieczeństwa całego hosta. Aktualnie składnia
-Compose, build i działanie daemona zostały zweryfikowane. Test integracyjny potwierdził
-publiczny HTTPS przez proxy, odmowę dla localhost i brak bezpośredniego egressu workera.
-Nie dowodzi to jeszcze działania pełnego researchu w kontenerze, ponieważ komenda
-`research-worker` pozostaje diagnostycznym scaffoldem.
+Docker Desktop na macOS działa wewnątrz maszyny wirtualnej. Test integracyjny potwierdził
+publiczny HTTPS przez proxy i odmowę dla localhost. Jest to granica egressu, a nie
+filesystem sandbox procesu Chrome.
 
 ## 17. MCP
 
@@ -332,11 +330,10 @@ Supervised fine-tuning minimalizuje stratę przewidywania poprawnej odpowiedzi d
 wejście–odpowiedź. LoRA nie aktualizuje pełnej macierzy `W`; uczy niskorangową zmianę
 `ΔW = B·A`. Liczba parametrów i stan optymalizatora są dzięki temu znacznie mniejsze.
 
-W eksperymencie Qwen3-0.6B uczono 1,442 mln parametrów przez 200 iteracji. Adapter
-osiągnął poprawny format prozy w 30/30 zamrożonych przypadków, podczas gdy model bazowy
-powtarzał JSON. Jednocześnie deterministyczny szablon uzyskał ten sam wynik taniej.
-Dlatego adapter nie został automatycznie wdrożony do produktu. To przykład dojrzałej
-decyzji: wykonany fine-tuning może zakończyć się świadomym brakiem integracji.
+W drugim eksperymencie użyto 400 przykładów train, 100 validation i 100 frozen test z
+całymi rodzinami produktów wyłączonymi z treningu. Adaptery nauczyły się prozy, ale
+pokrycie dokładnych faktów spadło do około 0,81, a nazwa przedmiotu była zachowana w
+połowie przypadków. Dlatego nie zostały wdrożone do produktu.
 
 ## 19. Obrona projektu
 

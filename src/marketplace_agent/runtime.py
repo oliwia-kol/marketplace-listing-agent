@@ -45,7 +45,9 @@ class ApplicationRuntime:
             event_sink=self.catalog.record_run_event,
         )
         self.sessions = BrowserSessionManager(
-            self.settings.chrome_profile_dir, headless=self.settings.headless
+            self.settings.chrome_profile_dir,
+            headless=self.settings.headless,
+            research_proxy_url=self.settings.research_proxy_url,
         )
         saver = await self.stack.enter_async_context(
             AsyncSqliteSaver.from_conn_string(str(self.settings.checkpoint_db))

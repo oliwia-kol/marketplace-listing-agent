@@ -356,6 +356,9 @@ class CatalogRepository:
             "item_id": item.item_id,
             "portal": draft.portal,
             "facts": item.facts.approved_dict(),
+            "fact_records": [
+                fact.model_dump(mode="json") for fact in item.facts.proposals if fact.approved
+            ],
             "draft": draft.model_dump(mode="json"),
             "photos": photos,
             "pricing_evidence": (

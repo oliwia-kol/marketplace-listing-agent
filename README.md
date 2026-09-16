@@ -66,10 +66,17 @@ ollama pull qwen3.5:4b
 ollama pull qwen3.5:9b
 ollama pull hf.co/speakleash/Bielik-11B-v3.0-Instruct-GGUF:Q4_K_M
 
+docker compose up -d research-proxy
 .venv/bin/marketplace-listing-agent doctor --scope all
 .venv/bin/marketplace-listing-agent manifest --destination environment-manifest.json
 .venv/bin/marketplace-listing-agent configure-token
 .venv/bin/marketplace-listing-agent run
+```
+
+Verify the loopback-only research egress proxy separately when diagnosing research:
+
+```bash
+.venv/bin/marketplace-listing-agent doctor --scope research
 ```
 
 Set only the allowed numeric chat ID in `.env`. Store the bot token through
@@ -126,6 +133,6 @@ enabled in the product. See the [latest experiment results](experiments/lora_v2/
 - [Technical learning textbook in Polish](docs/course/PODRECZNIK_TECHNICZNY.md)
 - [Competency and evidence matrix](docs/COMPETENCY_MATRIX.md)
 - [Model failure atlas](docs/FAILURE_ATLAS.md)
-- [Current verified status and remaining work](docs/PROJECT_STATUS_2026-09-15.md)
+- [Current verified status and remaining work](docs/PROJECT_STATUS_2026-09-16.md)
 - [Copy-quality implementation status](docs/IMPLEMENTATION_LOG_2026-09-14.md)
 - [Architecture decisions](docs/adr/)

@@ -40,7 +40,7 @@ async def _pipe(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> N
 
 
 async def handle_client(reader: asyncio.StreamReader, writer: asyncio.StreamWriter) -> None:
-    """Minimal CONNECT proxy for the isolated research container."""
+    """Minimal CONNECT proxy that constrains research-browser network egress."""
     try:
         request_line = (await reader.readline()).decode("ascii", "strict").strip()
         parts = request_line.split()

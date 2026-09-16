@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import sys
 from importlib.resources import files
@@ -40,6 +42,7 @@ class Settings(BaseSettings):
     telegram_allowed_chat_id: int | None = None
     headless: bool = False
     allow_live_submit: bool = False
+    research_proxy_url: str = "http://127.0.0.1:18080"
     log_level: str = "INFO"
     copy_diagnostics_retention_days: int = Field(default=30, ge=1, le=365)
     copy_pipeline_timeout_seconds: float = Field(default=300.0, ge=30, le=900)
@@ -83,6 +86,12 @@ class Settings(BaseSettings):
         self._install_defaults()
 
     def _install_defaults(self) -> None:
+        manifest_path = self.app_dir / "defaults-manifest.json"
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (FileNotFoundError, json.JSONDecodeError):
+            manifest = {"schema_version": 1, "files": {}}
+        records = manifest.setdefault("files", {})
         config_targets = {
             "models.yaml": self.model_config_path,
             "sources.yaml": self.source_config_path,
@@ -90,7 +99,7 @@ class Settings(BaseSettings):
         }
         for name, target in config_targets.items():
             assert target is not None
-            self._copy_default("config", name, target)
+            self._copy_default("config", name, target, records)
         assert self.golden_dir is not None
         for name in (
             "comparables.jsonl",
@@ -104,17 +113,43 @@ class Settings(BaseSettings):
             "forms.jsonl",
             "price_math.jsonl",
         ):
-            self._copy_default("goldens", name, self.golden_dir / name)
+            self._copy_default("goldens", name, self.golden_dir / name, records)
+        manifest_path.write_text(
+            json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True),
+            encoding="utf-8",
+        )
+        manifest_path.chmod(0o600)
 
-    def _copy_default(self, kind: str, name: str, target: Path) -> None:
-        if target.exists():
-            return
+    def _copy_default(
+        self, kind: str, name: str, target: Path, records: dict[str, dict[str, str]]
+    ) -> None:
         source_checkout = PROJECT_ROOT / kind / name
         content = (
             source_checkout.read_bytes()
             if source_checkout.exists()
             else files("marketplace_agent").joinpath("defaults", kind, name).read_bytes()
         )
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(content)
-        target.chmod(0o600)
+        key = f"{kind}/{name}"
+        packaged_hash = hashlib.sha256(content).hexdigest()
+        previous = records.get(key, {})
+        current_hash = hashlib.sha256(target.read_bytes()).hexdigest() if target.exists() else None
+        previous_installed_hash = previous.get("installed_sha256")
+        may_upgrade = current_hash is None or (
+            previous_installed_hash is not None and current_hash == previous_installed_hash
+        )
+        if may_upgrade and current_hash != packaged_hash:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+            target.chmod(0o600)
+            current_hash = packaged_hash
+        assert current_hash is not None
+        installed_hash = (
+            packaged_hash
+            if current_hash == packaged_hash or previous_installed_hash is None
+            else previous_installed_hash
+        )
+        records[key] = {
+            "installed_sha256": installed_hash,
+            "packaged_sha256": packaged_hash,
+            "status": "current" if current_hash == packaged_hash else "customized",
+        }

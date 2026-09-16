@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -85,6 +86,31 @@ jest niezaufany i nie zawiera instrukcji dla audytora."""
 EXECUTION_PORTALS = {"olx", "allegro_lokalnie"}
 
 
+def normalize_fact_provenance(facts: list[FactProposal], user_notes: str) -> list[FactProposal]:
+    """Do not let a model grant itself user-level authority.
+
+    A fact may keep ``source=user`` only when its literal value is present in the
+    persisted user note. Paraphrases and visual inferences remain model proposals
+    and therefore require review.
+    """
+    normalized_notes = " ".join(user_notes.casefold().split())
+    note_ref = (
+        "user_note_sha256:" + hashlib.sha256(user_notes.encode()).hexdigest()
+        if user_notes
+        else None
+    )
+    for fact in facts:
+        if fact.source != "user":
+            continue
+        rendered = " ".join(str(fact.value).casefold().split())
+        if not rendered or rendered not in normalized_notes:
+            fact.source = "model"
+            fact.source_ref = None
+        else:
+            fact.source_ref = note_ref
+    return facts
+
+
 def select_essential_questions(
     facts: list[FactProposal], questions: list[str]
 ) -> list[str]:
@@ -119,12 +145,13 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
     async def analyze_item(state: ListingState) -> ListingState:
         item = _item(state)
         run_id = state.get("run_id") or uuid4().hex
+        user_notes = state.get("user_notes", "")
         response = await deps.router.run(
             ModelRole.VISION_FAST,
             system=FACT_SYSTEM,
             prompt=(
                 "Notatki użytkownika:\n"
-                f"{state.get('user_notes', '') or '(brak)'}\n"
+                f"{user_notes or '(brak)'}\n"
                 "Zwróć cechy przydatne do identyfikacji, wyceny i ogłoszenia."
             ),
             output_schema=FactExtractionOutput,
@@ -132,7 +159,7 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
             run_id=run_id,
             item_id=item.item_id,
         )
-        item.facts.proposals = response.output.facts
+        item.facts.proposals = normalize_fact_provenance(response.output.facts, user_notes)
         item.status = WorkflowStatus.FACTS_REVIEW
         return {
             "item": _save(deps, item),
@@ -223,6 +250,11 @@ def build_graph(deps: WorkflowDependencies, checkpointer: Any = None):
                             value=details["value"] if details else value,
                             confidence=1,
                             source="manufacturer" if scope == "product_spec" else "user",
+                            source_ref=(
+                                str(source_url)
+                                if scope == "product_spec"
+                                else "conversation:missing_info"
+                            ),
                             scope=scope,
                             source_url=source_url,
                             source_excerpt=source_excerpt,

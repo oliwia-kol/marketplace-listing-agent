@@ -1,10 +1,12 @@
 import pytest
 
 from marketplace_agent.browser.forms import (
+    PORTAL_SPECS,
     _is_publish_target,
     _is_safe_click_target,
     _json_safe_form_value,
     _readback_expected,
+    _url_matches_portal,
 )
 from marketplace_agent.domain.models import PortalDraft
 from marketplace_agent.research.sources import canonicalize_listing_url, host_matches_domain
@@ -61,6 +63,8 @@ def test_readback_contract_covers_scalar_business_fields_and_photo_count(tmp_pat
         condition="Używany",
         sale_type="buy_now",
         location="Warszawa",
+        delivery={"parcel_locker": True},
+        attributes={"storage": "256 GB"},
     )
     assert _readback_expected(draft, [tmp_path / "1.jpg", tmp_path / "2.jpg"]) == {
         "title": "Konsola",
@@ -71,4 +75,12 @@ def test_readback_contract_covers_scalar_business_fields_and_photo_count(tmp_pat
         "sale_type": "buy_now",
         "location": "Warszawa",
         "photos": 2,
+        "delivery.parcel_locker": True,
+        "attribute.storage": "256 GB",
     }
+
+
+def test_portal_page_matching_uses_parsed_hostname() -> None:
+    spec = PORTAL_SPECS["olx"]
+    assert _url_matches_portal("https://www.olx.pl/d/nowe-ogloszenie/", spec)
+    assert not _url_matches_portal("https://olx.pl.evil.example/d/nowe-ogloszenie/", spec)

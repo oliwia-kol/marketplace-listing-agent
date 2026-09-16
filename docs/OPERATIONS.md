@@ -8,6 +8,8 @@ uv sync --locked --extra dev --no-editable
 .venv/bin/marketplace-listing-agent doctor --scope models --probe
 .venv/bin/marketplace-listing-agent doctor --scope telegram
 .venv/bin/marketplace-listing-agent doctor --scope browser
+docker compose up -d research-proxy
+.venv/bin/marketplace-listing-agent doctor --scope research
 ```
 
 The non-editable install is intentional: it tests the built package and avoids a Python
@@ -86,12 +88,15 @@ separate, concrete user authorization for that exact snapshot.
 
 ```bash
 .venv/bin/marketplace-listing-agent backup --destination ~/MarketplaceBackups
-.venv/bin/marketplace-listing-agent restore-backup BACKUP_DIR NEW_EMPTY_DATA_DIR
+.venv/bin/marketplace-listing-agent restore-backup BACKUP_DIR NEW_EMPTY_APP_DIR
 ```
 
-Backup uses the SQLite Backup API for a transactionally consistent copy. Restore refuses
-to overwrite a non-empty directory. Run core diagnostics against the restored location
-before switching the application configuration.
+Backup uses the SQLite Backup API, copies item photos and runtime configuration, and
+records a SHA-256 manifest. Restore validates every path and checksum before copying,
+recreates the `data/` and `config/` layout, and refuses to overwrite a non-empty
+directory. Stop the orchestrator and worker before a release backup so the two databases
+and files represent one application boundary. Run core diagnostics against the restored
+application directory before switching the application configuration.
 
 ## Evaluation and monitoring
 
@@ -115,13 +120,12 @@ telemetry. Copy diagnostics retain redacted brief/draft/audit stages for 30 days
 docker compose config --quiet
 docker compose build app-check research-proxy
 docker compose run --rm app-check
-docker compose --profile research up research-worker
+docker compose up -d research-proxy
 ```
 
-The research profile has no host data mounts and reaches public networks only through the
-CONNECT proxy. On 2026-09-13 Docker Desktop 29.4.0, both image builds and the container
-core doctor passed. An integration check reached public HTTPS through the proxy, rejected
-localhost and failed direct egress when environment proxies were ignored.
+The host research browser is required to use the loopback-only CONNECT proxy. This
+constrains egress but does not isolate the browser process from the host filesystem. On
+2026-09-16 an integration check reached public HTTPS and rejected localhost with HTTP 403.
 
 If an anonymous public-image pull hangs in the macOS credential helper, do not delete the
 saved Docker configuration. Use a temporary empty config for the pull, then build with

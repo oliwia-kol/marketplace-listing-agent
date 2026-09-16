@@ -1,15 +1,18 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import platform
 import shutil
+import socket
 import sqlite3
 import subprocess
 import sys
 from contextlib import closing
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import yaml
 from pydantic import BaseModel
@@ -132,6 +135,25 @@ def core_checks(settings: Settings) -> list[DiagnosticResult]:
             results.append(DiagnosticResult(name, False, type(error).__name__))
 
     try:
+        defaults_manifest = json.loads(
+            (settings.app_dir / "defaults-manifest.json").read_text(encoding="utf-8")
+        )
+        customized = sorted(
+            name
+            for name, record in defaults_manifest.get("files", {}).items()
+            if record.get("status") != "current"
+        )
+        results.append(
+            DiagnosticResult(
+                "installed defaults",
+                True,
+                "current" if not customized else "customized: " + ", ".join(customized),
+            )
+        )
+    except Exception as error:
+        results.append(DiagnosticResult("installed defaults", False, type(error).__name__))
+
+    try:
         repository = CatalogRepository(settings.catalog_db)
         repository.setup()
         with closing(sqlite3.connect(settings.catalog_db)) as connection:
@@ -178,6 +200,18 @@ def browser_checks(settings: Settings) -> list[DiagnosticResult]:
             "available" if not lock_present else "SingletonLock present",
         ),
     ]
+
+
+def research_checks(settings: Settings) -> list[DiagnosticResult]:
+    parsed = urlsplit(settings.research_proxy_url)
+    if parsed.scheme != "http" or not parsed.hostname or not parsed.port:
+        return [DiagnosticResult("research proxy", False, "invalid proxy URL")]
+    try:
+        with socket.create_connection((parsed.hostname, parsed.port), timeout=2):
+            pass
+    except OSError as error:
+        return [DiagnosticResult("research proxy", False, type(error).__name__)]
+    return [DiagnosticResult("research proxy", True, f"{parsed.hostname}:{parsed.port}")]
 
 
 async def model_checks(settings: Settings, *, probe: bool = True) -> list[DiagnosticResult]:

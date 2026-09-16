@@ -1,7 +1,7 @@
 # Marketplace Listing Agent — wykonawczy plan rozwoju
 
 > Dokument wewnętrzny dla kolejnego modelu lub implementera. Status obecnej wersji
-> znajduje się w `PROJECT_STATUS_2026-09-15.md`. Każde stwierdzenie „wdrożone” wymaga
+> znajduje się w `PROJECT_STATUS_2026-09-16.md`. Każde stwierdzenie „wdrożone” wymaga
 > kodu, testu i dowodu działania.
 
 ## 1. Cel produktu
@@ -628,7 +628,7 @@ realizować głównie na lokalnych fixtures i atrapach portalu.
 
 ## 10. Sposób pracy kolejnego modelu
 
-1. Zacznij od `PROJECT_STATUS_2026-09-15.md`, sprawdź `git status` i aktualny commit.
+1. Zacznij od `PROJECT_STATUS_2026-09-16.md`, sprawdź `git status` i aktualny commit.
 2. Zweryfikuj, czy `/Users/oliwia/Desktop/shopper-bot` nadal jest kanoniczną kopią.
 3. Nie przepisuj całości. Utrzymaj warstwy i poprawiaj je etapami.
 4. Przed każdym znanym błędem dodaj regresję, potem poprawkę.

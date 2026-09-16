@@ -1,3 +1,8 @@
+import json
+
+import pytest
+
+from marketplace_agent.browser.session import BrowserSessionManager
 from marketplace_agent.diagnostics import build_environment_manifest, core_checks
 from marketplace_agent.settings import Settings
 
@@ -16,6 +21,33 @@ def test_settings_install_defaults_outside_checkout(tmp_path) -> None:
     assert (settings.golden_dir / "copy_real_anonymized.jsonl").is_file()
     assert settings.data_dir.stat().st_mode & 0o777 == 0o700
     assert settings.model_config_path.stat().st_mode & 0o777 == 0o600
+    manifest = json.loads((tmp_path / "defaults-manifest.json").read_text())
+    assert manifest["files"]["config/models.yaml"]["status"] == "current"
+
+
+def test_settings_preserve_customized_runtime_config(tmp_path) -> None:
+    settings = Settings(app_dir=tmp_path)
+    settings.ensure_directories()
+    settings.model_config_path.write_text("custom: true\n")
+
+    settings.ensure_directories()
+
+    assert settings.model_config_path.read_text() == "custom: true\n"
+    manifest = json.loads((tmp_path / "defaults-manifest.json").read_text())
+    assert manifest["files"]["config/models.yaml"]["status"] == "customized"
+
+    defaults_check = next(
+        result for result in core_checks(settings) if result.name == "installed defaults"
+    )
+    assert defaults_check.ok is True
+    assert defaults_check.detail == "customized: config/models.yaml"
+
+
+@pytest.mark.asyncio
+async def test_research_browser_refuses_unproxied_execution(tmp_path) -> None:
+    sessions = BrowserSessionManager(tmp_path / "profile")
+    with pytest.raises(RuntimeError, match="research proxy"):
+        await sessions.research_context()
 
 
 def test_core_doctor_has_machine_readable_failures(tmp_path) -> None:

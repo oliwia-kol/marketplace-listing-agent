@@ -4,6 +4,7 @@ import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Protocol
+from urllib.parse import urlsplit
 
 from playwright.async_api import TimeoutError as PlaywrightTimeoutError
 
@@ -30,6 +31,30 @@ class ExecutionAdapter(Protocol):
     ) -> PreparationResult: ...
 
     async def reconcile(self, snapshot: dict[str, Any]) -> PreparationResult: ...
+
+
+def listing_identity(portal: str, url: str) -> dict[str, str] | None:
+    """Return a portal listing reference only for a concrete listing URL."""
+    parsed = urlsplit(url)
+    host = (parsed.hostname or "").casefold().rstrip(".")
+    path = parsed.path.rstrip("/")
+    expected_host = {
+        "olx": "olx.pl",
+        "allegro_lokalnie": "allegrolokalnie.pl",
+    }.get(portal)
+    marker = {"olx": "/d/oferta/", "allegro_lokalnie": "/oferta/"}.get(portal)
+    if not expected_host or not marker:
+        return None
+    if (
+        parsed.scheme != "https"
+        or not (host == expected_host or host.endswith(f".{expected_host}"))
+        or not path.startswith(marker)
+    ):
+        return None
+    reference = path.rsplit("/", 1)[-1]
+    if not reference:
+        return None
+    return {"url": url, "portal_listing_ref": reference}
 
 
 class BrowserExecutionAdapter:
@@ -160,8 +185,11 @@ class BrowserExecutionAdapter:
         except PlaywrightTimeoutError:
             return PreparationResult("unknown", {"reason": "submit_outcome_unknown"})
         body = (await page.locator("body").inner_text()).casefold()
-        if any(marker in body for marker in ("ogłoszenie zostało", "oferta została wystawiona")):
-            return PreparationResult("published", {"url": page.url})
+        identity = listing_identity(draft.portal, page.url)
+        if identity and any(
+            marker in body for marker in ("ogłoszenie zostało", "oferta została wystawiona")
+        ):
+            return PreparationResult("published", identity)
         if "moderac" in body:
             return PreparationResult("pending_moderation", {"url": page.url})
         return PreparationResult("unknown", {"url": page.url, "reason": "no_confirmation"})
@@ -169,17 +197,16 @@ class BrowserExecutionAdapter:
     async def reconcile(self, snapshot: dict[str, Any]) -> PreparationResult:
         portal = snapshot["portal"]
         context = await self.sessions.sales_context()
-        pages = [
-            page
-            for page in context.pages
-            if PORTAL_SPECS[portal].create_url.split("/")[2] in page.url
-        ]
+        pages = [page for page in context.pages if listing_identity(portal, page.url)]
         if not pages:
             return PreparationResult("unknown", {"reason": "portal_page_not_open"})
         page = pages[-1]
         body = (await page.locator("body").inner_text()).casefold()
-        if any(marker in body for marker in ("ogłoszenie zostało", "oferta została wystawiona")):
-            return PreparationResult("published", {"url": page.url, "reconciled": True})
+        identity = listing_identity(portal, page.url)
+        if identity and any(
+            marker in body for marker in ("ogłoszenie zostało", "oferta została wystawiona")
+        ):
+            return PreparationResult("published", {**identity, "reconciled": True})
         if "moderac" in body:
             return PreparationResult("pending_moderation", {"url": page.url, "reconciled": True})
         return PreparationResult("unknown", {"url": page.url, "reason": "not_confirmed"})
@@ -215,7 +242,7 @@ class ExecutionEngine:
         except Exception as error:
             self.catalog.set_execution_status(
                 job["job_id"],
-                "failed",
+                "unknown" if job.get("operation") == "publish" else "failed",
                 {"reason": "adapter_error", "error_type": type(error).__name__},
             )
             return self.catalog.get_execution_job(job["job_id"])
