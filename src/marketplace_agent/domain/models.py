@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Literal
 from uuid import uuid4
 
-from pydantic import BaseModel, Field, HttpUrl, field_validator
+from pydantic import BaseModel, Field, HttpUrl, field_validator, model_validator
 
 
 class WorkflowStatus(StrEnum):
@@ -17,6 +17,7 @@ class WorkflowStatus(StrEnum):
     PRICE_REVIEW = "price_review"
     COPY_REVIEW = "copy_review"
     FORM_FILLING = "form_filling"
+    FORM_NEEDS_USER = "form_needs_user"
     READY_TO_PUBLISH = "ready_to_publish"
     PUBLISHED = "published"
     ARCHIVED = "archived"
@@ -37,7 +38,12 @@ class FactProposal(BaseModel):
     )
     value: str | int | float | bool | None
     confidence: float = Field(ge=0, le=1)
-    source: Literal["image", "user", "model", "derived"]
+    source: Literal["image", "user", "model", "derived", "manufacturer"]
+    source_ref: str | None = Field(default=None, max_length=128)
+    scope: Literal["item", "product_spec"] = "item"
+    source_url: HttpUrl | None = None
+    source_excerpt: str | None = Field(default=None, max_length=500)
+    observed_at: datetime | None = None
     approved: bool = False
 
     @field_validator("name")
@@ -63,12 +69,24 @@ class FactProposal(BaseModel):
             return value
         raise ValueError("Fact name must use a canonical key")
 
+    @model_validator(mode="after")
+    def sourced_product_specification(self) -> FactProposal:
+        if self.scope == "product_spec" and self.source_url is None:
+            raise ValueError("product specifications require source_url")
+        return self
+
 
 class ItemFacts(BaseModel):
     proposals: list[FactProposal] = Field(default_factory=list)
 
-    def approved_dict(self) -> dict[str, Any]:
-        return {fact.name: fact.value for fact in self.proposals if fact.approved}
+    def approved_dict(
+        self, *, scope: Literal["item", "product_spec"] | None = None
+    ) -> dict[str, Any]:
+        return {
+            fact.name: fact.value
+            for fact in self.proposals
+            if fact.approved and (scope is None or fact.scope == scope)
+        }
 
 
 class ComparableCandidate(BaseModel):
@@ -76,6 +94,10 @@ class ComparableCandidate(BaseModel):
     url: HttpUrl
     title: str
     price_pln: float = Field(gt=0)
+    currency: Literal["PLN", "EUR", "USD", "UNKNOWN"] = "UNKNOWN"
+    price_kind: Literal["item", "delivery", "installment", "previous", "range", "unknown"] = (
+        "unknown"
+    )
     delivery_pln: float | None = Field(default=None, ge=0)
     condition: str | None = None
     status: Literal["active", "sold", "unknown"] = "unknown"
@@ -85,6 +107,7 @@ class ComparableCandidate(BaseModel):
     rejection_reason: str | None = None
     integrity_status: Literal["unchecked", "consistent", "suspicious"] = "unchecked"
     integrity_reasons: list[str] = Field(default_factory=list)
+    rejection_codes: list[str] = Field(default_factory=list)
     evidence_channels: list[str] = Field(default_factory=list)
     checked_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
@@ -104,6 +127,18 @@ class PriceRecommendation(BaseModel):
     basis: str
 
 
+class PriceDistribution(BaseModel):
+    count: int = 0
+    by_source: dict[str, int] = Field(default_factory=dict)
+    exact_price_counts: list[PricePointCount] = Field(default_factory=list)
+    minimum_pln: float | None = None
+    p25_pln: float | None = None
+    median_pln: float | None = None
+    trimmed_mean_pln: float | None = None
+    p75_pln: float | None = None
+    maximum_pln: float | None = None
+
+
 class PriceResearchSummary(BaseModel):
     checked_count: int = 0
     reachable_count: int = 0
@@ -114,6 +149,8 @@ class PriceResearchSummary(BaseModel):
     exact_price_counts: list[PricePointCount] = Field(default_factory=list)
     active_count: int = 0
     sold_count: int = 0
+    active_distribution: PriceDistribution = Field(default_factory=PriceDistribution)
+    sold_distribution: PriceDistribution = Field(default_factory=PriceDistribution)
     minimum_pln: float | None = None
     p25_pln: float | None = None
     median_pln: float | None = None
@@ -121,6 +158,8 @@ class PriceResearchSummary(BaseModel):
     p75_pln: float | None = None
     maximum_pln: float | None = None
     recommendations: list[PriceRecommendation] = Field(default_factory=list)
+    recommendation_basis: Literal["active_asking_prices"] = "active_asking_prices"
+    evidence_manifest_path: str | None = None
     confidence: Literal["low", "medium", "high"] = "low"
     generated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
@@ -131,6 +170,10 @@ class PortalDraft(BaseModel):
     description: str
     category: str
     price_pln: float = Field(gt=0)
+    condition: str | None = None
+    sale_type: Literal["buy_now", "auction", "classified"] | None = None
+    location: str | None = None
+    delivery: dict[str, str | int | float | bool] = Field(default_factory=dict)
     attributes: dict[str, str | int | float | bool] = Field(default_factory=dict)
     approved: bool = False
 
@@ -155,6 +198,7 @@ class ItemCase(BaseModel):
     price_summary: PriceResearchSummary | None = None
     selected_price_pln: float | None = None
     portal_drafts: list[PortalDraft] = Field(default_factory=list)
+    snapshot_ids: dict[str, str] = Field(default_factory=dict)
     fill_results: list[PortalFillResult] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

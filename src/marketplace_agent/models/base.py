@@ -31,6 +31,10 @@ class ModelProvider(ABC):
         context_tokens: int = 8192,
         think: bool | str = False,
         keep_alive: int | str = 0,
+        temperature: float = 0.0,
+        top_p: float | None = None,
+        top_k: int | None = None,
+        seed: int | None = None,
     ) -> StructuredModelResponse[OutputT]:
         raise NotImplementedError
 

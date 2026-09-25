@@ -90,6 +90,10 @@ def compare_verifications(
         reasons.append("adres docelowy zmienił się między odczytami")
     if abs(first.price_pln - second.price_pln) > max(1.0, first.price_pln * 0.01):
         reasons.append("cena zmieniła się między odczytami")
+    if first.currency != second.currency:
+        reasons.append("waluta zmieniła się między odczytami")
+    if first.price_kind != second.price_kind:
+        reasons.append("typ ceny zmienił się między odczytami")
     first_tokens = set(first.title.casefold().split())
     second_tokens = set(second.title.casefold().split())
     overlap = len(first_tokens & second_tokens) / max(1, len(first_tokens | second_tokens))

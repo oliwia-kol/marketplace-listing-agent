@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -45,10 +45,46 @@ class CopyDraftOutput(BaseModel):
     drafts: list[PortalDraft]
 
 
+class CopyClaim(BaseModel):
+    key: str
+    value: str
+    scope: Literal["item", "product_spec"]
+    required: bool = True
+    source_url: str | None = None
+    source_excerpt: str | None = None
+
+
+class CopyBrief(BaseModel):
+    claims: list[CopyClaim]
+    portals: list[Literal["olx", "allegro_lokalnie", "vinted"]]
+    style: Literal["natural_concrete"] = "natural_concrete"
+    preferences: list[dict[str, Any]] = Field(default_factory=list)
+    prohibited_claim_types: list[str] = Field(default_factory=list)
+
+
+class CopyTextDraft(BaseModel):
+    portal: Literal["olx", "allegro_lokalnie", "vinted"]
+    title: str = Field(min_length=3, max_length=100)
+    description: str = Field(min_length=10, max_length=4000)
+
+
+class CopyTextOutput(BaseModel):
+    drafts: list[CopyTextDraft]
+
+
+class CopyClaimAssessment(BaseModel):
+    text: str
+    verdict: Literal["supported", "contradicted", "unsupported", "uncertain"]
+    evidence_keys: list[str] = Field(default_factory=list)
+    severity: Literal["info", "warning", "critical"] = "warning"
+
+
 class CopyAuditItem(BaseModel):
     portal: Literal["olx", "allegro_lokalnie", "vinted"]
     safe: bool
     unsupported_claims: list[str] = Field(default_factory=list)
+    claims: list[CopyClaimAssessment] = Field(default_factory=list)
+    missing_required_keys: list[str] = Field(default_factory=list)
 
 
 class CopyAuditOutput(BaseModel):

@@ -1,0 +1,31 @@
+services:
+  app-check:
+    build: .
+    command: ["doctor", "--scope", "core"]
+    read_only: true
+    tmpfs:
+      - /tmp:size=128m,mode=1777
+      - /app-data:size=64m,uid=999,gid=999,mode=0700
+    environment:
+      MARKETPLACE_AGENT_APP_DIR: /app-data
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    cpus: 1.0
+
+  research-proxy:
+    build: .
+    entrypoint: ["python", "-m", "marketplace_agent.research.egress_proxy"]
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    networks: [research-internal, public-egress]
+    mem_limit: 128m
+    ports:
+      - "127.0.0.1:18080:8080"
+
+networks:
+  research-internal:
+    internal: true
+  public-egress: {}

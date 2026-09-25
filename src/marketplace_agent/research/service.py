@@ -6,6 +6,7 @@ import logging
 import re
 from collections import defaultdict
 from contextlib import suppress
+from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
@@ -19,8 +20,9 @@ from marketplace_agent.domain.pricing import summarize_prices
 from marketplace_agent.models.router import ModelRole, ModelRouter
 from marketplace_agent.models.tasks import ComparableAuditOutput, SearchPlanOutput
 from marketplace_agent.research.config import ResearchConfig
+from marketplace_agent.research.evidence import write_research_manifest
 from marketplace_agent.research.security import compare_verifications
-from marketplace_agent.research.sources import SearchSource
+from marketplace_agent.research.sources import SearchSource, canonicalize_listing_url
 from marketplace_agent.research.verifier import LinkVerifier
 
 SEARCH_SYSTEM = """Jesteś planistą badania cen używanych przedmiotów w Polsce.
@@ -56,15 +58,23 @@ class MarketResearchService:
         router: ModelRouter,
         config: ResearchConfig,
         category_profiles: CategoryProfileCatalog | None = None,
+        data_dir: Path | None = None,
     ) -> None:
         self.browser = browser
         self.router = router
         self.config = config
         self.category_profiles = category_profiles
+        self.data_dir = data_dir
         self._progress_candidates: list[ComparableCandidate] = []
         self._progress_checked_count = 0
 
-    async def create_search_plan(self, facts: dict[str, Any]) -> SearchPlanOutput:
+    async def create_search_plan(
+        self,
+        facts: dict[str, Any],
+        *,
+        run_id: str | None = None,
+        item_id: str | None = None,
+    ) -> SearchPlanOutput:
         profile = self.category_profiles.match(facts) if self.category_profiles else None
         research_facts = redact_sensitive_facts(facts)
         response = await self.router.run(
@@ -83,23 +93,46 @@ class MarketResearchService:
                 indent=2,
             ),
             output_schema=SearchPlanOutput,
+            run_id=run_id,
+            item_id=item_id,
         )
         return response.output
 
-    async def run(self, facts: dict[str, Any]) -> PriceResearchSummary:
+    async def run(
+        self,
+        facts: dict[str, Any],
+        *,
+        item_id: str | None = None,
+        run_id: str | None = None,
+    ) -> PriceResearchSummary:
         self._progress_candidates = []
         self._progress_checked_count = 0
         try:
             async with asyncio.timeout(self.config.research.timeout_seconds):
-                return await self._run_bounded(facts)
+                summary = await self._run_bounded(facts, run_id=run_id, item_id=item_id)
         except TimeoutError:
-            return summarize_prices(
+            summary = summarize_prices(
                 self._progress_candidates,
                 checked_count=self._progress_checked_count,
+                minimum_comparables=self.config.research.minimum_comparables,
             )
+        if self.data_dir is not None and item_id is not None:
+            summary.evidence_manifest_path = write_research_manifest(
+                self.data_dir,
+                item_id,
+                self._progress_candidates,
+                summary,
+            )
+        return summary
 
-    async def _run_bounded(self, facts: dict[str, Any]) -> PriceResearchSummary:
-        plan = await self.create_search_plan(facts)
+    async def _run_bounded(
+        self,
+        facts: dict[str, Any],
+        *,
+        run_id: str | None = None,
+        item_id: str | None = None,
+    ) -> PriceResearchSummary:
+        plan = await self.create_search_plan(facts, run_id=run_id, item_id=item_id)
         logger.info("research.plan queries=%s", len(plan.queries))
         context = await self.browser.research_context()
         try:
@@ -119,10 +152,11 @@ class MarketResearchService:
             seen_urls: set[str] = set()
             for rows in discovered:
                 for source, url in rows:
-                    if url in seen_urls:
+                    canonical_url = canonicalize_listing_url(url)
+                    if canonical_url in seen_urls:
                         continue
-                    seen_urls.add(url)
-                    raw_urls.append((source, url))
+                    seen_urls.add(canonical_url)
+                    raw_urls.append((source, canonical_url))
                     if len(raw_urls) >= self.config.research.max_candidate_urls:
                         break
                 if len(raw_urls) >= self.config.research.max_candidate_urls:
@@ -162,7 +196,7 @@ class MarketResearchService:
                         task.cancel()
                 await asyncio.gather(*tasks, return_exceptions=True)
 
-            await self._audit(facts, plan, verified)
+            await self._audit(facts, plan, verified, run_id=run_id, item_id=item_id)
             logger.info("research.audited candidates=%s", len(verified))
             selected = sorted(
                 (candidate for candidate in verified if candidate.comparable),
@@ -174,7 +208,11 @@ class MarketResearchService:
             selected_ids = {id(candidate) for candidate in selected}
             for candidate in verified:
                 candidate.comparable = id(candidate) in selected_ids
-            return summarize_prices(verified, checked_count=len(raw_urls))
+            return summarize_prices(
+                verified,
+                checked_count=len(raw_urls),
+                minimum_comparables=self.config.research.minimum_comparables,
+            )
         finally:
             with suppress(Exception):
                 await context.close()
@@ -184,6 +222,9 @@ class MarketResearchService:
         facts: dict[str, Any],
         plan: SearchPlanOutput,
         candidates: list[ComparableCandidate],
+        *,
+        run_id: str | None = None,
+        item_id: str | None = None,
     ) -> None:
         if not candidates:
             return
@@ -230,6 +271,8 @@ class MarketResearchService:
             system=AUDIT_SYSTEM,
             prompt=prompt,
             output_schema=ComparableAuditOutput,
+            run_id=run_id,
+            item_id=item_id,
         )
         decisions = {decision.index: decision for decision in response.output.decisions}
         for index, candidate in enumerate(candidates):

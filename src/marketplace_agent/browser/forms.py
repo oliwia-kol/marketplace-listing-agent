@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlsplit
 
 from playwright.async_api import BrowserContext, Locator, Page
 
@@ -22,13 +23,19 @@ FORBIDDEN_ACTION_WORDS = {
     "list item",
 }
 
-ALLOWED_CLICK_WORDS = {
-    "kategori",
-    "zdję",
+ALLOWED_CLICK_TARGETS = {
+    "kategoria",
+    "wybierz kategorię",
+    "zdjęcia",
+    "dodaj zdjęcia",
     "stan",
-    "mark",
+    "wybierz stan",
+    "marka",
+    "wybierz markę",
     "rozmiar",
+    "wybierz rozmiar",
     "kolor",
+    "wybierz kolor",
 }
 
 
@@ -42,13 +49,15 @@ class PortalSpec:
 PORTAL_SPECS = {
     "olx": PortalSpec(
         portal="olx",
-        create_url="https://www.olx.pl/dodaj-ogloszenie/",
+        create_url="https://www.olx.pl/d/nowe-ogloszenie/",
         field_labels={
             "title": ("Tytuł ogłoszenia", "Tytuł"),
             "description": ("Opis",),
             "price_pln": ("Cena",),
             "category": ("Kategoria",),
             "photos": ("Zdjęcia", "Dodaj zdjęcia"),
+            "condition": ("Stan",),
+            "location": ("Lokalizacja",),
         },
     ),
     "allegro_lokalnie": PortalSpec(
@@ -60,6 +69,9 @@ PORTAL_SPECS = {
             "price_pln": ("Cena",),
             "category": ("Kategoria",),
             "photos": ("Zdjęcia", "Dodaj zdjęcia"),
+            "condition": ("Stan",),
+            "sale_type": ("Rodzaj ogłoszenia",),
+            "location": ("Lokalizacja",),
         },
     ),
     "vinted": PortalSpec(
@@ -74,6 +86,21 @@ PORTAL_SPECS = {
         },
     ),
 }
+
+
+async def detect_page_blocker(page: Page) -> str | None:
+    """Return a typed blocker without trying to defeat a portal safeguard."""
+    if any(part in page.url.casefold() for part in ("login", "oauth", "signin")):
+        return "login_required"
+    text = (await page.locator("body").inner_text()).casefold()
+    captcha_markers = ("captcha", "nie jestem robotem", "potwierdź, że jesteś człowiekiem")
+    if any(marker in text for marker in captcha_markers):
+        return "captcha"
+    fee_markers = ("opłata za wystawienie", "zapłać za ogłoszenie", "promowanie płatne")
+    if any(marker in text for marker in fee_markers):
+        return "unexpected_fee"
+    return None
+
 
 FORM_MAPPING_SYSTEM = """Mapujesz wyłącznie brakujące pola formularza na widoczne
 kontrolki. `target` musi być dokładnym tekstem label, aria-label albo placeholder z
@@ -91,9 +118,59 @@ def _is_publish_target(target: str) -> bool:
 
 def _is_safe_click_target(target: str) -> bool:
     normalized = re.sub(r"\s+", " ", target.lower()).strip()
-    return not _is_publish_target(target) and any(
-        word in normalized for word in ALLOWED_CLICK_WORDS
-    )
+    return not _is_publish_target(target) and normalized in ALLOWED_CLICK_TARGETS
+
+
+def _json_safe_form_value(value: Any) -> Any:
+    if isinstance(value, Path):
+        return {"file_name": value.name}
+    if isinstance(value, dict):
+        return {str(key): _json_safe_form_value(child) for key, child in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_json_safe_form_value(child) for child in value]
+    return value
+
+
+def _readback_expected(draft: PortalDraft, photo_paths: list[Path]) -> dict[str, Any]:
+    values: dict[str, Any] = {
+        "title": draft.title,
+        "description": draft.description,
+        "price_pln": draft.price_pln,
+        "category": draft.category,
+        "condition": draft.condition,
+        "sale_type": draft.sale_type,
+        "location": draft.location,
+        "photos": len(photo_paths),
+        **{f"delivery.{key}": value for key, value in draft.delivery.items()},
+        **{f"attribute.{key}": value for key, value in draft.attributes.items()},
+    }
+    return {field: value for field, value in values.items() if value not in (None, "", [])}
+
+
+def _form_values(draft: PortalDraft, photo_paths: list[Path]) -> dict[str, Any]:
+    return {
+        "title": draft.title,
+        "description": draft.description,
+        "price_pln": draft.price_pln,
+        "category": draft.category,
+        "photos": photo_paths,
+        "condition": draft.condition,
+        "sale_type": draft.sale_type,
+        "location": draft.location,
+        **{f"delivery.{key}": value for key, value in draft.delivery.items()},
+        **{f"attribute.{key}": value for key, value in draft.attributes.items()},
+    }
+
+
+def _field_labels(spec: PortalSpec, field: str) -> tuple[str, ...]:
+    fallback = field.split(".", 1)[-1].replace("_", " ")
+    return spec.field_labels.get(field, (fallback,))
+
+
+def _url_matches_portal(url: str, spec: PortalSpec) -> bool:
+    actual = (urlsplit(url).hostname or "").casefold().rstrip(".")
+    expected = (urlsplit(spec.create_url).hostname or "").casefold().rstrip(".")
+    return actual == expected or actual.endswith(f".{expected}")
 
 
 class SafeActionExecutor:
@@ -102,7 +179,11 @@ class SafeActionExecutor:
     async def execute(self, page: Page, action: FormAction, photo_paths: list[Path]) -> None:
         if action.action == "click" and not _is_safe_click_target(action.target):
             raise PermissionError(f"Click outside the allowlist is blocked: {action.target}")
-        locator = page.get_by_label(action.target, exact=False).first
+        locator = page.get_by_label(action.target, exact=True)
+        if await locator.count() != 1:
+            locator = page.get_by_placeholder(action.target, exact=True)
+        if await locator.count() != 1:
+            raise LookupError(f"Expected exactly one control named {action.target!r}")
         if action.action == "fill":
             await locator.fill(str(action.value or ""))
         elif action.action == "select":
@@ -112,10 +193,7 @@ class SafeActionExecutor:
         elif action.action == "upload":
             await locator.set_input_files(photo_paths)
         elif action.action == "click":
-            try:
-                await locator.click()
-            except Exception:
-                await page.get_by_text(action.target, exact=False).first.click()
+            await locator.click()
 
 
 class PortalFormFiller:
@@ -128,20 +206,21 @@ class PortalFormFiller:
     async def fill(self, draft: PortalDraft, photo_paths: list[Path]) -> PortalFillResult:
         spec = PORTAL_SPECS[draft.portal]
         page = await self._page_for_portal(spec)
+        blocker = await detect_page_blocker(page)
+        if blocker:
+            return PortalFillResult(
+                portal=draft.portal,
+                status="needs_user",
+                form_url=page.url,
+                message=f"intervention:{blocker}",
+            )
         filled: dict[str, Any] = {}
         missing: dict[str, Any] = {}
-        values: dict[str, Any] = {
-            "title": draft.title,
-            "description": draft.description,
-            "price_pln": draft.price_pln,
-            "category": draft.category,
-            "photos": photo_paths,
-            **draft.attributes,
-        }
+        values = _form_values(draft, photo_paths)
         for field, value in values.items():
             if value in (None, "", []):
                 continue
-            labels = spec.field_labels.get(field, (field,))
+            labels = _field_labels(spec, field)
             success = await self._fill_by_labels(page, field, labels, value, photo_paths)
             if success:
                 filled[field] = value if field != "photos" else [path.name for path in photo_paths]
@@ -153,7 +232,7 @@ class PortalFormFiller:
             filled.update(repaired)
             missing = {field: value for field, value in missing.items() if field not in repaired}
 
-        differences = await self._readback(page, draft, filled)
+        differences = await self._readback(page, draft, filled, photo_paths)
         self.evidence_dir.mkdir(parents=True, exist_ok=True)
         screenshot = self.evidence_dir / f"{draft.portal}-ready.png"
         await page.screenshot(path=screenshot, full_page=True)
@@ -174,15 +253,15 @@ class PortalFormFiller:
 
     async def _page_for_portal(self, spec: PortalSpec) -> Page:
         for page in self.context.pages:
-            if spec.portal == "olx" and "olx.pl" in page.url:
-                if "/dodaj-ogloszenie" not in page.url:
+            if spec.portal == "olx" and _url_matches_portal(page.url, spec):
+                if "/d/nowe-ogloszenie" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
-            if spec.portal == "vinted" and "vinted.pl" in page.url:
+            if spec.portal == "vinted" and _url_matches_portal(page.url, spec):
                 if "/items/new" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
-            if spec.portal == "allegro_lokalnie" and "allegrolokalnie.pl" in page.url:
+            if spec.portal == "allegro_lokalnie" and _url_matches_portal(page.url, spec):
                 if "/oferty/wystaw" not in page.url:
                     await page.goto(spec.create_url, wait_until="domcontentloaded", timeout=45_000)
                 return page
@@ -199,20 +278,43 @@ class PortalFormFiller:
         photo_paths: list[Path],
     ) -> bool:
         for label in labels:
-            locator = page.get_by_label(label, exact=False).first
             try:
-                if await locator.count() == 0:
+                locator = await self._unique_control(page, label)
+                if locator is None:
                     continue
                 if field == "photos":
                     await locator.set_input_files(photo_paths)
-                elif field == "price_pln":
-                    await locator.fill(str(int(value) if float(value).is_integer() else value))
                 else:
-                    await locator.fill(str(value))
+                    tag = await locator.evaluate("element => element.tagName")
+                    input_type = (await locator.get_attribute("type") or "").casefold()
+                    if tag == "SELECT":
+                        await locator.select_option(label=str(value))
+                    elif input_type in {"checkbox", "radio"}:
+                        if not isinstance(value, bool):
+                            continue
+                        await locator.set_checked(value)
+                    elif tag in {"INPUT", "TEXTAREA"}:
+                        rendered = (
+                            str(int(value) if float(value).is_integer() else value)
+                            if field == "price_pln"
+                            else str(value)
+                        )
+                        await locator.fill(rendered)
+                    else:
+                        continue
                 return True
             except Exception:
                 continue
         return False
+
+    async def _unique_control(self, page: Page, label: str) -> Locator | None:
+        by_label = page.get_by_label(label, exact=True)
+        if await by_label.count() == 1:
+            return by_label
+        by_placeholder = page.get_by_placeholder(label, exact=True)
+        if await by_placeholder.count() == 1:
+            return by_placeholder
+        return None
 
     async def _ai_repair(
         self,
@@ -241,7 +343,12 @@ class PortalFormFiller:
             ModelRole.GUI_FALLBACK,
             system=FORM_MAPPING_SYSTEM,
             prompt=json.dumps(
-                {"portal": portal, "missing": missing, "controls": controls}, ensure_ascii=False
+                {
+                    "portal": portal,
+                    "missing": _json_safe_form_value(missing),
+                    "controls": controls,
+                },
+                ensure_ascii=False,
             ),
             output_schema=FormPlanOutput,
             images=[screenshot],
@@ -268,24 +375,31 @@ class PortalFormFiller:
         page: Page,
         draft: PortalDraft,
         filled: dict[str, Any],
+        photo_paths: list[Path],
     ) -> dict[str, dict[str, Any]]:
-        expected = {
-            "title": draft.title,
-            "description": draft.description,
-            "price_pln": draft.price_pln,
-        }
+        expected = _readback_expected(draft, photo_paths)
         differences: dict[str, dict[str, Any]] = {}
         spec = PORTAL_SPECS[draft.portal]
         for field, expected_value in expected.items():
             if field not in filled:
                 continue
             actual: str | None = None
-            for label in spec.field_labels[field]:
-                locator: Locator = page.get_by_label(label, exact=False).first
+            for label in _field_labels(spec, field):
                 try:
-                    if await locator.count():
+                    locator = await self._unique_control(page, label)
+                    if locator is None:
+                        continue
+                    if field == "photos":
+                        actual = str(
+                            await locator.evaluate("element => element.files?.length ?? 0")
+                        )
+                    elif await locator.evaluate("element => element.tagName") == "SELECT":
+                        actual = await locator.evaluate(
+                            "element => element.selectedOptions[0]?.textContent?.trim() ?? ''"
+                        )
+                    else:
                         actual = await locator.input_value()
-                        break
+                    break
                 except Exception:
                     continue
             if actual is None:
@@ -296,6 +410,9 @@ class PortalFormFiller:
                     if float(normalized) != float(expected_value):
                         differences[field] = {"expected": expected_value, "actual": actual}
                 except ValueError:
+                    differences[field] = {"expected": expected_value, "actual": actual}
+            elif field == "photos":
+                if actual != str(expected_value):
                     differences[field] = {"expected": expected_value, "actual": actual}
             elif actual.strip() != str(expected_value).strip():
                 differences[field] = {"expected": expected_value, "actual": actual}

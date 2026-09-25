@@ -1,5 +1,7 @@
 .DS_Store
 .env
+.env.*
+!.env.example
 .venv/
 .uv-cache/
 __pycache__/
@@ -14,3 +16,11 @@ reports/*
 work/
 playwright-report/
 test-results/
+environment-manifest.json
+*.sqlite
+*.sqlite-*
+*.db
+*.log
+backups/
+experiments/lora/adapters/
+experiments/lora_v2/adapters/

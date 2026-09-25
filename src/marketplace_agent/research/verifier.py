@@ -25,7 +25,7 @@ class LinkVerifier:
             response = await page.goto(url, wait_until="domcontentloaded", timeout=30_000)
             if response is None or response.status >= 400:
                 return None
-            extracted = await extract_listing(page)
+            extracted = await extract_listing(page, source=source)
             if extracted.blocked or extracted.expired or extracted.price_pln is None:
                 return None
             final_domain = urlparse(page.url).netloc.removeprefix("www.")
@@ -39,6 +39,8 @@ class LinkVerifier:
                 url=page.url,
                 title=extracted.title,
                 price_pln=extracted.price_pln,
+                currency=extracted.currency,
+                price_kind=extracted.price_kind,
                 condition=extracted.condition,
                 status=extracted.status,
                 verified=True,

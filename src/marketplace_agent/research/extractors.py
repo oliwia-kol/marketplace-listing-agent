@@ -9,8 +9,13 @@ from urllib.parse import parse_qs, unquote, urlparse
 
 from playwright.async_api import Page
 
+from marketplace_agent.research.portal_extractors import parse_portal_listing
+
 PRICE_PATTERN = re.compile(
-    r"(?<!\d)(\d{1,3}(?:[ .]\d{3})*|\d+)(?:[,.](\d{1,2}))?\s*(?:zł|PLN)", re.IGNORECASE
+    r"(?<!\d)(?P<integer>\d{1,3}(?:[ .]\d{3})*|\d+)"
+    r"(?:[,.](?P<decimal>\d{1,2}))?\s*"
+    r"(?P<currency>zł|PLN|EUR|USD|€|\$)",
+    re.IGNORECASE,
 )
 EXPIRED_MARKERS = (
     "ogłoszenie nieaktualne",
@@ -29,10 +34,101 @@ class ExtractedListing:
     price_pln: float | None
     condition: str | None
     status: str
+    currency: str = "UNKNOWN"
+    price_kind: str = "unknown"
     blocked: bool = False
     expired: bool = False
     evidence_channels: tuple[str, ...] = ()
     integrity_reasons: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True, slots=True)
+class PriceObservation:
+    amount: float
+    currency: str
+    kind: str
+    channel: str
+    raw: str
+
+
+def _normalize_currency(value: Any) -> str:
+    normalized = str(value or "").strip().upper()
+    return {
+        "ZŁ": "PLN",
+        "ZL": "PLN",
+        "PLN": "PLN",
+        "€": "EUR",
+        "EUR": "EUR",
+        "$": "USD",
+        "USD": "USD",
+    }.get(normalized, "UNKNOWN")
+
+
+def _parse_amount(integer: str, decimal: str | None = None) -> float:
+    whole = integer.replace(" ", "").replace(".", "")
+    return float(f"{whole}.{decimal or '0'}")
+
+
+def _price_kind(text: str, match_start: int) -> str:
+    boundary = max(text.rfind(".", 0, match_start), text.rfind("\n", 0, match_start))
+    next_dot = text.find(".", match_start)
+    next_newline = text.find("\n", match_start)
+    endings = [position for position in (next_dot, next_newline) if position >= 0]
+    end = min(endings) if endings else match_start + 40
+    context = text[boundary + 1 : end].casefold()[-120:]
+    prefix = text[boundary + 1 : match_start].casefold()[-80:]
+    if re.search(r"(?:dostaw|wysył|przesył|transport)", context):
+        return "delivery"
+    if re.search(r"(?:rata|raty|miesięcz|/\s*mies)", context):
+        return "installment"
+    if re.search(r"(?:poprzednia|stara cena|było|przed obniż|cena początkowa)", context):
+        return "previous"
+    if re.search(r"\d[\d ,.]*\s*(?:-|\u2013|\u2014|do)\s*$", prefix):
+        return "range"
+    return "item"
+
+
+def _price_observations_from_text(text: str) -> list[PriceObservation]:
+    observations: list[PriceObservation] = []
+    for match in PRICE_PATTERN.finditer(text):
+        observations.append(
+            PriceObservation(
+                amount=_parse_amount(match.group("integer"), match.group("decimal")),
+                currency=_normalize_currency(match.group("currency")),
+                kind=_price_kind(text, match.start()),
+                channel="visible_text",
+                raw=match.group(0),
+            )
+        )
+    return observations
+
+
+def _select_item_price(observations: list[PriceObservation]) -> PriceObservation | None:
+    item_observations = [row for row in observations if row.kind == "item"]
+    channel_priority = (
+        "olx_primary_dom",
+        "allegro_lokalnie_primary_meta",
+        "visible_text",
+        "meta",
+        "json_ld",
+    )
+    for channel in channel_priority:
+        preferred = next((row for row in item_observations if row.channel == channel), None)
+        if preferred is not None:
+            return preferred
+    return item_observations[0] if item_observations else None
+
+
+def _price_integrity_reasons(observations: list[PriceObservation]) -> list[str]:
+    item_observations = [row for row in observations if row.kind == "item"]
+    reasons: list[str] = []
+    currencies = {row.currency for row in item_observations if row.currency != "UNKNOWN"}
+    if len(currencies) > 1:
+        reasons.append("sprzeczne waluty ceny przedmiotu")
+    amounts = [row.amount for row in item_observations]
+    if len(amounts) > 1 and max(amounts) - min(amounts) > max(1.0, min(amounts) * 0.01):
+        reasons.append("sprzeczne ceny między DOM i metadanymi strony")
+    return reasons
 
 
 def _walk_json(value: Any) -> Iterable[dict[str, Any]]:
@@ -45,7 +141,8 @@ def _walk_json(value: Any) -> Iterable[dict[str, Any]]:
             yield from _walk_json(child)
 
 
-def _price_from_json_ld(documents: list[Any]) -> float | None:
+def _price_observations_from_json_ld(documents: list[Any]) -> list[PriceObservation]:
+    observations: list[PriceObservation] = []
     for document in documents:
         for node in _walk_json(document):
             raw_type = node.get("@type")
@@ -64,24 +161,41 @@ def _price_from_json_ld(documents: list[Any]) -> float | None:
                         continue
                     raw_price = offer.get("price") or offer.get("lowPrice")
                     try:
-                        return float(str(raw_price).replace(" ", "").replace(",", "."))
+                        amount = float(str(raw_price).replace(" ", "").replace(",", "."))
                     except (TypeError, ValueError):
                         continue
-    return None
+                    observations.append(
+                        PriceObservation(
+                            amount=amount,
+                            currency=_normalize_currency(
+                                offer.get("priceCurrency") or node.get("priceCurrency")
+                            ),
+                            kind=(
+                                "range" if "price" not in offer and "lowPrice" in offer else "item"
+                            ),
+                            channel="json_ld",
+                            raw=str(raw_price),
+                        )
+                    )
+    return observations
+
+
+def _price_from_json_ld(documents: list[Any]) -> float | None:
+    observations = _price_observations_from_json_ld(documents)
+    return observations[0].amount if observations else None
 
 
 def _price_from_text(text: str) -> float | None:
-    match = PRICE_PATTERN.search(text)
-    if not match:
-        return None
-    integer = match.group(1).replace(" ", "").replace(".", "")
-    decimal = match.group(2) or "0"
-    return float(f"{integer}.{decimal}")
+    observations = _price_observations_from_text(text)
+    item = next((row for row in observations if row.kind == "item"), None)
+    return item.amount if item else None
 
 
-async def extract_listing(page: Page) -> ExtractedListing:
+async def extract_listing(page: Page, source: str | None = None) -> ExtractedListing:
     title = (await page.title()).strip()
     body = (await page.locator("body").inner_text(timeout=10_000))[:100_000]
+    html = await page.content() if source in {"olx", "allegro_lokalnie"} else ""
+    portal_fields = parse_portal_listing(source, html) if source else None
     lowered = body.lower()
     json_ld_documents: list[Any] = []
     for raw in await page.locator('script[type="application/ld+json"]').all_text_contents():
@@ -113,33 +227,86 @@ async def extract_listing(page: Page) -> ExtractedListing:
     except ValueError:
         parsed_meta_price = None
 
-    json_ld_price = _price_from_json_ld(json_ld_documents)
-    text_price = _price_from_text(body)
-    evidence = {
-        "meta": parsed_meta_price,
-        "json_ld": json_ld_price,
-        "visible_text": text_price,
-    }
-    price = parsed_meta_price or json_ld_price or text_price
-    structured_prices = [
-        value for key, value in evidence.items() if key != "visible_text" and value
-    ]
-    integrity_reasons: list[str] = []
-    if len(structured_prices) > 1 and (
-        max(structured_prices) - min(structured_prices) > max(1.0, min(structured_prices) * 0.01)
-    ):
-        integrity_reasons.append("sprzeczne ceny w metadanych strony")
-    sold = any(marker in lowered for marker in SOLD_MARKERS)
+    meta_currency_locator = page.locator(
+        'meta[property="product:price:currency"], meta[itemprop="priceCurrency"], '
+        'meta[property="og:price:currency"]'
+    ).first
+    raw_meta_currency = (
+        await meta_currency_locator.get_attribute("content", timeout=1_000)
+        if await meta_currency_locator.count()
+        else None
+    )
+    observations = _price_observations_from_json_ld(json_ld_documents)
+    visible_observations = [] if portal_fields else _price_observations_from_text(body)
+    visible_item = next((row for row in visible_observations if row.kind == "item"), None)
+    if visible_item is not None:
+        observations.append(visible_item)
+    if parsed_meta_price is not None:
+        observations.insert(
+            0,
+            PriceObservation(
+                amount=parsed_meta_price,
+                currency=_normalize_currency(raw_meta_currency),
+                kind="item",
+                channel="meta",
+                raw=str(meta_price),
+            ),
+        )
+    if portal_fields is not None:
+        title = portal_fields.title
+        observations.insert(
+            0,
+            PriceObservation(
+                amount=portal_fields.amount,
+                currency=portal_fields.currency,
+                kind="item",
+                channel=portal_fields.primary_channel,
+                raw=str(portal_fields.amount),
+            ),
+        )
+        if portal_fields.previous_amount is not None:
+            observations.append(
+                PriceObservation(
+                    amount=portal_fields.previous_amount,
+                    currency=portal_fields.currency,
+                    kind="previous",
+                    channel="allegro_lokalnie_previous_dom",
+                    raw=str(portal_fields.previous_amount),
+                )
+            )
+    preferred = _select_item_price(observations)
+    price = preferred.amount if preferred else None
+    integrity_reasons = _price_integrity_reasons(observations)
+    sold = (
+        portal_fields.status == "sold"
+        if portal_fields
+        else any(marker in lowered for marker in SOLD_MARKERS)
+    )
     expired = any(marker in lowered for marker in EXPIRED_MARKERS)
     blocked = any(marker in lowered for marker in CAPTCHA_MARKERS)
     return ExtractedListing(
         title=title,
         price_pln=price,
+        currency=preferred.currency if preferred else "UNKNOWN",
+        price_kind=preferred.kind if preferred else "unknown",
         condition=None,
-        status="sold" if sold else "active" if not expired else "unknown",
+        status=(
+            portal_fields.status
+            if portal_fields
+            else "sold"
+            if sold
+            else "active"
+            if not expired
+            else "unknown"
+        ),
         blocked=blocked,
         expired=expired,
-        evidence_channels=tuple(key for key, value in evidence.items() if value is not None),
+        evidence_channels=tuple(
+            dict.fromkeys(
+                [row.channel for row in observations]
+                + (["visible_text"] if visible_observations else [])
+            )
+        ),
         integrity_reasons=tuple(integrity_reasons),
     )
 

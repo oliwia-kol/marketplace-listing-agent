@@ -1,0 +1,11 @@
+.git
+.env
+.venv
+.uv-cache
+data
+reports
+work
+htmlcov
+test-results
+**/__pycache__
+**/*.pyc

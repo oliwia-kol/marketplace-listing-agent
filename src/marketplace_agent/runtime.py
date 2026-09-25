@@ -31,12 +31,23 @@ class ApplicationRuntime:
 
     async def __aenter__(self) -> ApplicationRuntime:
         self.settings.ensure_directories()
+        assert self.settings.model_config_path is not None
+        assert self.settings.source_config_path is not None
+        assert self.settings.category_profile_path is not None
+        assert self.settings.data_dir is not None
         self.catalog = CatalogRepository(self.settings.catalog_db)
         self.catalog.setup()
+        self.catalog.purge_expired_copy_diagnostics()
         provider = OllamaModelProvider()
-        self.router = ModelRouter.from_yaml(provider, self.settings.model_config_path)
+        self.router = ModelRouter.from_yaml(
+            provider,
+            self.settings.model_config_path,
+            event_sink=self.catalog.record_run_event,
+        )
         self.sessions = BrowserSessionManager(
-            self.settings.chrome_profile_dir, headless=self.settings.headless
+            self.settings.chrome_profile_dir,
+            headless=self.settings.headless,
+            research_proxy_url=self.settings.research_proxy_url,
         )
         saver = await self.stack.enter_async_context(
             AsyncSqliteSaver.from_conn_string(str(self.settings.checkpoint_db))
@@ -48,9 +59,12 @@ class ApplicationRuntime:
                 self.router,
                 ResearchConfig.from_yaml(self.settings.source_config_path),
                 CategoryProfileCatalog.from_yaml(self.settings.category_profile_path),
+                data_dir=self.settings.data_dir,
             ),
             browser_fill=BrowserFillService(self.sessions, self.router, self.settings.data_dir),
             catalog=self.catalog,
+            copy_diagnostics_retention_days=self.settings.copy_diagnostics_retention_days,
+            copy_pipeline_timeout_seconds=self.settings.copy_pipeline_timeout_seconds,
         )
         self.graph = build_graph(deps, saver)
         return self
